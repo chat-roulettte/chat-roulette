@@ -1,0 +1,47 @@
+{
+    "blocks": [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": ":wave: <@U0123456789> <@U9876543210>\n\nTime for an end of round check-in!",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*Did you get a chance to connect?*",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "action_id": "CHECK_PAIR|yes",
+                    "text": {
+                        "type": "plain_text",
+                        "text": ":white_check_mark: Yes",
+                        "emoji": true
+                    },
+                    "style": "primary",
+                    "value": "{\"match_id\":99,\"has_met\":true,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\"}"
+                },
+                {
+                    "type": "button",
+                    "action_id": "CHECK_PAIR|no",
+                    "text": {
+                        "type": "plain_text",
+                        "text": ":x: No",
+                        "emoji": true
+                    },
+                    "style": "danger",
+                    "value": "{\"match_id\":99,\"has_met\":false,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\"}"
+                }
+            ]
+        }
+    ]
+}

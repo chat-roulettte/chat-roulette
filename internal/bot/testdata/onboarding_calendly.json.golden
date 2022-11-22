@@ -1,0 +1,56 @@
+{
+    "response_action": "push",
+    "view": {
+        "type": "modal",
+        "callback_id": "onboarding-calendly",
+        "private_metadata": "base64-encoded-data-here",
+        "title": {
+            "type": "plain_text",
+            "text": "Chat Roulette for Slack",
+            "emoji": true
+        },
+        "close": {
+            "type": "plain_text",
+            "text": "Cancel",
+            "emoji": true
+        },
+        "submit": {
+            "type": "plain_text",
+            "text": "Submit",
+            "emoji": true
+        },
+        "blocks": [
+            {
+                "type": "section",
+                "block_id": "onboarding",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "Share your Calendly link to make scheduling meetings easier"
+                }
+            },
+            {
+                "type": "image",
+                "image_url": "http://localhost/static/img/calendly.jpg",
+                "alt_text": "social icons"
+            },
+            {
+                "type": "input",
+                "block_id": "onboarding-calendly",
+                "optional": true,
+                "element": {
+                    "type": "plain_text_input",
+                    "action_id": "onboarding-calendly",
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "https://calendly.com/"
+                    }
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Calendly link:",
+                    "emoji": true
+                }
+            }
+        ]
+    }
+}

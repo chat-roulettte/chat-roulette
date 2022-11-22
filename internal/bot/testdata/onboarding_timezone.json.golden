@@ -1,0 +1,66 @@
+{
+    "response_action": "update",
+    "view": {
+        "type": "modal",
+        "callback_id": "onboarding-timezone",
+        "private_metadata": "base64-encoded-data-here",
+        "title": {
+            "type": "plain_text",
+            "text": "Chat Roulette for Slack",
+            "emoji": true
+        },
+        "close": {
+            "type": "plain_text",
+            "text": "Cancel",
+            "emoji": true
+        },
+        "submit": {
+            "type": "plain_text",
+            "text": "Next",
+            "emoji": true
+        },
+        "blocks": [
+            {
+                "type": "section",
+                "block_id": "onboarding",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "Let's get your timezone to share with your future chat-roulette matches"
+                }
+            },
+            {
+                "type": "image",
+                "image_url": "http://localhost/static/img/globe.jpg",
+                "alt_text": "globe"
+            },
+            {
+                "type": "input",
+                "block_id": "onboarding-timezone",
+                "element": {
+                    "type": "static_select",
+                    "action_id": "onboarding-timezone",
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "Timezone",
+                        "emoji": false
+                    },
+                    "options": [
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Europe/Malta",
+                                "emoji": false
+                            },
+                            "value": "Europe/Malta"
+                        }
+                    ]
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Select the timezone for your location",
+                    "emoji": true
+                }
+            }
+        ]
+    }
+}

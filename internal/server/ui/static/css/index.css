@@ -1,0 +1,64 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.overlay {
+  position: fixed;
+  background-image: url("../img/background.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+.container {
+  width: 100vw;
+  height: 100vh;
+}
+
+.container .avatar {
+  width: 300px;
+  margin-bottom: 20px;
+}
+
+.container form {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.container form #signIn-btn {
+  align-items: center;
+  color: #fff;
+  background-color: #4a154b;
+  border: 0;
+  border-radius: 4px;
+  display: inline-flex;
+  font-family: Lato, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  height: 48px;
+  justify-content: center;
+  text-decoration: none;
+  width: 200px;
+}
+
+.container form #signIn-btn svg {
+  height: 20px;
+  width: 20px;
+  margin-right: 12px;
+}

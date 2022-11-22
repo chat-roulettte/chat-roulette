@@ -1,0 +1,24 @@
+{
+    "blocks": [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": ":wave: <@{{ .Participant }}> <@{{ .Partner }}>\n\nTime for an end of round check-in!",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                {{ if .HasMet -}}
+                "text": ":white_check_mark: <@{{ .Responder }}> said that you met. Awesome!",
+                {{ else -}}
+                "text": ":x: <@{{ .Responder }}> said that you did not meet. Sorry to hear that!",
+                {{ end -}}
+                "verbatim": false
+            }
+        }
+    ]
+}

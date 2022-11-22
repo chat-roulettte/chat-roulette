@@ -1,0 +1,5 @@
+DROP FUNCTION GetNextJob;
+
+DROP TABLE IF EXISTS jobs;
+
+DROP TYPE "job_type";

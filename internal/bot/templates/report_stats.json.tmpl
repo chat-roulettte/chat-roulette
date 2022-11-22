@@ -1,0 +1,63 @@
+{
+	"blocks": [
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": ":bar_chart: Stats for Chat Roulette",
+				"emoji": true
+			}
+		},
+		{
+			"type": "divider"
+		},
+	{{- if (eq .Matches 0.0) }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "No matches were made in the last round of Chat Roulette! :cry:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "To ensure matches can be made in the next round, participants must opt-in to Chat Roulette."
+			}
+		}
+	{{- else }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*{{ .Met }}* groups met from the last round of Chat Roulette!"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "That's *{{ .Percent }}%* of the *{{ .Matches }}* intros made."
+			}
+		},
+		{{- if (eq .Percent 100.0) }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Congratulations to everyone for achieving *100%* :tada:"
+			}
+		}
+		{{- else }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Can you get to *100%* next round?"
+			}
+		}
+		{{- end }}
+	{{- end }}
+	]
+}

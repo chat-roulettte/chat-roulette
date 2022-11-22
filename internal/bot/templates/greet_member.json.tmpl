@@ -1,0 +1,61 @@
+{
+    "type": "home",
+    "blocks": [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": ":wave: Hello <@{{ .UserID }}>"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Welcome to the <#{{ .ChannelID }}> channel!"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Chat Roulette has been enabled on this channel. *{{ .Interval | capitalize }}* on *{{ .Weekday }}s*, you will be introduced to another member in the <#{{ .ChannelID }}> channel. You will have until the start of the next round to meet over a video call using Slack, Zoom, Google Meet, etc.",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "The next chat roulette round begins on *{{ .NextRound | prettyDate }}*!"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Chat Roulette has been enabled on this channel by <@{{ .Invitor }}>, so if you have any questions, please reach out to them."
+            }
+        },
+        {
+            "type": "divider"
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*To participate in chat roulette, click the following button to complete onboarding:*"
+            },
+            "accessory": {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Opt In",
+                    "emoji": true
+                },
+                "value": "{{ .ChannelID }}",
+                "action_id": "GREET_MEMBER|confirm"
+            }
+        }
+    ]
+}

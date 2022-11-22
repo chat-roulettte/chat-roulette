@@ -1,0 +1,100 @@
+{
+	"type": "home",
+	"blocks": [
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": "Chat Roulette for Slack",
+				"emoji": true
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Chat Roulette helps you stay connected to your Slack community by introducing you to other members on a regular cadence."
+			}
+		},
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": ":question: How It Works",
+				"emoji": true
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Chat Roulette can be enabled on a Slack channel by inviting <@{{ .BotUserID }}> to it. The chat roulette bot will pair members of the Slack channel every round, giving enough time for participants to meet for a video call."
+			}
+		},
+{{ if .Channels }}
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": ":door: Chat Roulette Channels You Can Join",
+				"emoji": true
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "context",
+			"elements": [
+				{
+					"type": "mrkdwn",
+					"text": "_Join any of these channels to start meeting members of your community_"
+				}
+			]
+		},
+{{ range .Channels }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "<#{{ .ChannelID }}>\n:clock1: Interval: *{{ .Interval }}*\n:calendar: Next Round: *{{ .NextRound | prettyDate }}*"
+			}
+		},
+{{ end }}{{ end }}
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": ":globe_with_meridians: Visit Your Chat Roulette Dashboard",
+				"emoji": true
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "_To view your Chat Roulette dashboard, click on the button to the right_"
+			},
+			"accessory": {
+				"type": "button",
+				"text": {
+					"type": "plain_text",
+					"text": ":bar_chart: Dashboard",
+					"emoji": true
+				},
+				"value": "dashboard",
+				"url": "{{ .AppURL }}",
+				"action_id": "link"
+			}
+		}
+	]
+}

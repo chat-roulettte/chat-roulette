@@ -1,0 +1,36 @@
+{
+	"blocks": [
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": ":bar_chart: Stats for Chat Roulette",
+				"emoji": true
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*10* groups met from the last round of Chat Roulette!"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "That's *100%* of the *10* intros made."
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Congratulations to everyone for achieving *100%* :tada:"
+			}
+		}
+	]
+}
