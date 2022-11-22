@@ -1,0 +1,26 @@
+{
+    "bot": {
+        "auth_token": "xoxb-slackbot-oauthtoken-here"
+    },
+    "chatroulette": {
+        "interval": "biweekly",
+        "weekday": "Monday",
+        "hour": 12
+    },
+    "server": {
+        "client_id": "oauth-client-id-here",
+        "client_secret": "oauth-client-secret-here",
+        "secret_key": "secret-key-goes-here",
+        "signing_secret": "slack-signing-key-here"
+    },
+    "database": {
+        "url": "postgres://postgres:letmein@localhost:5432/chat-roulette",
+        "encryption": {
+            "key": "32-byte-hex-encoded-encryption-key"
+        }
+    },
+    "worker": {
+        "concurrency": 2
+    },
+    "dev": false
+}

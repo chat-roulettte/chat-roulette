@@ -1,0 +1,75 @@
+{
+    "response_action": "update",
+    "view": {
+        "type": "modal",
+        "callback_id": "onboarding-location",
+        "private_metadata": "{{ .PrivateMetadata }}",
+        "title": {
+            "type": "plain_text",
+            "text": "Chat Roulette for Slack",
+            "emoji": true
+        },
+        "close": {
+            "type": "plain_text",
+            "text": "Cancel",
+            "emoji": true
+        },
+        "submit": {
+            "type": "plain_text",
+            "text": "Next",
+            "emoji": true
+        },
+        "blocks": [
+            {
+                "type": "section",
+                "block_id": "onboarding",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "Let's get your location to share with your future chat-roulette matches"
+                }
+            },
+            {
+                "type": "image",
+                "image_url": "{{ .ImageURL }}",
+                "alt_text": "globe"
+            },
+            {
+                "type": "input",
+                "block_id": "onboarding-country",
+                "element": {
+                    "type": "external_select",
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "Country",
+                        "emoji": true
+                    },
+                    "min_query_length": 2,
+                    "action_id": "onboarding-location-country"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Which country are you based in?",
+                    "emoji": true
+                }
+            },
+            {
+                "type": "input",
+                "block_id": "onboarding-city",
+                "element": {
+                    "type": "plain_text_input",
+                    "action_id": "onboarding-location-city",
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "City",
+                        "emoji": true
+                    }
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "What's the name of your city?",
+                    "emoji": true
+                }
+            }
+        ]
+    }
+}

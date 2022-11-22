@@ -1,0 +1,148 @@
+{
+    "response_action": "push",
+    "view": {
+        "type": "modal",
+        "callback_id": "onboarding-profile",
+        "private_metadata": "{{ .PrivateMetadata }}",
+        "title": {
+            "type": "plain_text",
+            "text": "Chat Roulette for Slack",
+            "emoji": true
+        },
+        "close": {
+            "type": "plain_text",
+            "text": "Cancel",
+            "emoji": true
+        },
+        "submit": {
+            "type": "plain_text",
+            "text": "Next",
+            "emoji": true
+        },
+        "blocks": [
+            {
+                "type": "section",
+                "block_id": "onboarding",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "Share a link to your social profile with your future chat-roulette matches"
+                }
+            },
+            {
+                "type": "image",
+                "image_url": "{{ .ImageURL }}",
+                "alt_text": "social icons"
+            },
+            {
+                "type": "input",
+                "block_id": "onboarding-profile-type",
+                "element": {
+                    "type": "static_select",
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "Twitter",
+                        "emoji": true
+                    },
+                    "options": [
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Facebook",
+                                "emoji": true
+                            },
+                            "value": "Facebook"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "GitHub",
+                                "emoji": true
+                            },
+                            "value": "GitHub"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Instagram",
+                                "emoji": true
+                            },
+                            "value": "Instagram"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "LinkedIn",
+                                "emoji": true
+                            },
+                            "value": "LinkedIn"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Pinterest",
+                                "emoji": true
+                            },
+                            "value": "Pinterest"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Snapchat",
+                                "emoji": true
+                            },
+                            "value": "Snapchat"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "TikTok",
+                                "emoji": true
+                            },
+                            "value": "TikTok"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Twitter",
+                                "emoji": true
+                            },
+                            "value": "Twitter"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "YouTube",
+                                "emoji": true
+                            },
+                            "value": "YouTube"
+                        }
+                    ],
+                    "action_id": "onboarding-profile-type"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Profile type?",
+                    "emoji": true
+                }
+            },
+            {
+                "type": "input",
+                "block_id": "onboarding-profile-link",
+                "element": {
+                    "type": "plain_text_input",
+                    "action_id": "onboarding-profile-link",
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "twitter.com/...",
+                        "emoji": true
+                    }
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Link to profile:",
+                    "emoji": true
+                }
+            }
+        ]
+    }
+}

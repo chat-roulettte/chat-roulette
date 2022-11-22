@@ -1,0 +1,39 @@
+{
+	"type": "modal",
+	"callback_id": "onboarding-modal",
+	"private_metadata": "{{ .PrivateMetadata }}",
+	"clear_on_close": true,
+	"notify_on_close": false,
+	"title": {
+		"type": "plain_text",
+		"text": "Chat Roulette for Slack",
+		"emoji": true
+	},
+	"close": {
+		"type": "plain_text",
+		"text": "Cancel",
+		"emoji": true
+	},
+	"submit": {
+		"type": "plain_text",
+		"text": "Next",
+		"emoji": true
+	},
+	"blocks": [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":wave: Hi *<@{{ .UserID }}>*!"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "plain_text",
+				"text": "Thanks for your interest in participating in chat roulette. Let's collect some information to share with your future matches.",
+				"emoji": true
+			}
+		}
+	]
+}

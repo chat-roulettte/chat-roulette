@@ -1,0 +1,68 @@
+{{ template "main" . }}
+
+<div class="mt-4">
+  <div>
+    <p class="font-medium text-xl">Chat Roulette History</p>
+    <p class="font-medium text-l">#{{ .Channel }}</p>
+  </div>
+
+  {{ if .History }}
+  <div class="flex flex-col">
+    <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+        <div class="overflow-hidden">
+          <table class="min-w-full">
+            <thead class="border-b bg-gray-50">
+              <tr>
+                <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                  Match
+                </th>
+                <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                  Intro Date
+                </th>
+                <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                  Status
+                </th>
+                <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                  Location
+                </th>
+                <th scope="col" class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                  Social
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {{ range .History }}
+              <tr class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <a href="{{ .SlackLink }}" target="_blank" referrerpolicy="no-referrer">
+                    <img class="inline-block h-12 w-12 rounded-full ring-2 ring-white" src="{{ .Image }}"
+                      title="{{ .User }}" />
+                  </a>
+                </td>
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  {{ .IntroDate | prettyDate }}
+                </td>
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  {{ if .HasMet }}✅ You met{{ else }}❌ You didn't meet{{ end }}
+                </td>
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  {{ .Location }}
+                </td>
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  <a class="text-blue-600 hover:text-blue-700 transition duration-300 ease-in-out mb-4"
+                    href="https://{{ .Social }}" target="_blank" referrerpolicy="no-referrer">{{ .Social }}</a>
+                </td>
+              </tr>
+              {{ end }}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{ end }}
+</div>
+
+
+{{ template "footer" }}

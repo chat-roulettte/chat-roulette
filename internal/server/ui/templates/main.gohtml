@@ -1,0 +1,182 @@
+{{ define "main" }}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Chat Roulette</title>
+  <link rel="icon" type="image/x-icon" href="../static/img/favicon.png" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <!-- tailwind CSS CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/index.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+
+<body>
+  <div class="grid lg:grid-cols-6">
+
+    <!-- Mobile & Tablet View -->
+
+    <!--Mobile Navbar -->
+    <div class="flex justify-between col-span-6 z-10 px-2 py-1 lg:hidden">
+      <svg id="hamburger-menu" class="w-7 mt-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="12" x2="20" y2="12"></line>
+        <line x1="4" y1="6" x2="20" y2="6"></line>
+        <line x1="4" y1="18" x2="20" y2="18"></line>
+      </svg>
+
+      <!-- Mobile Sidebar -->
+      <div id="mobile-sidebar" class="fixed top-0 left-0 w-52 h-screen bg-slate-200 overflow-hidden hidden lg:block">
+        <svg id="close-btn" class="w-8 mt-3 ml-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+          <path
+            d="M0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256zM175 208.1L222.1 255.1L175 303C165.7 312.4 165.7 327.6 175 336.1C184.4 346.3 199.6 346.3 208.1 336.1L255.1 289.9L303 336.1C312.4 346.3 327.6 346.3 336.1 336.1C346.3 327.6 346.3 312.4 336.1 303L289.9 255.1L336.1 208.1C346.3 199.6 346.3 184.4 336.1 175C327.6 165.7 312.4 165.7 303 175L255.1 222.1L208.1 175C199.6 165.7 184.4 165.7 175 175C165.7 184.4 165.7 199.6 175 208.1V208.1z" />
+        </svg>
+        <div class="w-5/6 mx-auto">
+          <img class="w-36 pt-2 m-auto hidden lg:block" src="../static/img/logo.png" />
+          <p class="font-medium mt-4 text-center">
+            <!-- https://lucide.dev/icon/slack?search=slack -->
+            <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="13" y="2" width="3" height="8" rx="1.5"></rect>
+              <path d="M19 8.5V10h1.5A1.5 1.5 0 1 0 19 8.5"></path>
+              <rect x="8" y="14" width="3" height="8" rx="1.5"></rect>
+              <path d="M5 15.5V14H3.5A1.5 1.5 0 1 0 5 15.5"></path>
+              <rect x="14" y="13" width="8" height="3" rx="1.5"></rect>
+              <path d="M15.5 19H14v1.5a1.5 1.5 0 1 0 1.5-1.5"></path>
+              <rect x="2" y="8" width="8" height="3" rx="1.5"></rect>
+              <path d="M8.5 5H10V3.5A1.5 1.5 0 1 0 8.5 5"></path>
+            </svg>
+            {{ .Workspace }}
+          </p>
+          <ul class="bg-white mt-5 rounded">
+            <li class="pl-2 pt-1 text-left">
+              <!-- https://lucide.dev/icon/list -->
+              <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+              Channels
+            </li>
+            <li class="text-right pr-2 pt-2">
+              <a href="/profile">Your Channels</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Logo -->
+      <img class="w-28" src="../static/img/logo-text.png" />
+
+      <!-- User Avatar -->
+      <button id="mobile-user-icon" class="'relative inline">
+        <img class="w-10 rounded-full" src="{{ .Image }}" />
+        <!-- Dropdown menu -->
+        <div id="mobile-dropdown"
+          class="hidden fixed z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 z-10 right-1 top-14">
+          <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault">
+            <li class="py-2 px-4" id="slack-user-id" data-slack-user-id="{{ .ID }}">
+              {{ .DisplayName }}
+            </li>
+            <li>
+              <a href="/oidc/logout"
+                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a>
+            </li>
+          </ul>
+        </div>
+      </button>
+    </div>
+
+    <!-- Desktop View -->
+
+    <!-- Sidebar -->
+    <div class="col-span-1 top-0 left-0 h-screen bg-slate-200 overflow-hidden hidden lg:block">
+      <div class="w-5/6 mx-auto">
+        <img class="w-36 pt-2 m-auto hidden lg:block" src="../static/img/logo.png" />
+        <p class="mt-8 text-center">
+          <!-- https://lucide.dev/icon/slack?search=slack -->
+          <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="13" y="2" width="3" height="8" rx="1.5"></rect>
+            <path d="M19 8.5V10h1.5A1.5 1.5 0 1 0 19 8.5"></path>
+            <rect x="8" y="14" width="3" height="8" rx="1.5"></rect>
+            <path d="M5 15.5V14H3.5A1.5 1.5 0 1 0 5 15.5"></path>
+            <rect x="14" y="13" width="8" height="3" rx="1.5"></rect>
+            <path d="M15.5 19H14v1.5a1.5 1.5 0 1 0 1.5-1.5"></path>
+            <rect x="2" y="8" width="8" height="3" rx="1.5"></rect>
+            <path d="M8.5 5H10V3.5A1.5 1.5 0 1 0 8.5 5"></path>
+          </svg>
+          {{ .Workspace }}
+        </p>
+        <ul class="bg-white mt-5 rounded">
+          <li class="pl-2 pt-1 text-left">
+            <!-- https://lucide.dev/icon/list -->
+            <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            Channels
+          </li>
+          <li class="text-right pr-2 pt-2">
+            <a href="/profile">Your Channels</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="col-span-5 mx-auto sm:mx-0 lg:col-start-2 lg:col-span-5 h-screen px-2 py-2 lg:px-4 lg:overflow-y-scroll">
+      <!-- User Avatar -->
+      <div class="flex justify-end">
+        <button id="user-icon" class="'relative inline">
+          <img class="w-10 rounded-full hidden lg:block" src="{{ .Image }}" />
+          <!-- Dropdown menu -->
+          <div id="dropdown"
+            class="hidden fixed z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 z-10 right-1 top-14">
+            <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault">
+              <li class="py-2 px-4" id="slack-user-id" data-slack-user-id="{{ .ID }}">
+                {{ .DisplayName }}
+              </li>
+              <li>
+                <a href="/oidc/logout"
+                  class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a>
+              </li>
+            </ul>
+          </div>
+        </button>
+      </div>
+      {{ end }}
+
+{{ define "footer" }}
+  <div>
+  <script type="text/javascript" src="/static/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
+</body>
+
+</html>
+{{ end }}

@@ -1,0 +1,20 @@
+{
+    "blocks": [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": ":wave: <@U0123456789> <@U9876543210>\n\nTime for an end of round check-in!",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": ":white_check_mark: <@U9876543210> said that you met. Awesome!",
+                "verbatim": false
+            }
+        }
+    ]
+}

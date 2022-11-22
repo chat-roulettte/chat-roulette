@@ -1,0 +1,193 @@
+{{ template "main" . }}
+
+<div class="mt-4">
+  <div>
+    <p class="font-medium text-xl">Channel Settings</p>
+    <p class="font-medium text-l">#{{ .ChannelName }}</p>
+  </div>
+</div>
+
+<div class="flex w-full max-w-lg justify-center py-3 hidden" id="success-alert">
+  <div class="flex mt-1 bg-blue-100 rounded-lg py-2 px-4 text-base text-blue-700 inline-flex items-center" role="alert">
+    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="info-circle"
+      class="w-4 h-4 mr-2 fill-current" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <path fill="currentColor"
+        d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z">
+      </path>
+    </svg>
+    <span>
+      Channel settings updated successfully!
+    </span>
+  </div>
+</div>
+
+<div class="flex w-full max-w-lg justify-center py-3 hidden" id="error-alert">
+  <div role="alert">
+    <div class="bg-red-500 text-white rounded-t px-3 py-2">
+      Failed to update channel settings
+    </div>
+    <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-3 py-2 text-red-700">
+      <p id="error-alert-text"></p>
+    </div>
+  </div>
+</div>
+
+<div class="flex mt-5 min-w-full py-1">
+  <form action="/v1/channel" id="channel-settings-form" class="w-full lg:max-w-lg">
+    <div class="flex items-center justify-end pb-2">
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        type="submit" id="profile-form">
+        Save
+      </button>
+
+      <a href="/profile">
+        <button
+          class="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 ml-1 rounded focus:outline-none focus:shadow-outline"
+          type="button">
+          Cancel
+        </button>
+      </a>
+
+    </div>
+    <div class="flex flex-wrap -mx-3 mb-6">
+      <div class="w-full px-3">
+        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="Frequency">
+          <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m17 2 4 4-4 4"></path>
+            <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
+            <path d="m7 22-4-4 4-4"></path>
+            <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
+          </svg>
+          Frequency
+        </label>
+        <div class="relative">
+          <select id="interval" name="interval"
+            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+            <option value="weekly" {{ if eq $.Channel.Interval.String "weekly" }}selected{{ end }}>Every Week</option>
+            <option value="biweekly" {{ if eq $.Channel.Interval.String "biweekly" }}selected{{ end }}>Every 2 Weeks
+            </option>
+            <option value="triweekly" {{ if eq $.Channel.Interval.String "triweekly" }}selected{{ end }}>Every 3 Weeks
+            </option>
+            <option value="monthly" {{ if eq $.Channel.Interval.String "monthly" }}selected{{ end }}>Every 4 Weeks
+            </option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full px-3 py-3">
+        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="dayOfTheWeek">
+          <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <path d="M8 14h.01"></path>
+            <path d="M12 14h.01"></path>
+            <path d="M16 14h.01"></path>
+            <path d="M8 18h.01"></path>
+            <path d="M12 18h.01"></path>
+            <path d="M16 18h.01"></path>
+          </svg>
+          Day of the Week
+        </label>
+        <div class="relative">
+          <select id="weekday" name="weekday"
+            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+            <option value="Monday" {{ if eq $.Channel.Weekday 1}}selected{{ end }}>Monday</option>
+            <option value="Tuesday" {{ if eq $.Channel.Weekday 2}}selected{{ end }}>Tuesday</option>
+            <option value="Wednesday" {{ if eq $.Channel.Weekday 3}}selected{{ end }}>Wednesday</option>
+            <option value="Thursday" {{ if eq $.Channel.Weekday 4}}selected{{ end }}>Thursday</option>
+            <option value="Friday" {{ if eq $.Channel.Weekday 5}}selected{{ end }}>Friday</option>
+            <option value="Saturday" {{ if eq $.Channel.Weekday 6}}selected{{ end }}>Saturday</option>
+            <option value="Sunday" {{ if eq $.Channel.Weekday 0}}selected{{ end }}>Sunday</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full px-3">
+        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="introTime">
+          <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 8 14"></polyline>
+          </svg>
+          Intro Time
+        </label>
+        <div class="relative">
+          <select id="hour" name="hour"
+            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+            <option value="0" {{ if eq $.Channel.Hour 0}}selected{{ end }}>12:00 AM</option>
+            <option value="1" {{ if eq $.Channel.Hour 1}}selected{{ end }}>1:00 AM</option>
+            <option value="2" {{ if eq $.Channel.Hour 2}}selected{{ end }}>2:00 AM</option>
+            <option value="3" {{ if eq $.Channel.Hour 3}}selected{{ end }}>3:00 AM</option>
+            <option value="4" {{ if eq $.Channel.Hour 4}}selected{{ end }}>4:00 AM</option>
+            <option value="5" {{ if eq $.Channel.Hour 5}}selected{{ end }}>5:00 AM</option>
+            <option value="6" {{ if eq $.Channel.Hour 6}}selected{{ end }}>6:00 AM</option>
+            <option value="7" {{ if eq $.Channel.Hour 7}}selected{{ end }}>7:00 AM</option>
+            <option value="8" {{ if eq $.Channel.Hour 8}}selected{{ end }}>8:00 AM</option>
+            <option value="9" {{ if eq $.Channel.Hour 9}}selected{{ end }}>9:00 AM</option>
+            <option value="10" {{ if eq $.Channel.Hour 10}}selected{{ end }}>10:00 AM</option>
+            <option value="11" {{ if eq $.Channel.Hour 11}}selected{{ end }}>11:00 AM</option>
+            <option value="12" {{ if eq $.Channel.Hour 12}}selected{{ end }}>12:00 PM</option>
+            <option value="13" {{ if eq $.Channel.Hour 13}}selected{{ end }}>1:00 PM</option>
+            <option value="14" {{ if eq $.Channel.Hour 14}}selected{{ end }}>2:00 PM</option>
+            <option value="15" {{ if eq $.Channel.Hour 15}}selected{{ end }}>3:00 PM</option>
+            <option value="16" {{ if eq $.Channel.Hour 16}}selected{{ end }}>4:00 PM</option>
+            <option value="17" {{ if eq $.Channel.Hour 17}}selected{{ end }}>5:00 PM</option>
+            <option value="18" {{ if eq $.Channel.Hour 18}}selected{{ end }}>6:00 PM</option>
+            <option value="19" {{ if eq $.Channel.Hour 19}}selected{{ end }}>7:00 PM</option>
+            <option value="20" {{ if eq $.Channel.Hour 20}}selected{{ end }}>8:00 PM</option>
+            <option value="21" {{ if eq $.Channel.Hour 21}}selected{{ end }}>9:00 PM</option>
+            <option value="22" {{ if eq $.Channel.Hour 22}}selected{{ end }}>10:00 PM</option>
+            <option value="23" {{ if eq $.Channel.Hour 23}}selected{{ end }}>11:00 PM</option>
+
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+            </svg>
+          </div>
+        </div>
+        <p class="text-gray-600 text-xs italic">Timezone is in UTC</p>
+      </div>
+
+      <div class="w-full px-3 py-3">
+        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="next-round">
+          <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"></path>
+            <path d="M16 2v4"></path>
+            <path d="M8 2v4"></path>
+            <path d="M3 10h5"></path>
+            <path d="M17.5 17.5 16 16.25V14"></path>
+            <path d="M22 16a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z"></path>
+          </svg>
+          Date of Next Round
+        </label>
+        <div class="relative">
+          <input type="date" name="next-round" required min="{{ $.MinDate | htmlDate }}" type="text"
+            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            value="{{ $.Channel.NextRound | htmlDate }}">
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<script type="text/javascript" src="/static/js/channel.js"></script>
+
+{{ template "footer" }}

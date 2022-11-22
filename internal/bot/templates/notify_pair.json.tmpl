@@ -1,0 +1,53 @@
+{
+	"blocks": [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":wave: <@{{ .Participant.UserID }}> <@{{ .Partner.UserID }}>"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "I'm here to help facilitate a little human connection by introducing everyone in <#{{ .ChannelID }}> {{ .Interval }}."
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "You two have been paired for this round of chat-roulette. Now that you're here, schedule a video call to get to know each other!"
+			}
+		},
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": "Match Info",
+				"emoji": true
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*Name:* <@{{ .Participant.UserID }}>\n*Location:* {{ .Participant.City }}, {{ .Participant.Country }}\n*Timezone*: {{ .ParticipantTimezone }}\n*{{ .Participant.ProfileType }}:* {{ .Participant.ProfileLink }}{{ if .Participant.CalendlyLink }}\n*Calendly*: {{ .Participant.CalendlyLink }}{{ end }}"
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*Name:* <@{{ .Partner.UserID }}>\n*Location:* {{ .Partner.City }}, {{ .Partner.Country }}\n*Timezone*: {{ .PartnerTimezone }}\n*{{ .Partner.ProfileType }}:* {{ .Partner.ProfileLink }}{{ if .Partner.CalendlyLink }}\n*Calendly*: {{ .Partner.CalendlyLink }}{{ end }}"
+			}
+		}
+	]
+}

@@ -1,0 +1,51 @@
+# Manifest for Slack app
+# See: https://api.slack.com/reference/manifests
+---
+_metadata:
+  major_version: 1
+  minor_version: 1
+display_information:
+  name: Chat Roulette for Slack
+  description: "chat-roulette-bot"
+  background_color: "#1a171a"
+features:
+  bot_user:
+    display_name: chat-roulette-bot
+    always_online: false
+  app_home:
+    home_tab_enabled: true
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: true
+oauth_config:
+  scopes:
+    bot:
+      - channels:join
+      - channels:history
+      - channels:read
+      - chat:write
+      - users:read
+      - im:history
+      - im:read
+      - im:write
+      - mpim:history
+      - mpim:read
+      - mpim:write
+      - groups:history
+      - groups:read
+      - team:read
+  redirect_urls:
+    - "{{ .BaseURL}}/oidc/callback"
+settings:
+  event_subscriptions:
+    request_url: "{{ .BaseURL}}/v1/slack/event"
+    bot_events:
+      - app_home_opened
+      - member_joined_channel
+      - member_left_channel
+  interactivity:
+    is_enabled: true
+    request_url: "{{ .BaseURL}}/v1/slack/interaction"
+    message_menu_options_url: "{{ .BaseURL}}/v1/slack/options"
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false

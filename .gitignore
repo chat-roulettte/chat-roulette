@@ -1,0 +1,5 @@
+bin/
+cmd/bin/
+.coverage.out
+config.json
+fly.toml

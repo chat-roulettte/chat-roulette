@@ -1,0 +1,61 @@
+{
+    "type": "home",
+    "blocks": [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": ":wave: Hello <@U0123456789>"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Welcome to the <#C0123456789> channel!"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Chat Roulette has been enabled on this channel. *Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the start of the next round to meet over a video call using Slack, Zoom, Google Meet, etc.",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "The next chat roulette round begins on *Monday, January 3rd, 2022*!"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Chat Roulette has been enabled on this channel by <@U9876543210>, so if you have any questions, please reach out to them."
+            }
+        },
+        {
+            "type": "divider"
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*To participate in chat roulette, click the following button to complete onboarding:*"
+            },
+            "accessory": {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Opt In",
+                    "emoji": true
+                },
+                "value": "C0123456789",
+                "action_id": "GREET_MEMBER|confirm"
+            }
+        }
+    ]
+}
