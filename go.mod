@@ -29,7 +29,7 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/unrolled/render v1.5.0
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.1.17
-	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.28.0
+	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.36.4
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.36.4
 	go.opentelemetry.io/otel v1.11.1
 	go.opentelemetry.io/otel/exporters/jaeger v1.11.1
