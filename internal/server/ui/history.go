@@ -3,12 +3,12 @@ package ui
 import (
 	"context"
 	"fmt"
+	"html/template"
 	"net/http"
 	"sync"
 	"time"
 
 	"github.com/bincyber/go-sqlcrypter"
-	"github.com/google/safehtml"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
 	"go.opentelemetry.io/otel/trace"
@@ -22,7 +22,7 @@ import (
 type matchHistory struct {
 	User      string
 	Image     string
-	SlackLink safehtml.URL
+	SlackLink template.URL
 	City      sqlcrypter.EncryptedBytes
 	Country   sqlcrypter.EncryptedBytes
 	Social    sqlcrypter.EncryptedBytes
@@ -106,7 +106,15 @@ func (s *implServer) historyHandler(w http.ResponseWriter, r *http.Request) {
 		Where("user_id = ?", slackUserID)
 
 	result := db.WithContext(dbCtx).Model(&models.Pairing{}).
-		Select("members.user_id AS user, members.channel_id AS channel, matches.created_at AS intro_date, members.city, members.country, members.profile_link AS social, matches.has_met").
+		Select(`
+			members.user_id AS user,
+			members.channel_id AS channel,
+			matches.created_at AS intro_date,
+			members.city,
+			members.country,
+			members.profile_link AS social,
+			matches.has_met`,
+		).
 		Joins("LEFT JOIN members ON members.id = pairings.member_id").
 		Joins("LEFT JOIN matches ON matches.id = pairings.match_id").
 		Where("pairings.match_id IN (?)", subQuery).
@@ -145,7 +153,9 @@ func (s *implServer) historyHandler(w http.ResponseWriter, r *http.Request) {
 			defer wg.Done()
 
 			// Set the Slack link before converting userID to display name
-			history[i].SlackLink = safehtml.URLSanitized(generateSlackLink(teamInfo.ID, e.User))
+			//
+			// This is a safe link as the data comes from Slack and not the user.
+			history[i].SlackLink = template.URL(generateSlackLink(teamInfo.ID, e.User)) //nolint:gosec
 
 			// Map the Slack user ID to display name
 			match, err := lookupSlackUser(r.Context(), cache, slackClient, e.User)

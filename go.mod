@@ -13,7 +13,6 @@ require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/go-playground/tz v0.0.0-20200117153713-f73b7c143ef6
 	github.com/golang-migrate/migrate/v4 v4.15.2
-	github.com/google/safehtml v0.1.0
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/schema v1.2.0
 	github.com/gorilla/sessions v1.2.1
