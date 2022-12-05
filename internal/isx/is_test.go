@@ -141,6 +141,7 @@ func Test_ValidateProfileLink(t *testing.T) {
 		{"Twitter", "twitter.com/joe", false},
 		{"Instagram", "https://instagram.com/ahmed", false},
 		{"LinkedIn", "facebook.com/bincyber", true},
+		{"LinkedIn", "ca.linkedin.com/bincyber", false},
 		{"github", "https://github.com/bincyber", false},
 		{"twitter", "github.com/bincyber", true},
 		{"tiktok", "tiktok.com/@example", false},
