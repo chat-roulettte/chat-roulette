@@ -22,7 +22,7 @@ var (
 		"facebook":  `(?:(www\.)|(m\.))?facebook.com`,
 		"github":    "github.com",
 		"instagram": `(?:(www\.)|(m\.))?instagram.com`,
-		"linkedin":  `(?:(www\.)|(m\.))?linkedin.com`,
+		"linkedin":  `(?:(www\.)|(m\.)|([a-z]{2}\.))?linkedin.com`,
 		"pinterest": `(?:(www\.))?pinterest.com`,
 		"snapchat":  `(?:(www\.))?snapchat.com`,
 		"tiktok":    `(?:(www\.)|(m\.))?tiktok.com`,
