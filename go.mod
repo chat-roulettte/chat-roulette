@@ -9,7 +9,7 @@ require (
 	github.com/bincyber/go-sqlcrypter v0.2.0
 	github.com/coreos/go-oidc/v3 v3.4.0
 	github.com/dgraph-io/ristretto v0.1.1
-	github.com/dustin/go-humanize v1.0.0
+	github.com/dustin/go-humanize v1.0.1
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/go-playground/tz v0.0.0-20200117153713-f73b7c143ef6
 	github.com/golang-migrate/migrate/v4 v4.15.2
