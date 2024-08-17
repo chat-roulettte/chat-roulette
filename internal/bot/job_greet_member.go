@@ -44,8 +44,7 @@ type greetMemberTemplate struct {
 	Invitor   string
 	UserID    string
 	NextRound time.Time
-	Interval  string
-	Weekday   string
+	When      string
 }
 
 type privateMetadata struct {
@@ -113,8 +112,7 @@ func GreetMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Gree
 		Invitor:   channel.Inviter,
 		UserID:    p.UserID,
 		NextRound: channel.NextRound,
-		Weekday:   channel.Weekday.String(),
-		Interval:  channel.Interval.String(),
+		When:      formatSchedule(channel.Interval, channel.NextRound),
 	}
 
 	content, err := renderTemplate(greetMemberTemplateFilename, t)

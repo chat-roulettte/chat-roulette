@@ -62,10 +62,9 @@ ngrok by @inconshreveable                                                       
 
 Session Status                online
 Account                       bincyber (Plan: Free)
-Version                       2.3.40
-Region                        United States (us)
+Version                       3.14.0
 Web Interface                 http://127.0.0.1:4040
-Forwarding                    https://c486-174-114-137-56.ngrok.io -> http://localhost:8080
+Forwarding                    https://36a1-5-193-74-226.ngrok-free.app -> http://localhost:8080
 ```
 
 ### Install the Slack App
@@ -83,7 +82,7 @@ Copy the access token:
 2. Run the app-manifest-installer CLI to install the Slack app using the provided App Manifest:
 
 ```
-go run cmd/app-manifest/main.go -u https://YOUR-NGROK-SUBDOMAIN-HERE.ngrok.io -t xoxe.xoxp-1-SlackAppConfigurationAccessTokenHere
+go run cmd/app-manifest/main.go -u <NGROK URL HERE> -t <xoxe.xoxp-1-SlackAppConfigurationAccessTokenHere>
 ```
 
 3. Refresh your browser to view the new Slack app, then click on it. Scroll down to `Display Information` and click on `Add App Icon` to set the image for the bot:

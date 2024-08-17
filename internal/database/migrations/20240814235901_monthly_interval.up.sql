@@ -1,0 +1,1 @@
+ALTER TYPE INTERVAL_TYPE ADD VALUE 'quadweekly';

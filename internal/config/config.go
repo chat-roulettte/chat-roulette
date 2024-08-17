@@ -178,20 +178,26 @@ type SlackBotConfig struct {
 // ChatRouletteConfig stores the configuration for chat roulette
 type ChatRouletteConfig struct {
 	// Interval is the interval or frequency that matches will be made.
-	// Valid values are "weekly", "biweekly", "triweekly", or "monthly".
+	// Valid values are "weekly", "biweekly", "triweekly", "quadweekly", or "monthly".
 	//
 	// Optional
+	//
+	// Default: biweekly
 	Interval string `mapstructure:"interval"`
 
 	// Weekday is the day of the week that matches will be made.
 	// eg, Monday
 	//
 	// Optional
+	//
+	// Default: Monday
 	Weekday string `mapstructure:"weekday"`
 
 	// Hour is the hour (in UTC) that matches will be made.
 	//
 	// Optional
+	//
+	// Default: 12
 	Hour int `mapstructure:"hour"`
 }
 
@@ -223,7 +229,7 @@ type TracingConfig struct {
 // JaegerTracing contains configuration for the Jaeger exporter
 type JaegerTracing struct {
 	// Endpoint is the URL of the Jaeger collector.
-	// This is typically "http://localhost:14268/api/traces"
+	// This is typically "http://localhost:4318/v1/traces"
 	//
 	// Required
 	Endpoint string `mapstructure:"endpoint"`

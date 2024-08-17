@@ -70,7 +70,9 @@
             </option>
             <option value="triweekly" {{ if eq $.Channel.Interval.String "triweekly" }}selected{{ end }}>Every 3 Weeks
             </option>
-            <option value="monthly" {{ if eq $.Channel.Interval.String "monthly" }}selected{{ end }}>Every 4 Weeks
+            <option value="quadweekly" {{ if eq $.Channel.Interval.String "quadweekly" }}selected{{ end }}>Every 4 Weeks
+            </option>
+            <option value="monthly" {{ if eq $.Channel.Interval.String "monthly" }}selected{{ end }}>Monthly
             </option>
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">

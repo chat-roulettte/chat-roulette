@@ -2,6 +2,11 @@
 	"type": "home",
 	"blocks": [
 		{
+			"type": "image",
+			"image_url": "{{ .AppURL }}/static/img/logo.png",
+			"alt_text": "chat-roulette logo"
+		},
+		{
 			"type": "header",
 			"text": {
 				"type": "plain_text",
@@ -63,7 +68,7 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "<#{{ .ChannelID }}>\n:clock1: Interval: *{{ .Interval }}*\n:calendar: Next Round: *{{ .NextRound | prettyDate }}*"
+				"text": "<#{{ .ChannelID }}>\n:clock1: Interval: *{{ .Interval.String | capitalize }}*\n:calendar: Next Round: *{{ .NextRound | prettyDate }}*"
 			}
 		},
 {{ end }}{{ end }}

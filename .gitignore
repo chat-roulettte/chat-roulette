@@ -1,5 +1,6 @@
 bin/
 cmd/bin/
+notes/
 .coverage.out
 config.json
 fly.toml

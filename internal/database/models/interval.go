@@ -24,15 +24,19 @@ const (
 	// Triweekly is every 3 weeks, 21 days
 	Triweekly IntervalEnum = 21
 
-	// Monthly is every 4 weeks, 28 days
-	Monthly IntervalEnum = 28
+	// Quadweekly is every 4 weeks, 28 days
+	Quadweekly IntervalEnum = 28
+
+	// Monthly is every month on the same week
+	Monthly IntervalEnum = 30
 )
 
 var intervals = map[string]IntervalEnum{
-	"weekly":    Weekly,
-	"biweekly":  Biweekly,
-	"triweekly": Triweekly,
-	"monthly":   Monthly,
+	"weekly":     Weekly,
+	"biweekly":   Biweekly,
+	"triweekly":  Triweekly,
+	"quadweekly": Quadweekly,
+	"monthly":    Monthly,
 }
 
 func (i IntervalEnum) String() string {
@@ -43,6 +47,8 @@ func (i IntervalEnum) String() string {
 		return "biweekly"
 	case Triweekly:
 		return "triweekly"
+	case Quadweekly:
+		return "quadweekly"
 	case Monthly:
 		return "monthly"
 	default:

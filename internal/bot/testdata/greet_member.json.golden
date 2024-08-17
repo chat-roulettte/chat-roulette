@@ -19,7 +19,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Chat Roulette has been enabled on this channel. *Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the start of the next round to meet over a video call using Slack, Zoom, Google Meet, etc.",
+                "text": "Chat Roulette has been enabled on this channel. *Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the start of the next round to meet over a video call using Zoom, Google Meet, Teams, etc.",
                 "verbatim": false
             }
         },
