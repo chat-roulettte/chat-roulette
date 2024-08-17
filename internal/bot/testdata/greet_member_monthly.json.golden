@@ -5,21 +5,21 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": ":wave: Hello <@{{ .UserID }}>"
+                "text": ":wave: Hello <@U0123456789>"
             }
         },
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Welcome to the <#{{ .ChannelID }}> channel!"
+                "text": "Welcome to the <#C0123456789> channel!"
             }
         },
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Chat Roulette has been enabled on this channel. {{ .When }}, you will be introduced to another member in the <#{{ .ChannelID }}> channel. You will have until the start of the next round to meet over a video call using Zoom, Google Meet, Teams, etc.",
+                "text": "Chat Roulette has been enabled on this channel. On the *first Monday* of every month, you will be introduced to another member in the <#C0123456789> channel. You will have until the start of the next round to meet over a video call using Zoom, Google Meet, Teams, etc.",
                 "verbatim": false
             }
         },
@@ -27,14 +27,14 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "The next chat roulette round begins on *{{ .NextRound | prettyDate }}*!"
+                "text": "The next chat roulette round begins on *Monday, January 3rd, 2022*!"
             }
         },
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Chat Roulette has been enabled on this channel by <@{{ .Invitor }}>, so if you have any questions, please reach out to them."
+                "text": "Chat Roulette has been enabled on this channel by <@U9876543210>, so if you have any questions, please reach out to them."
             }
         },
         {
@@ -53,7 +53,7 @@
                     "text": "Opt In",
                     "emoji": true
                 },
-                "value": "{{ .ChannelID }}",
+                "value": "C0123456789",
                 "action_id": "GREET_MEMBER|confirm"
             }
         }

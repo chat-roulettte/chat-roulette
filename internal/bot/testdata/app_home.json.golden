@@ -2,6 +2,11 @@
 	"type": "home",
 	"blocks": [
 		{
+			"type": "image",
+			"image_url": "https://chat-roulette-for-slack.com/static/img/logo.png",
+			"alt_text": "chat-roulette logo"
+		},
+		{
 			"type": "header",
 			"text": {
 				"type": "plain_text",
@@ -63,7 +68,7 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "<#G0123456789>\n:clock1: Interval: *biweekly*\n:calendar: Next Round: *Monday, January 4th, 2021*"
+				"text": "<#G0123456789>\n:clock1: Interval: *Biweekly*\n:calendar: Next Round: *Monday, January 4th, 2021*"
 			}
 		},
 

@@ -148,19 +148,35 @@ func Test_greetMemberTemplate(t *testing.T) {
 
 	nextRound := time.Date(2022, time.January, 3, 12, 0, 0, 0, time.UTC)
 
-	data := greetMemberTemplate{
-		ChannelID: "C0123456789",
-		Invitor:   "U9876543210",
-		UserID:    "U0123456789",
-		NextRound: nextRound,
-		Interval:  "biweekly",
-		Weekday:   "Monday",
-	}
+	t.Run("biweekly", func(t *testing.T) {
+		data := greetMemberTemplate{
+			ChannelID: "C0123456789",
+			Invitor:   "U9876543210",
+			UserID:    "U0123456789",
+			NextRound: nextRound,
+			When:      formatSchedule(models.Biweekly, nextRound),
+		}
 
-	content, err := renderTemplate("greet_member.json.tmpl", data)
-	assert.Nil(t, err)
+		content, err := renderTemplate("greet_member.json.tmpl", data)
+		assert.Nil(t, err)
 
-	g.Assert(t, "greet_member.json", []byte(content))
+		g.Assert(t, "greet_member.json", []byte(content))
+	})
+
+	t.Run("monthly", func(t *testing.T) {
+		data := greetMemberTemplate{
+			ChannelID: "C0123456789",
+			Invitor:   "U9876543210",
+			UserID:    "U0123456789",
+			NextRound: nextRound,
+			When:      formatSchedule(models.Monthly, nextRound),
+		}
+
+		content, err := renderTemplate("greet_member.json.tmpl", data)
+		assert.Nil(t, err)
+
+		g.Assert(t, "greet_member_monthly.json", []byte(content))
+	})
 }
 
 func Test_HandleGreetMemberButton(t *testing.T) {

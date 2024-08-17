@@ -40,5 +40,5 @@ func Test_appHomeTemplate(t *testing.T) {
 	err = json.Unmarshal([]byte(content), &view)
 	r.NoError(err)
 	r.Equal(view.Type, slack.VTHomeTab)
-	r.Len(view.Blocks.BlockSet, 13)
+	r.Len(view.Blocks.BlockSet, 14)
 }

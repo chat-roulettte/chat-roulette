@@ -15,11 +15,13 @@ jobs:
     name: lint
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/setup-go@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
         with:
           go-version: 1.19
 
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
@@ -30,13 +32,13 @@ jobs:
     name: test
     runs-on: ubuntu-20.04
     steps:
-      - name: Set up Go
+      - name: Setup Go
         uses: actions/setup-go@v2.1.3
         with:
           go-version: 1.19
 
       - name: Checkout code
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v3
 
       - name: Get dependencies
         run: go mod download
@@ -54,7 +56,8 @@ jobs:
     name: build
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Build chat-roulette container image
         run: make docker/build/chat-roulette

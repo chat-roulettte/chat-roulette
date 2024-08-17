@@ -108,8 +108,8 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 
 	if result.Error != nil {
 		message := "failed to retrieve members' info"
-		logger.Error(message, "error", err)
-		return errors.Wrap(err, message)
+		logger.Error(message, "error", result.Error)
+		return errors.Wrap(result.Error, message)
 	}
 
 	participant := participants[0]
