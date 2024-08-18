@@ -1,0 +1,24 @@
+---
+name: go
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+    paths:
+      - 'cmd/app-manifest/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build/container
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build app-manifest container image
+        run: make docker/build/chat-roulette
