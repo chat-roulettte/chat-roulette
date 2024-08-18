@@ -75,6 +75,7 @@ func (s *GreetMemberSuite) Test_GreetMember() {
 	s.mock.ExpectQuery(`SELECT \* FROM "channels" WHERE channel_id = (.+) ORDER BY`).
 		WithArgs(
 			p.ChannelID,
+			1,
 		).
 		WillReturnRows(sqlmock.NewRows(columns).AddRow(row...))
 

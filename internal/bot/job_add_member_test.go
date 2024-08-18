@@ -46,7 +46,11 @@ func (s *AddMemberSuite) Test_AddMember() {
 	}
 
 	s.mock.ExpectQuery(`SELECT (.?) FROM "members" WHERE user_id = (.+) AND channel_id = (.+)`).
-		WithArgs(p.UserID, p.ChannelID).
+		WithArgs(
+			p.UserID,
+			p.ChannelID,
+			1,
+		).
 		WillReturnRows(sqlmock.NewRows(nil))
 
 	s.mock.ExpectBegin()

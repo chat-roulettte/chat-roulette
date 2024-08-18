@@ -3,7 +3,7 @@
 _Chat Roulette for Slack is an open-source chat-roulette app for Slack. A no-frills, self-hosted, free alternative to the popular [Donut](https://www.donut.com/) app._
 
 [![License](https://img.shields.io/badge/License-AGPL-orange.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
-[![Go](https://img.shields.io/badge/Go-1.19-blue.svg)](#)
+[![Go](https://img.shields.io/badge/Go-1.22-blue.svg)](#)
 [![Go Report Card](https://img.shields.io/badge/go%20report-A%2B-brightgreen)](https://goreportcard.com/report/github.com/chat-roulettte/chat-roulette)
 
 

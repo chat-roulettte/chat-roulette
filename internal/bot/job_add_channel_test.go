@@ -43,8 +43,11 @@ func (s *AddChannelSuite) Test_AddChannel() {
 	invitor := "U9999999999"
 	now := time.Date(2022, time.January, 1, 12, 0, 0, 0, time.UTC)
 
-	s.mock.ExpectQuery(`SELECT (.+) FROM "channels" WHERE "channels"."channel_id" = (.+)`).
-		WithArgs(channelID).
+	s.mock.ExpectQuery(`SELECT (.+) FROM "channels" WHERE "channels"."channel_id" = (.+) ORDER BY "channels"."channel_id" LIMIT  (?)`).
+		WithArgs(
+			channelID,
+			1,
+		).
 		WillReturnRows(sqlmock.NewRows(nil))
 
 	s.mock.ExpectBegin()

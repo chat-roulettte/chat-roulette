@@ -121,7 +121,7 @@ The following config options control the default chat-roulette settings for ever
 | -------- | -------- | -------- | -------- | -------- | ------
 | `enabled` | `TRACING_ENABLED` | Boolean | No | `false`  | Setting this to true enables tracing using [OpenTelemetry](https://opentelemetry.io/).
 | `exporter` | `TRACING_EXPORTER` | String | No |  | The tracing exporter to use. This must be set if tracing is enabled. <br /><br />Options: <ul><li>`honeycomb`</li><li>`jaeger`</li></ul>
-| `endpoint` | `TRACING_JAEGER_ENDPOINT` | String | No |  | The URL of the Jaeger collector. This must be set if the tracing exporter is set to `jaeger`.
+| `endpoint` | `TRACING_JAEGER_ENDPOINT` | String | No |  | The URL of the Jaeger OTLP HTTP collector. This must be set if the tracing exporter is set to `jaeger`.
 | `team` | `TRACING_HONEYCOMB_TEAM` | String | No |  | The [honeycomb.io](https://www.honeycomb.io/) API key. This must be set if the tracing exporter is set to `honeycomb`.
 | `dataset` | `TRACING_HONEYCOMB_DATASET` | String | No |  | The dataset to send traces to. This must be set if the tracing exporter is set to `honeycomb`.
 
@@ -145,7 +145,7 @@ The following config options control the default chat-roulette settings for ever
         "enabled": true,
         "exporter": "jaeger",
         "jaeger": {
-            "endpoint": "http://localhost:14268/api/traces"
+            "endpoint": "http://localhost:4318/v1/traces"
         }
     }
 }

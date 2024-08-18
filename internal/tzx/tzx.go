@@ -18,6 +18,8 @@ func GetCountryByName(name string) (*tz.Country, bool) {
 	}
 
 	name = cases.Title(language.English, cases.NoLower).String(name)
+	name = strings.ReplaceAll(name, "Of", "of")
+	name = strings.ReplaceAll(name, "And", "and")
 
 	for _, i := range tz.GetCountries() {
 		if i.Name == name {

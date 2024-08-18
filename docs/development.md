@@ -158,7 +158,7 @@ Tracing can be enabled by adding the following settings to the config file:
     "enabled": true,
     "exporter": "jaeger",
     "jaeger": {
-      "endpoint": "http://example.com:14268/api/traces"
+      "endpoint": "http://localhost:4318/api/traces"
     }
   }
 ```

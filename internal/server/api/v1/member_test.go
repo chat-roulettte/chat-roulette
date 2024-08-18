@@ -47,7 +47,7 @@ func Test_updateMemberHandler(t *testing.T) {
 		ChannelID:   "C9876543210",
 		UserID:      "U0123456789",
 		IsActive:    true,
-		Country:     "United States",
+		Country:     "United States of America",
 		City:        "Phoenix",
 		Timezone:    "America/Phoenix",
 		ProfileType: "Twitter",
@@ -127,7 +127,7 @@ func Test_updateMemberHandler(t *testing.T) {
 		session.Values["slack_user_id"] = params.UserID
 		session.Save(req, resp)
 
-		params.Country = "VW5pdGVkIFN0YXRlcw=="
+		params.Country = "VW5pdGVkIFN0YXRlcyBvZiBBbWVyaWNh"
 		params.City = "UGhvZW5peA=="
 		params.Timezone = "QW1lcmljYS9QaG9lbml4"
 		params.ProfileType = "VHdpdHRlcg=="
