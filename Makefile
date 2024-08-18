@@ -77,3 +77,6 @@ dev/up:
 
 dev/destroy:
 	./scripts/dev.sh destroy
+
+generate/changelog:
+	changie merge
