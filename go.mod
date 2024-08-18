@@ -26,7 +26,7 @@ require (
 	github.com/slack-go/slack v0.11.4
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.9.0
-	github.com/unrolled/render v1.5.0
+	github.com/unrolled/render v1.6.1
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.3.1
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.36.4
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.53.0
