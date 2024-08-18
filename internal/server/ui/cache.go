@@ -47,7 +47,12 @@ func lookupSlackChannel(ctx context.Context, cache *ristretto.Cache, client *sla
 	ctx, cancel := context.WithTimeout(ctx, 2000*time.Millisecond)
 	defer cancel()
 
-	channel, err := client.GetConversationInfoContext(ctx, channelID, false)
+	p := &slack.GetConversationInfoInput{
+		ChannelID:     channelID,
+		IncludeLocale: false,
+	}
+
+	channel, err := client.GetConversationInfoContext(ctx, p)
 	if err != nil {
 		return nil, err
 	}
