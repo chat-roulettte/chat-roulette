@@ -4,7 +4,6 @@ set -euo pipefail
 
 BIN="chat-roulette"
 
-# remove old bin directory and recreate it
 rm -f bin/*
 mkdir -p bin/
 

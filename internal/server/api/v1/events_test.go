@@ -187,6 +187,7 @@ func Test_slackEventHandler_MemberJoinedChannelEvent(t *testing.T) {
 	mock.ExpectQuery(`SELECT "channel_id" FROM "channels" WHERE channel_id =`).
 		WithArgs(
 			channelID,
+			1,
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"channel_id"}).AddRow(channelID))
 
@@ -262,6 +263,7 @@ func Test_slackEventHandler_MemberLeftChannelEvent(t *testing.T) {
 	mock.ExpectQuery(`SELECT "channel_id" FROM "channels" WHERE channel_id =`).
 		WithArgs(
 			p.ChannelID,
+			1,
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"channel_id"}).AddRow(p.ChannelID))
 

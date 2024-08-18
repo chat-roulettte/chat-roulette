@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_GetCountriesByLetter(t *testing.T) {
@@ -45,13 +46,52 @@ func Test_nextLetter(t *testing.T) {
 }
 
 func Test_GetCountryByName(t *testing.T) {
-	c, ok := GetCountryByName("united states")
-	assert.True(t, ok)
-	assert.Equal(t, "US", c.Code)
+	type TestCase struct {
+		name        string
+		country     string
+		countryCode string
+		isErr       bool
+	}
 
-	f, nok := GetCountryByName("")
-	assert.False(t, nok)
-	assert.Nil(t, f)
+	testCases := []TestCase{
+		{
+			"success",
+			"canada",
+			"CA",
+			false,
+		},
+		{
+			"normalize or",
+			"united states of america",
+			"US",
+			false,
+		},
+		{
+			"normalize and",
+			"United Kingdom of Great Britain and Northern Ireland",
+			"GB",
+			false,
+		},
+		{
+			"empty",
+			"",
+			"",
+			true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			c, ok := GetCountryByName(tc.country)
+
+			if tc.isErr {
+				assert.False(t, ok)
+			} else {
+				require.True(t, ok)
+				assert.Equal(t, tc.countryCode, c.Code)
+			}
+		})
+	}
 }
 
 func Test_GetAbbreviatedTimezone(t *testing.T) {

@@ -79,7 +79,10 @@ func (s *CreateRoundSuite) Test_CreateRound() {
 
 	// Mock query to check/create if chat roulette round has ended
 	s.mock.ExpectQuery(`SELECT (.+) FROM "rounds" WHERE channel_id = (.+) AND has_ended = false`).
-		WithArgs(p.ChannelID).
+		WithArgs(
+			p.ChannelID,
+			1,
+		).
 		WillReturnRows(sqlmock.NewRows(nil))
 
 	s.mock.ExpectBegin()

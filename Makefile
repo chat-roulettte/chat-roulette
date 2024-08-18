@@ -13,7 +13,7 @@ go/tools:
 	go install github.com/miniscruff/changie@v1.19.1
 
 go/tidy:
-	go mod tidy -compat=1.19
+	go mod tidy -compat=1.22
 
 go/test:
 	go test -v --cover ./...
