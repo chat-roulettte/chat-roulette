@@ -41,10 +41,10 @@ generate/key:
 	openssl rand -hex 32
 
 docker/build/app-manifest:
-	docker buildx build --platform linux/amd64 -t ghcr.io/chat-roulettte/app-manifest:latest -f cmd/app-manifest/Dockerfile .
+	docker buildx build --platform=linux/amd64 -t ghcr.io/chat-roulettte/app-manifest:latest -f cmd/app-manifest/Dockerfile .
 
 docker/build/chat-roulette:
-	docker buildx build --platform linux/amd64 -t ghcr.io/chat-roulettte/chat-roulette:latest -f cmd/chat-roulette/Dockerfile .
+	docker buildx build --platform=linux/amd64 -t ghcr.io/chat-roulettte/chat-roulette:latest -f cmd/chat-roulette/Dockerfile .
 
 docker/push/app-manifest:
 	docker push ghcr.io/chat-roulettte/app-manifest:latest

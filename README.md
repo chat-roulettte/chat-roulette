@@ -11,7 +11,7 @@ _Chat Roulette for Slack is an open-source chat-roulette app for Slack. A no-fri
 
 Chat Roulette helps you stay connected to your Slack community by introducing you to other members on a regular cadence.
 
-It works by inviting the `@chat-roulette-bot` to your Slack channel. The bot will pair members of the Slack channel every round (eg, every two weeks), giving participants enough time to meet for a video call before the start of the next chat-roulette round.
+It works by inviting the `@chat-roulette-bot` to your Slack channel. The bot will pair up members of the Slack channel every round (eg, every two weeks), giving participants ample time to connect. The bot will suggest connecting in person over coffee or virtually over a video call using Zoom, Google Meet, or Microsoft Teams based on each channel's _Connection Mode_ setting.
 
 ### Screenshots
 

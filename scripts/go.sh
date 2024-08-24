@@ -7,8 +7,14 @@ BIN="chat-roulette"
 rm -f bin/*
 mkdir -p bin/
 
-XC_OS="$(go env GOOS)"
-XC_ARCH="$(go env GOARCH)"
+if [ -z "${XC_OS:-}" ]; then
+    XC_OS="$(go env GOOS)"
+fi
+
+if [ -z "${XC_ARCH:-}" ]; then
+    XC_ARCH="$(go env GOARCH)"
+fi
+
 
 GIT_COMMIT_SHA=$(git rev-parse HEAD)
 BUILD_DATE=$(date -u '+%Y-%m-%d %H:%M:%S')
