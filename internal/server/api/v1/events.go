@@ -92,19 +92,48 @@ func (s *implServer) slackEventHandler(w http.ResponseWriter, r *http.Request) {
 
 			// Onboard Slack channel for chat-roulette when the bot is invited to a channel
 			if s.GetSlackBotUserID() == ev.User {
-				p := &bot.SyncChannelsParams{
-					BotUserID:          ev.User,
-					ChatRouletteConfig: s.GetChatRouletteConfig(),
+
+				// Inviter is blank if the bot is added by default to the channel
+				if ev.Inviter == "" {
+					p := &bot.SyncChannelsParams{
+						BotUserID:          ev.User,
+						ChatRouletteConfig: s.GetChatRouletteConfig(),
+					}
+
+					if err := bot.QueueSyncChannelsJob(r.Context(), db, p); err != nil {
+						span.RecordError(err)
+						logger.Error("failed to add job to the queue", "error", err, "job", models.JobTypeSyncChannels.String())
+						// Return HTTP 503 so that Slack marks the event as failed to deliver and retries up to 3 times.
+						w.WriteHeader(http.StatusServiceUnavailable)
+						return
+					}
+
+				} else {
+					c := s.GetChatRouletteConfig()
+
+					// Get the timestamp for the first chat-roulette round
+					firstRound := bot.FirstChatRouletteRound(time.Now().UTC(), c.Weekday, c.Hour)
+
+					p := &bot.AddChannelParams{
+						ChannelID:      ev.Channel,
+						Inviter:        ev.Inviter,
+						ConnectionMode: c.ConnectionMode,
+						Interval:       c.Interval,
+						Weekday:        c.Weekday,
+						Hour:           c.Hour,
+						NextRound:      firstRound,
+					}
+
+					if err := bot.QueueAddChannelJob(r.Context(), db, p); err != nil {
+						span.RecordError(err)
+						logger.Error("failed to add job to the queue", "error", err, "job", models.JobTypeSyncChannels.String())
+						// Return HTTP 503 so that Slack marks the event as failed to deliver and retries up to 3 times.
+						w.WriteHeader(http.StatusServiceUnavailable)
+						return
+					}
 				}
 
-				if err := bot.QueueSyncChannelsJob(r.Context(), db, p); err != nil {
-					span.RecordError(err)
-					logger.Error("failed to add job to the queue", "error", err, "job", models.JobTypeSyncChannels.String())
-					// Return HTTP 503 so that Slack marks the event as failed to deliver and retries up to 3 times.
-					w.WriteHeader(http.StatusServiceUnavailable)
-					return
-				}
-
+				w.WriteHeader(http.StatusOK)
 				return
 			}
 

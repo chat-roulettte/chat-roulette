@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/hashicorp/go-hclog"
@@ -86,16 +87,28 @@ func Test_slackEventHandler_ParseEvent_Failure(t *testing.T) {
 func Test_slackEventHandler_BotJoinedChannelEvent(t *testing.T) {
 	r := require.New(t)
 
-	db, mock := database.NewMockedGormDB()
+	// Setup DB for this test
+	resource, databaseURL, err := database.NewTestPostgresDB(false)
+	r.NoError(err)
+	defer resource.Close()
+
+	if err := database.Migrate(databaseURL); err != nil {
+		r.NoError(err)
+	}
+
+	db, err := database.NewGormDB(databaseURL)
+	r.NoError(err)
+
 	channelID := "C9876543210"
 	userID := "U1111111111"
 	inviter := "U2222222222"
 
 	conf := &config.Config{
 		ChatRoulette: config.ChatRouletteConfig{
-			Interval: "weekly",
-			Weekday:  "Monday",
-			Hour:     12,
+			Interval:       models.Weekly.String(),
+			Weekday:        time.Monday.String(),
+			Hour:           12,
+			ConnectionMode: models.VirtualConnectionMode.String(),
 		},
 	}
 
@@ -108,22 +121,6 @@ func Test_slackEventHandler_BotJoinedChannelEvent(t *testing.T) {
 
 	srv := server.NewTestServer(opts)
 	s := &implServer{srv}
-
-	mock.ExpectBegin()
-	mock.ExpectQuery(`INSERT INTO "jobs" (.+) VALUES (.+) RETURNING`).
-		WithArgs(
-			sqlmock.AnyArg(),
-			models.JobTypeSyncChannels.String(),
-			models.JobPriorityHighest,
-			models.JobStatusPending,
-			false,
-			sqlmock.AnyArg(),
-			database.AnyTime(),
-			database.AnyTime(),
-			database.AnyTime(),
-		).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
-	mock.ExpectCommit()
 
 	path := "/v1/slack/events"
 
@@ -149,6 +146,92 @@ func Test_slackEventHandler_BotJoinedChannelEvent(t *testing.T) {
 }
 `, channelID, userID, inviter))
 
+	r.NoError(json.Unmarshal(rawE, &event))
+
+	body := new(bytes.Buffer)
+	json.NewEncoder(body).Encode(event)
+
+	req, _ := http.NewRequest(http.MethodPost, path, body)
+	resp := httptest.NewRecorder()
+
+	server := http.NewServeMux()
+	server.Handle(path, http.HandlerFunc(s.slackEventHandler))
+	server.ServeHTTP(resp, req)
+
+	r.Equal(http.StatusOK, resp.Code)
+
+	// Validate exactly one row was added to the database
+	var count int64
+	db.Model(&models.Job{}).Count(&count)
+	r.Equal(int64(1), count)
+
+	// Validate the contents of the single row added
+	var job models.Job
+	r.NoError(db.First(&job).Error)
+	r.Equal(job.JobType, models.JobTypeAddChannel)
+}
+
+func Test_slackEventHandler_BotJoinedChannelEvent_failure(t *testing.T) {
+	r := require.New(t)
+
+	db, mock := database.NewMockedGormDB()
+	channelID := "C9876543210"
+	userID := "U1111111111"
+	inviter := "U2222222222"
+
+	conf := &config.Config{
+		ChatRoulette: config.ChatRouletteConfig{
+			Interval:       "weekly",
+			Weekday:        "Monday",
+			Hour:           12,
+			ConnectionMode: "virtual",
+		},
+	}
+
+	opts := &server.ServerOptions{
+		Config:         conf,
+		DB:             db,
+		DevMode:        true,
+		SlackBotUserID: userID,
+	}
+
+	srv := server.NewTestServer(opts)
+	s := &implServer{srv}
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(`INSERT INTO "jobs" (.+) VALUES (.+) RETURNING`).
+		WithArgs(
+			sqlmock.AnyArg(),
+			models.JobTypeAddChannel.String(),
+			models.JobPriorityHighest,
+			models.JobStatusPending,
+			false,
+			sqlmock.AnyArg(),
+			database.AnyTime(),
+			database.AnyTime(),
+			database.AnyTime(),
+		).
+		WillReturnError(fmt.Errorf("failed to add job to the queue"))
+	mock.ExpectRollback()
+
+	path := "/v1/slack/events"
+
+	var event slackevents.EventsAPICallbackEvent
+
+	rawE := []byte(fmt.Sprintf(`
+{
+	"event": {
+		"type": "member_joined_channel",
+		"channel": %q,
+		"user": %q,
+		"channel_type": "C",
+		"team": "T1928374560",
+		"inviter": %q
+	},
+	"type": "event_callback"
+}
+`, channelID, userID, inviter))
+
 	err := json.Unmarshal(rawE, &event)
 	r.NoError(err)
 
@@ -162,7 +245,7 @@ func Test_slackEventHandler_BotJoinedChannelEvent(t *testing.T) {
 	server.Handle(path, http.HandlerFunc(s.slackEventHandler))
 	server.ServeHTTP(resp, req)
 
-	r.Equal(http.StatusOK, resp.Code)
+	r.Equal(http.StatusServiceUnavailable, resp.Code)
 
 	r.Nil(mock.ExpectationsWereMet())
 }
