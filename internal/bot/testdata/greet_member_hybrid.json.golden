@@ -18,7 +18,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Chat Roulette has been enabled on this channel. On the *first Monday* of every month, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet virtually over a video call using Zoom, Google Meet, or Microsoft Teams!",
+                "text": "Chat Roulette has been enabled on this channel. *Weekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet in person or virtually over a video call using Zoom, Google Meet, or Microsoft Teams!",
                 "verbatim": false
             }
         },

@@ -1,5 +1,4 @@
 {
-    "type": "home",
     "blocks": [
         {
             "type": "section",
@@ -19,7 +18,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Chat Roulette has been enabled on this channel. {{ .When }}, you will be introduced to another member in the <#{{ .ChannelID }}> channel. You will have until the start of the next round to meet over a video call using Zoom, Google Meet, Teams, etc.",
+                "text": "Chat Roulette has been enabled on this channel. {{ .When }}, you will be introduced to another member in the <#{{ .ChannelID }}> channel. You will have until the end of each round to meet {{ if eq .ConnectionMode "virtual" }}virtually over a video call using Zoom, Google Meet, or Microsoft Teams{{ else if eq .ConnectionMode "physical" }}in person at a location of your choosing, whether it's for coffee or a meal{{ else if eq .ConnectionMode "hybrid" }}in person or virtually over a video call using Zoom, Google Meet, or Microsoft Teams{{ end }}!",
                 "verbatim": false
             }
         },
@@ -27,7 +26,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "The next chat roulette round begins on *{{ .NextRound | prettyDate }}*!"
+                "text": "The next Chat Roulette round begins on *{{ .NextRound | prettyDate }}*!"
             }
         },
         {
@@ -44,7 +43,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*To participate in chat roulette, click the following button to complete onboarding:*"
+                "text": "*To participate in Chat Roulette, click the following button to complete onboarding:*"
             },
             "accessory": {
                 "type": "button",

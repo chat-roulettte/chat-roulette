@@ -16,13 +16,14 @@ import (
 // profileChannel represents a chat-roulette channel
 // that the Slack user is a member of.
 type profileChannel struct {
-	ChannelID    string
-	ChannelName  string
-	Inviter      string
-	Interval     models.IntervalEnum
-	Weekday      time.Weekday
-	NextRound    time.Time
-	Participants int32
+	ChannelID      string
+	ChannelName    string
+	Inviter        string
+	ConnectionMode string
+	Interval       models.IntervalEnum
+	Weekday        time.Weekday
+	NextRound      time.Time
+	Participants   int32
 
 	// ProfileType is used to determine if the user has completed onboarding,
 	// since collecting profile_type is the last required step of onboarding.
@@ -99,7 +100,7 @@ func (s *implServer) profileHandler(w http.ResponseWriter, r *http.Request) {
 
 	result := db.WithContext(dbCtx).
 		Model(&models.Channel{}).
-		Select("channels.channel_id, channels.inviter, channels.interval, channels.weekday, channels.next_round, members.profile_type, (?) AS participants", subquery).
+		Select("channels.channel_id, channels.inviter, channels.interval, channels.weekday, channels.next_round, channels.connection_mode, members.profile_type, (?) AS participants", subquery).
 		Joins("LEFT JOIN members on channels.channel_id = members.channel_id").
 		Where("user_id = ?", slackUserID).
 		Scan(&profileChannels)

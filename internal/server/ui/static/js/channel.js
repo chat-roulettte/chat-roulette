@@ -25,6 +25,7 @@ document
       weekday: data.get("weekday"),
       hour: Number(data.get("hour")),
       next_round: next_round,
+      connection_mode: data.get("connection-mode"),
     };
 
     let response = await fetch(form.action, {

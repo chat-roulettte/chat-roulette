@@ -16,6 +16,9 @@ type Channel struct {
 	// Inviter is the ID of the user who has invited the bot to the Slack channel
 	Inviter string
 
+	// ConnectionMode ...
+	ConnectionMode ConnectionMode
+
 	// Interval is the interval for chat roulette rounds for the channel (ie. weekly, biweekly, triweekly, monthly)
 	Interval IntervalEnum
 

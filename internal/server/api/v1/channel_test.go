@@ -46,12 +46,13 @@ func (s *UpdateChannelHandlerSuite) SetupTest() {
 
 	// Write channel to the database
 	db.Create(&models.Channel{
-		ChannelID: "C0123456789",
-		Inviter:   "U9876543210",
-		Interval:  models.Biweekly,
-		Weekday:   time.Friday,
-		Hour:      12,
-		NextRound: time.Now().Add(24 * time.Hour),
+		ChannelID:      "C0123456789",
+		Inviter:        "U9876543210",
+		ConnectionMode: models.PhysicalConnectionMode,
+		Interval:       models.Biweekly,
+		Weekday:        time.Friday,
+		Hour:           12,
+		NextRound:      time.Now().Add(24 * time.Hour),
 	})
 
 	s.db = db
@@ -91,11 +92,12 @@ func (s *UpdateChannelHandlerSuite) Test_Validation() {
 	r := require.New(s.T())
 
 	p := &bot.UpdateChannelParams{
-		ChannelID: "C0123456789",
-		Interval:  "on the regular",
-		Weekday:   "Thursday",
-		Hour:      24,
-		NextRound: time.Now().UTC().AddDate(0, 0, -2),
+		ChannelID:      "C0123456789",
+		Interval:       "on the regular",
+		ConnectionMode: "in person",
+		Weekday:        "Thursday",
+		Hour:           24,
+		NextRound:      time.Now().UTC().AddDate(0, 0, -2),
 	}
 
 	body := new(bytes.Buffer)
@@ -111,7 +113,7 @@ func (s *UpdateChannelHandlerSuite) Test_Validation() {
 	s.router.ServeHTTP(s.response, request)
 
 	r.Equal(http.StatusBadRequest, s.response.Code)
-	r.Contains(s.response.Body.String(), "Validation failed")
+	r.Contains(s.response.Body.String(), "validation failed")
 }
 
 func (s *UpdateChannelHandlerSuite) Test_Unauthorized() {

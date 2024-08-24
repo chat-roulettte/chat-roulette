@@ -16,11 +16,12 @@ import (
 
 // UpdateChannelParams are the parameters the UPDATE_CHANNEL job.
 type UpdateChannelParams struct {
-	ChannelID string    `json:"channel_id"`
-	Interval  string    `json:"interval"`
-	Weekday   string    `json:"weekday"`
-	Hour      int       `json:"hour"`
-	NextRound time.Time `json:"next_round"`
+	ChannelID      string    `json:"channel_id"`
+	Interval       string    `json:"interval"`
+	ConnectionMode string    `json:"connection_mode"`
+	Weekday        string    `json:"weekday"`
+	Hour           int       `json:"hour"`
+	NextRound      time.Time `json:"next_round"`
 }
 
 // UpdateChannel updates the settings for a chat-roulette enabled Slack channel.
@@ -45,13 +46,20 @@ func UpdateChannel(ctx context.Context, db *gorm.DB, client *slack.Client, p *Up
 		return err
 	}
 
+	connectionMode, err := models.ParseConnectionMode(p.ConnectionMode)
+	if err != nil {
+		logger.Error("failed to parse connection mode", "error", err)
+		return err
+	}
+
 	// Update the chat-roulette settings for the Slack channel
 	updatedChannel := &models.Channel{
-		ChannelID: p.ChannelID,
-		Interval:  interval,
-		Weekday:   weekday,
-		Hour:      p.Hour,
-		NextRound: p.NextRound,
+		ChannelID:      p.ChannelID,
+		Interval:       interval,
+		ConnectionMode: connectionMode,
+		Weekday:        weekday,
+		Hour:           p.Hour,
+		NextRound:      p.NextRound,
 	}
 
 	dbCtx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)

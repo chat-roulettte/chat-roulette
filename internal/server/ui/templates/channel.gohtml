@@ -50,7 +50,7 @@
       </a>
 
     </div>
-    <div class="flex flex-wrap -mx-3 mb-6">
+    <div class="flex flex-wrap mx-3 mb-6">
       <div class="w-full px-3">
         <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="Frequency">
           <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -73,6 +73,35 @@
             <option value="quadweekly" {{ if eq $.Channel.Interval.String "quadweekly" }}selected{{ end }}>Every 4 Weeks
             </option>
             <option value="monthly" {{ if eq $.Channel.Interval.String "monthly" }}selected{{ end }}>Monthly
+            </option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full px-3 py-3">
+        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="Frequency">
+          <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m17 2 4 4-4 4"></path>
+            <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
+            <path d="m7 22-4-4 4-4"></path>
+            <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
+          </svg>
+          Connection Mode
+        </label>
+        <div class="relative">
+          <select id="connection-mode" name="connection-mode"
+            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+            <option value="virtual" {{ if eq $.Channel.ConnectionMode.String "virtual" }}selected{{ end }}>Virtual
+            </option>
+            <option value="physical" {{ if eq $.Channel.ConnectionMode.String "physical" }}selected{{ end }}>Physical
+            </option>
+            <option value="hybrid" {{ if eq $.Channel.ConnectionMode.String "hybrid" }}selected{{ end }}>Hybrid
             </option>
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -168,8 +197,8 @@
 
       <div class="w-full px-3 py-3">
         <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="next-round">
-          <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="w-6 inline" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"></path>
             <path d="M16 2v4"></path>
             <path d="M8 2v4"></path>

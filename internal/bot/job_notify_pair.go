@@ -27,6 +27,8 @@ type notifyPairTemplate struct {
 	ParticipantTimezone string
 	Partner             models.Member
 	PartnerTimezone     string
+	// Suggestion          string
+	ConnectionMode string
 }
 
 // NotifyPairParams are the parameters for the NOTIFY_PAIR job.
@@ -123,6 +125,7 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 		ParticipantTimezone: tzx.GetAbbreviatedTimezone(participant.Timezone.String()),
 		Partner:             partner,
 		PartnerTimezone:     tzx.GetAbbreviatedTimezone(partner.Timezone.String()),
+		ConnectionMode:      channel.ConnectionMode.String(),
 	}
 
 	content, err := renderTemplate(notifyPairTemplateFilename, templateParams)

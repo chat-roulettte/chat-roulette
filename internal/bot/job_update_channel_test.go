@@ -41,14 +41,16 @@ func (s *UpdateChannelSuite) Test_UpdateChannel() {
 
 	channelID := "C0123456789"
 	interval := models.Biweekly
+	connectionMode := models.VirtualConnectionMode
 	weekday := time.Monday
 	hour := 12
 
-	// Mock updating the chat roulette channel's settings
+	// Mock updating the chat-roulette channel's settings
 	s.mock.ExpectBegin()
 	s.mock.ExpectExec(`UPDATE "channels" SET (.*) WHERE channel_id = (.+)`).
 		WithArgs(
 			channelID,
+			connectionMode,
 			interval,
 			weekday,
 			hour,
@@ -60,11 +62,12 @@ func (s *UpdateChannelSuite) Test_UpdateChannel() {
 	s.mock.ExpectCommit()
 
 	p := &UpdateChannelParams{
-		ChannelID: channelID,
-		Interval:  "biweekly",
-		Weekday:   "Monday",
-		Hour:      12,
-		NextRound: time.Now().UTC(),
+		ChannelID:      channelID,
+		Interval:       interval.String(),
+		ConnectionMode: connectionMode.String(),
+		Weekday:        weekday.String(),
+		Hour:           12,
+		NextRound:      time.Now().UTC(),
 	}
 
 	// Mock canceling pending CREATE_ROUND jobs
@@ -106,11 +109,12 @@ func (s *UpdateChannelSuite) Test_QueueUpdateChannelJob() {
 	r := require.New(s.T())
 
 	p := &UpdateChannelParams{
-		ChannelID: "C0123456789",
-		Interval:  "biweekly",
-		Weekday:   "Monday",
-		Hour:      12,
-		NextRound: time.Now().Add(48 * time.Hour),
+		ChannelID:      "C0123456789",
+		Interval:       "biweekly",
+		ConnectionMode: models.HybridConnectionMode.String(),
+		Weekday:        "Monday",
+		Hour:           12,
+		NextRound:      time.Now().Add(48 * time.Hour),
 	}
 
 	database.MockQueueJob(

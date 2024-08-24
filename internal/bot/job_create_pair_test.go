@@ -52,12 +52,13 @@ func (s *CreatePairSuite) Test_CreatePair() {
 
 	// Write channel to the database
 	db.Create(&models.Channel{
-		ChannelID: channelID,
-		Inviter:   "U9876543210",
-		Interval:  models.Biweekly,
-		Weekday:   time.Friday,
-		Hour:      12,
-		NextRound: time.Now().Add(24 * time.Hour),
+		ChannelID:      channelID,
+		Inviter:        "U9876543210",
+		ConnectionMode: models.HybridConnectionMode,
+		Interval:       models.Biweekly,
+		Weekday:        time.Friday,
+		Hour:           12,
+		NextRound:      time.Now().Add(24 * time.Hour),
 	})
 
 	// Write two members to the database

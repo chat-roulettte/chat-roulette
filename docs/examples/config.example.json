@@ -5,7 +5,8 @@
     "chatroulette": {
         "interval": "biweekly",
         "weekday": "Monday",
-        "hour": 12
+        "hour": 12,
+        "connection_mode": "virtual"
     },
     "server": {
         "client_id": "oauth-client-id-here",

@@ -45,6 +45,7 @@ func Test_Validate(t *testing.T) {
 			conf.ChatRoulette.Hour = 24
 			conf.ChatRoulette.Interval = "every 2 weeks"
 			conf.ChatRoulette.Weekday = "foo"
+			conf.ChatRoulette.ConnectionMode = "other"
 			return conf
 		}(), true},
 		{"invalid tracing config", func() Config {

@@ -17,6 +17,10 @@
           <span class="font-bold">Active Participants: </span>{{
           .Participants }}
         </p>
+        <p class="text-gray-700 text-base" id="{{ .ChannelID }}-connection-mode">
+          <span class="font-bold">Connection Mode: </span>{{
+          .ConnectionMode }}
+        </p>        
         <p class="text-gray-700 text-base">
           <span class="font-bold">Interval: </span>
           {{ .Interval | capitalizeInterval }}

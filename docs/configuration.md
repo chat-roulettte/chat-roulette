@@ -30,7 +30,7 @@ The following config options control the default chat-roulette settings for ever
 | `interval` | `CHATROULETTE_INTERVAL` | String | No | `biweekly` | The interval or frequency that matches will be made. <br /><br />Options: <ul><li>`weekly`</li><li>`biweekly`</li><li>`triweekly`</li><li>`quadweekly`</li><li>`monthly`</li></ul>
 | `weekday` | `CHATROULETTE_WEEKDAY` | String | No | `Monday` | The day of the week that matches will be made. Supports short form (eg, `Tue` or `Thurs`)
 | `hour` | `CHATROULETTE_HOUR` | Integer | No | `12` | The hour (in UTC) that matches will be made.
-
+| `connection_mode` | `CHATROULETTE_CONNECTION_MODE` | String | No | `virtual` | The type of connections that the chat-roulette bot will encourage. <br /><br />Options: <ul><li>`virtual`</li><li>`physical`</li><li>`hybrid`</li></ul>
 
 ###### JSON
 ```json
@@ -38,7 +38,8 @@ The following config options control the default chat-roulette settings for ever
     "chatroulette": {
         "interval": "monthly",
         "weekday": "Friday",
-        "hour": 10
+        "hour": 10,
+        "connection_mode": "hybrid"
     }
 }
 ```

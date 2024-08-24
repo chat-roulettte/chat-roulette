@@ -62,12 +62,13 @@ func SyncChannels(ctx context.Context, db *gorm.DB, client *slack.Client, p *Syn
 
 			// Queue an ADD_CHANNEL job for the new Slack channel.
 			p := &AddChannelParams{
-				ChannelID: channel.ChannelID,
-				Invitor:   channel.Invitor,
-				Interval:  p.ChatRouletteConfig.Interval,
-				Weekday:   p.ChatRouletteConfig.Weekday,
-				Hour:      p.ChatRouletteConfig.Hour,
-				NextRound: firstRound,
+				ChannelID:      channel.ChannelID,
+				Inviter:        channel.Invitor,
+				ConnectionMode: p.ChatRouletteConfig.ConnectionMode,
+				Interval:       p.ChatRouletteConfig.Interval,
+				Weekday:        p.ChatRouletteConfig.Weekday,
+				Hour:           p.ChatRouletteConfig.Hour,
+				NextRound:      firstRound,
 			}
 
 			if err := QueueAddChannelJob(ctx, db, p); err != nil {

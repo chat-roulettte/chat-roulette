@@ -114,7 +114,7 @@ func (s *SyncChannelsSuite) Test_SyncChannels() {
 		s.mock,
 		&AddChannelParams{
 			ChannelID: addChannel,
-			Invitor:   inviter,
+			Inviter:   inviter,
 			Interval:  "weekly",
 			Weekday:   "Monday",
 			Hour:      12,
