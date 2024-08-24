@@ -31,7 +31,7 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*{{ .Met }}* groups met from the last round of Chat Roulette!"
+				"text": "*{{ .Met }}* group{{ if or (eq .Met 0.0) (gt .Met 1.0) }}s{{ end }} met from the last round of Chat Roulette!"
 			}
 		},
 		{

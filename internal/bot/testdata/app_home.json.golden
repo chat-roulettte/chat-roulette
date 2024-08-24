@@ -39,7 +39,7 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "Chat Roulette can be enabled on a Slack channel by inviting <@U0123456789> to it. The chat roulette bot will pair members of the Slack channel every round, giving enough time for participants to meet for a video call."
+				"text": "Chat Roulette can be enabled on a Slack channel by inviting <@U0123456789> to it. The bot will pair up members of the Slack channel every round giving participants ample time to connect. Based on the channel's _Connection Mode_ setting, the bot will suggest connecting in person over coffee or virtually over a video call using Zoom, Google Meet, or Microsoft Teams."
 			}
 		},
 
@@ -59,7 +59,7 @@
 			"elements": [
 				{
 					"type": "mrkdwn",
-					"text": "_Join any of these channels to start meeting members of your community_"
+					"text": "_Join any of the following channels to start connecting with members of your community_"
 				}
 			]
 		},
@@ -68,8 +68,26 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "<#G0123456789>\n:clock1: Interval: *Biweekly*\n:calendar: Next Round: *Monday, January 4th, 2021*"
-			}
+				"text": "<#C0123456789>"
+			},
+			"fields": [
+				{
+					"type": "mrkdwn",
+					"text": ":hammer_and_wrench: Admin: <@U0123456789>"
+				},
+				{
+					"type": "mrkdwn",
+					"text": ":clock1: Interval: *Biweekly*"
+				},
+				{
+					"type": "mrkdwn",
+					"text": ":busts_in_silhouette: Connection Mode: *Virtual*"
+				},
+				{
+					"type": "mrkdwn",
+					"text": ":calendar: Next Round: *Monday, January 4th, 2021*"
+				}
+			]
 		},
 
 		{

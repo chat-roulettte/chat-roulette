@@ -55,6 +55,18 @@ func Weekday(value interface{}) error {
 	return nil
 }
 
+// ConnectionMode validates that the given value
+// is a valid chat-roulette connection mode.
+func ConnectionMode(value interface{}) error {
+	s, _ := value.(string)
+
+	if _, err := models.ParseConnectionMode(s); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // NextRoundDate validates that the given value
 // is a valid date for the next chat-roulette round.
 func NextRoundDate(value interface{}) error {

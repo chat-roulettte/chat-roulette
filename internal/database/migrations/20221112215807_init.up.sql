@@ -2,6 +2,7 @@ CREATE TYPE INTERVAL_TYPE AS ENUM (
     'weekly',
     'biweekly',
     'triweekly',
+    -- 'quadweekly', -- added in v1.1.0
     'monthly'
 );
 
@@ -14,6 +15,7 @@ CREATE TABLE IF NOT EXISTS channels (
     next_round timestamp without time zone NOT NULL,
     created_at timestamp without time zone DEFAULT NOW()::timestamp NOT NULL,
     updated_at timestamp without time zone DEFAULT NOW()::timestamp NOT NULL,
+    -- 'connection_mode', -- added in v1.2.0    
 
     CONSTRAINT channels_pk_channel_id PRIMARY KEY (channel_id)
 );
@@ -23,12 +25,12 @@ CREATE TABLE IF NOT EXISTS members (
     user_id varchar NOT NULL,
     channel_id varchar NOT NULL,
     is_active boolean DEFAULT false NOT NULL,
-    country BYTEA,
-    city BYTEA,
-    timezone BYTEA,
-    profile_type BYTEA,
-    profile_link BYTEA,
-    calendly_link BYTEA,
+    country BYTEA, -- encrypted
+    city BYTEA, -- encrypted
+    timezone BYTEA, -- encrypted
+    profile_type BYTEA, -- encrypted
+    profile_link BYTEA, -- encrypted
+    calendly_link BYTEA, -- encrypted
     created_at timestamp without time zone DEFAULT NOW()::timestamp NOT NULL,
     updated_at timestamp without time zone DEFAULT NOW()::timestamp NOT NULL,
 

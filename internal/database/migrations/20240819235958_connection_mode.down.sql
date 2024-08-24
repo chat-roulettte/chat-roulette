@@ -1,0 +1,3 @@
+ALTER TABLE channels DROP COLUMN connection_mode;
+
+DROP TYPE CONNECTION_MODE;

@@ -199,6 +199,14 @@ type ChatRouletteConfig struct {
 	//
 	// Default: 12
 	Hour int `mapstructure:"hour"`
+
+	// ConnectionMode is the mode (physical) of connections that will be made.
+	// Valid values are "virtual", "physical", or "hybrid".
+	//
+	// Optional
+	//
+	// Default: virtual
+	ConnectionMode string `mapstructure:"connection_mode"`
 }
 
 // TracingConfig stores the configuration for OpenTelemetry tracing.
@@ -255,9 +263,10 @@ func newDefaultConfig() Config {
 			Port:    DefaultServerPort,
 		},
 		ChatRoulette: ChatRouletteConfig{
-			Interval: DefaultChatRouletteInterval,
-			Weekday:  DefaultChatRouletteWeekday,
-			Hour:     DefaultChatRouletteHour,
+			Interval:       DefaultChatRouletteInterval,
+			Weekday:        DefaultChatRouletteWeekday,
+			Hour:           DefaultChatRouletteHour,
+			ConnectionMode: DefaultChatRouletteConnectionMode,
 		},
 		Worker: WorkerConfig{
 			Concurrency: DefaultWorkerConcurrency,
@@ -330,6 +339,7 @@ func (c Config) Validate() error {
 		validation.Field(&c.ChatRoulette.Interval, validation.By(isx.Interval)),
 		validation.Field(&c.ChatRoulette.Weekday, validation.By(isx.Weekday)),
 		validation.Field(&c.ChatRoulette.Hour, validation.Required, validation.Min(0), validation.Max(23)),
+		validation.Field(&c.ChatRoulette.ConnectionMode, validation.By(isx.ConnectionMode)),
 	); err != nil {
 		return errors.Wrap(err, "failed to validate chat-roulette config")
 	}

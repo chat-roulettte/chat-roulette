@@ -58,7 +58,7 @@ func (s *implServer) updateChannelHandler(w http.ResponseWriter, r *http.Request
 		span.RecordError(err)
 
 		response := ErrResponse{
-			Error: fmt.Sprintf("Validation failed: %s", err),
+			Error: fmt.Sprintf("validation failed: %s", err),
 		}
 
 		w.WriteHeader(http.StatusBadRequest)

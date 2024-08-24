@@ -6,9 +6,10 @@ import (
 )
 
 const (
-	DefaultChatRouletteInterval = "biweekly"
-	DefaultChatRouletteWeekday  = "Monday"
-	DefaultChatRouletteHour     = 12 // UTC
+	DefaultChatRouletteInterval       = "biweekly"
+	DefaultChatRouletteWeekday        = "Monday"
+	DefaultChatRouletteHour           = 12 // UTC
+	DefaultChatRouletteConnectionMode = "virtual"
 
 	DefaultServerAddr = "0.0.0.0"
 	DefaultServerPort = 8080

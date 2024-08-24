@@ -16,12 +16,13 @@ import (
 
 // AddChannelParams are the parameters for the ADD_CHANNEL job.
 type AddChannelParams struct {
-	ChannelID string    `json:"channel_id"`
-	Invitor   string    `json:"invitor"`
-	Interval  string    `json:"interval"`
-	Weekday   string    `json:"weekday"`
-	Hour      int       `json:"hour"`
-	NextRound time.Time `json:"next_round"`
+	ChannelID      string    `json:"channel_id"`
+	Inviter        string    `json:"inviter"`
+	ConnectionMode string    `json:"connection_mode"`
+	Interval       string    `json:"interval"`
+	Weekday        string    `json:"weekday"`
+	Hour           int       `json:"hour"`
+	NextRound      time.Time `json:"next_round"`
 }
 
 // AddChannel adds a Slack channel to the database.
@@ -39,13 +40,20 @@ func AddChannel(ctx context.Context, db *gorm.DB, client *slack.Client, p *AddCh
 		return err
 	}
 
+	connectionMode, err := models.ParseConnectionMode(p.ConnectionMode)
+	if err != nil {
+		logger.Error("failed to parse connection mode", "error", err)
+		return err
+	}
+
 	newChannel := &models.Channel{
-		ChannelID: p.ChannelID,
-		Inviter:   p.Invitor,
-		Interval:  interval,
-		Weekday:   weekday,
-		Hour:      p.Hour,
-		NextRound: p.NextRound,
+		ChannelID:      p.ChannelID,
+		Inviter:        p.Inviter,
+		ConnectionMode: connectionMode,
+		Interval:       interval,
+		Weekday:        weekday,
+		Hour:           p.Hour,
+		NextRound:      p.NextRound,
 	}
 
 	dbCtx, cancel := context.WithTimeout(ctx, 300*time.Millisecond)

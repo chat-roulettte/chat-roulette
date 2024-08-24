@@ -76,12 +76,13 @@ func (s *ProcessJobTestSuite) Test_Succeeded() {
 	r := require.New(s.T())
 
 	p := bot.AddChannelParams{
-		ChannelID: "C0123456789",
-		Invitor:   "U9876543210",
-		Interval:  "weekly",
-		Weekday:   "Friday",
-		Hour:      12,
-		NextRound: time.Now().Add(24 * time.Hour),
+		ChannelID:      "C0123456789",
+		Inviter:        "U9876543210",
+		ConnectionMode: "virtual",
+		Interval:       "weekly",
+		Weekday:        "Friday",
+		Hour:           12,
+		NextRound:      time.Now().Add(24 * time.Hour),
 	}
 
 	data, _ := json.Marshal(p)

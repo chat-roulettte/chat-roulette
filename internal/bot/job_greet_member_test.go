@@ -149,35 +149,35 @@ func Test_greetMemberTemplate(t *testing.T) {
 
 	nextRound := time.Date(2022, time.January, 3, 12, 0, 0, 0, time.UTC)
 
-	t.Run("biweekly", func(t *testing.T) {
-		data := greetMemberTemplate{
-			ChannelID: "C0123456789",
-			Invitor:   "U9876543210",
-			UserID:    "U0123456789",
-			NextRound: nextRound,
-			When:      formatSchedule(models.Biweekly, nextRound),
-		}
+	p := greetMemberTemplate{
+		ChannelID: "C0123456789",
+		Invitor:   "U9876543210",
+		UserID:    "U0123456789",
+		NextRound: nextRound,
+	}
 
-		content, err := renderTemplate("greet_member.json.tmpl", data)
-		assert.Nil(t, err)
+	testCases := []struct {
+		name           string
+		connectionMode string
+		interval       models.IntervalEnum
+		goldenFile     string
+	}{
+		{"biweekly physical", models.PhysicalConnectionMode.String(), models.Biweekly, "greet_member_biweekly.json"},
+		{"monthly virtual", models.VirtualConnectionMode.String(), models.Monthly, "greet_member_monthly.json"},
+		{"weekly hybrid", models.HybridConnectionMode.String(), models.Weekly, "greet_member_hybrid.json"},
+	}
 
-		g.Assert(t, "greet_member.json", []byte(content))
-	})
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			p.ConnectionMode = tc.connectionMode
+			p.When = formatSchedule(tc.interval, nextRound)
 
-	t.Run("monthly", func(t *testing.T) {
-		data := greetMemberTemplate{
-			ChannelID: "C0123456789",
-			Invitor:   "U9876543210",
-			UserID:    "U0123456789",
-			NextRound: nextRound,
-			When:      formatSchedule(models.Monthly, nextRound),
-		}
+			content, err := renderTemplate(greetMemberTemplateFilename, p)
+			assert.Nil(t, err)
 
-		content, err := renderTemplate("greet_member.json.tmpl", data)
-		assert.Nil(t, err)
-
-		g.Assert(t, "greet_member_monthly.json", []byte(content))
-	})
+			g.Assert(t, tc.goldenFile, []byte(content))
+		})
+	}
 }
 
 func Test_HandleGreetMemberButton(t *testing.T) {
@@ -215,7 +215,7 @@ func Test_HandleGreetMemberButton(t *testing.T) {
 				"type": "section",
 				"text": {
 					"type": "mrkdwn",
-					"text": "Chat Roulette has been enabled on this channel. *Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the start of the next round to meet over a video call using Slack, Zoom, Google Meet, etc.",
+					"text": "Chat Roulette has been enabled on this channel. *Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet in person at a location of your choosing, whether it's for coffee or a meal!",
 					"verbatim": false
 				}
 			},
@@ -223,7 +223,7 @@ func Test_HandleGreetMemberButton(t *testing.T) {
 				"type": "section",
 				"text": {
 					"type": "mrkdwn",
-					"text": "The next chat roulette round begins on *Monday, January 3rd, 2022*!"
+					"text": "The next Chat Roulette round begins on *Monday, January 3rd, 2022*!"
 				}
 			},
 			{
@@ -241,7 +241,7 @@ func Test_HandleGreetMemberButton(t *testing.T) {
 				"block_id": "Q5maS",
 				"text": {
 					"type": "mrkdwn",
-					"text": "*To participate in chat roulette, click the following button to complete onboarding:*"
+					"text": "*To participate in Chat roulette, click the following button to complete onboarding:*"
 				},
 				"accessory": {
 					"type": "button",

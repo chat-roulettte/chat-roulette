@@ -40,11 +40,12 @@ const (
 
 // greetMemberTemplate is used with templates/greet_member.json.tmpl
 type greetMemberTemplate struct {
-	ChannelID string
-	Invitor   string
-	UserID    string
-	NextRound time.Time
-	When      string
+	ChannelID      string
+	Invitor        string
+	UserID         string
+	NextRound      time.Time
+	When           string
+	ConnectionMode string
 }
 
 type privateMetadata struct {
@@ -108,11 +109,12 @@ func GreetMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Gree
 
 	// Render template
 	t := greetMemberTemplate{
-		ChannelID: p.ChannelID,
-		Invitor:   channel.Inviter,
-		UserID:    p.UserID,
-		NextRound: channel.NextRound,
-		When:      formatSchedule(channel.Interval, channel.NextRound),
+		ChannelID:      p.ChannelID,
+		Invitor:        channel.Inviter,
+		UserID:         p.UserID,
+		NextRound:      channel.NextRound,
+		When:           formatSchedule(channel.Interval, channel.NextRound),
+		ConnectionMode: channel.ConnectionMode.String(),
 	}
 
 	content, err := renderTemplate(greetMemberTemplateFilename, t)
@@ -120,7 +122,7 @@ func GreetMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Gree
 		return errors.Wrap(err, "failed to render template")
 	}
 
-	logger.Info("greeting Slack member with a welcome message")
+	logger.Info("greeting Slack member with an intro message")
 
 	// We can marshal the json template into View as it contains Blocks
 	var view slack.View
@@ -543,7 +545,7 @@ func RespondGreetMemberWebhook(ctx context.Context, client *http.Client, interac
 		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
 	}
 
-	confirmationText := `*Thank you for choosing to participate in chat roulette!*`
+	confirmationText := `*Thank you for choosing to participate in Chat Roulette!*`
 
 	text := slack.NewTextBlockObject("mrkdwn", confirmationText, false, false)
 	section := slack.NewSectionBlock(text, nil, nil)

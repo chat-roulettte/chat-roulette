@@ -24,14 +24,16 @@ func Test_appHomeTemplate(t *testing.T) {
 		AppURL:    "https://chat-roulette-for-slack.com",
 		Channels: []models.Channel{
 			{
-				ChannelID: "G0123456789",
-				Interval:  models.Biweekly,
-				NextRound: nextRound,
+				ChannelID:      "C0123456789",
+				Inviter:        "U0123456789",
+				Interval:       models.Biweekly,
+				ConnectionMode: models.VirtualConnectionMode,
+				NextRound:      nextRound,
 			},
 		},
 	}
 
-	content, err := renderTemplate("app_home.json.tmpl", data)
+	content, err := renderTemplate(appHomeTemplateFilename, data)
 	r.NoError(err)
 
 	g.Assert(t, "app_home.json", []byte(content))

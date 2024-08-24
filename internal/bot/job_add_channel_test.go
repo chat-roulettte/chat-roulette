@@ -40,7 +40,9 @@ func (s *AddChannelSuite) Test_AddChannel() {
 	r := require.New(s.T())
 
 	channelID := "C0123456789"
-	invitor := "U9999999999"
+	inviter := "U9999999999"
+	connectionMode := "hybrid"
+	interval := "weekly"
 	now := time.Date(2022, time.January, 1, 12, 0, 0, 0, time.UTC)
 
 	s.mock.ExpectQuery(`SELECT (.+) FROM "channels" WHERE "channels"."channel_id" = (.+) ORDER BY "channels"."channel_id" LIMIT  (?)`).
@@ -54,8 +56,9 @@ func (s *AddChannelSuite) Test_AddChannel() {
 	s.mock.ExpectExec(`INSERT INTO "channels" (.+) VALUES (.+)`).
 		WithArgs(
 			channelID,
-			invitor,
-			sqlmock.AnyArg(),
+			inviter,
+			connectionMode,
+			interval,
 			sqlmock.AnyArg(),
 			sqlmock.AnyArg(),
 			database.AnyTime(),
@@ -90,12 +93,13 @@ func (s *AddChannelSuite) Test_AddChannel() {
 	)
 
 	p := &AddChannelParams{
-		ChannelID: channelID,
-		Invitor:   invitor,
-		Interval:  "weekly",
-		Weekday:   "Monday",
-		Hour:      11,
-		NextRound: now,
+		ChannelID:      channelID,
+		Inviter:        inviter,
+		ConnectionMode: connectionMode,
+		Interval:       interval,
+		Weekday:        "Monday",
+		Hour:           11,
+		NextRound:      now,
 	}
 
 	err := AddChannel(s.ctx, s.db, nil, p)

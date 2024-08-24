@@ -30,6 +30,16 @@ import (
 func Test_notifyPairTemplate(t *testing.T) {
 	g := goldie.New(t)
 
+	testCases := []struct {
+		name           string
+		connectionMode string
+		goldenFile     string
+	}{
+		{"virtual", models.VirtualConnectionMode.String(), "notify_pair_virtual.json"},
+		{"physical", models.PhysicalConnectionMode.String(), "notify_pair_physical.json"},
+		{"hybrid", models.HybridConnectionMode.String(), "notify_pair_hybrid.json"},
+	}
+
 	p := notifyPairTemplate{
 		ChannelID: "C0123456789",
 		Interval:  "biweekly",
@@ -52,10 +62,16 @@ func Test_notifyPairTemplate(t *testing.T) {
 		PartnerTimezone: "MST (UTC-07:00)",
 	}
 
-	content, err := renderTemplate(notifyPairTemplateFilename, p)
-	assert.Nil(t, err)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			p.ConnectionMode = tc.connectionMode
 
-	g.Assert(t, "notify_pair.json", []byte(content))
+			content, err := renderTemplate(notifyPairTemplateFilename, p)
+			assert.Nil(t, err)
+
+			g.Assert(t, tc.goldenFile, []byte(content))
+		})
+	}
 }
 
 type NotifyPairSuite struct {
@@ -105,12 +121,13 @@ func (s *NotifyPairSuite) Test_NotifyPair() {
 
 	// Write channel to the database
 	db.Create(&models.Channel{
-		ChannelID: channelID,
-		Inviter:   "U9876543210",
-		Interval:  models.Biweekly,
-		Weekday:   time.Friday,
-		Hour:      12,
-		NextRound: time.Now().Add(24 * time.Hour),
+		ChannelID:      channelID,
+		Inviter:        "U9876543210",
+		ConnectionMode: models.VirtualConnectionMode,
+		Interval:       models.Biweekly,
+		Weekday:        time.Friday,
+		Hour:           12,
+		NextRound:      time.Now().Add(24 * time.Hour),
 	})
 
 	// Write two members to the database
