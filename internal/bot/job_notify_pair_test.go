@@ -135,20 +135,24 @@ func (s *NotifyPairSuite) Test_NotifyPair() {
 
 	firstUserID := "U0123456789"
 	db.Create(&models.Member{
-		ChannelID: channelID,
-		UserID:    firstUserID,
-		IsActive:  &isActive,
-		Country:   sqlcrypter.NewEncryptedBytes("Canada"),
-		City:      sqlcrypter.NewEncryptedBytes("Toronto"),
+		ChannelID:           channelID,
+		UserID:              firstUserID,
+		Gender:              models.Male,
+		IsActive:            &isActive,
+		HasGenderPreference: new(bool),
+		Country:             sqlcrypter.NewEncryptedBytes("Canada"),
+		City:                sqlcrypter.NewEncryptedBytes("Toronto"),
 	})
 
 	secondUserID := "U5555666778"
 	db.Create(&models.Member{
-		ChannelID: channelID,
-		UserID:    secondUserID,
-		IsActive:  &isActive,
-		Country:   sqlcrypter.NewEncryptedBytes("United Kingdom"),
-		City:      sqlcrypter.NewEncryptedBytes("Manchester"),
+		ChannelID:           channelID,
+		UserID:              secondUserID,
+		Gender:              models.Female,
+		IsActive:            &isActive,
+		HasGenderPreference: new(bool),
+		Country:             sqlcrypter.NewEncryptedBytes("United Kingdom"),
+		City:                sqlcrypter.NewEncryptedBytes("Manchester"),
 	})
 
 	// Write records in the rounds and matches table

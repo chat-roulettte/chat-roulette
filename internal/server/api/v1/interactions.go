@@ -139,6 +139,29 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 			}
 
 			// Respond to the HTTP request with the new view
+			body, err := bot.RenderOnboardingGenderView(r.Context(), &interaction, s.GetBaseURL())
+			if err != nil {
+				span.RecordError(err)
+				logger.Error("failed to load onboarding gender template", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write(body)
+			return
+
+		case "onboarding-gender":
+			// Parse the contents of the view and queue UPDATE_MEMBER job
+			if err := bot.UpsertMemberGenderInfo(r.Context(), s.GetDB(), &interaction); err != nil {
+				span.RecordError(err)
+				logger.Error("failed to upsert Slack member's gender info", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			// Respond to the HTTP request with the new view
 			body, err := bot.RenderOnboardingProfileView(r.Context(), &interaction, s.GetBaseURL())
 			if err != nil {
 				span.RecordError(err)

@@ -20,7 +20,7 @@
         <p class="text-gray-700 text-base" id="{{ .ChannelID }}-connection-mode">
           <span class="font-bold">Connection Mode: </span>{{
           .ConnectionMode }}
-        </p>        
+        </p>
         <p class="text-gray-700 text-base">
           <span class="font-bold">Interval: </span>
           {{ .Interval | capitalizeInterval }}
@@ -34,34 +34,40 @@
           {{ .NextRound | prettyDate }}
         </p>
       </div>
-      <div class="px-6 pt-2 pb-2">
+      <div class="px-6 pt-4 relative">
         {{ if .ProfileType.String }}
-        <a class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
-          href="/profile/{{ .ChannelID }}">
+        <a class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 relative group"
+          href="/profile/{{ .ChannelID }}"> id="edit-user">
           <svg class="w-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <circle cx="19" cy="11" r="2"></circle>
-            <path d="M19 8v1"></path>
-            <path d="M19 13v1"></path>
-            <path d="m21.6 9.5-.87.5"></path>
-            <path d="m17.27 12-.87.5"></path>
-            <path d="m21.6 12.5-.87-.5"></path>
-            <path d="m17.27 10-.87-.5"></path>
+            <path d="M11.5 15H7a4 4 0 0 0-4 4v2" />
+            <path
+              d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" />
+            <circle cx="10" cy="7" r="4" />
           </svg>
+          <div
+            class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 inline-block text-center bg-gray-500 text-white text-xs rounded-lg py-1 px-2 hidden group-hover:block whitespace-nowrap">
+            Edit Profile
+            <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-500 rotate-45">
+            </div>
+          </div>
         </a>
         {{ end }}
         {{ if .Admin }}
-        <a class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+        <a class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 relative group"
           href="/channel/{{ .ChannelID }}">
           <svg class="w-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path
-              d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z">
-            </path>
-            <circle cx="12" cy="12" r="3"></circle>
+              d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+            <circle cx="12" cy="12" r="3" />
           </svg>
+          <div
+            class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 inline-block text-center bg-gray-500 text-white text-xs rounded-lg py-1 px-2 hidden group-hover:block whitespace-nowrap">
+            Edit Channel
+            <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-500 rotate-45">
+            </div>
+          </div>
         </a>
         {{ end }}
       </div>

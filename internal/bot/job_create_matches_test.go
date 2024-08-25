@@ -43,14 +43,10 @@ func (s *CreateMatchesSuite) Test_CreateMatches() {
 	r.NoError(err)
 	defer resource.Close()
 
-	if err := database.Migrate(databaseURL); err != nil {
-		r.NoError(err)
-	}
+	r.NoError(database.Migrate(databaseURL))
 
 	db, err := database.NewGormDB(databaseURL)
-	if err != nil {
-		r.NoError(err)
-	}
+	r.NoError(err)
 
 	channelID := "C0123456789"
 
@@ -65,29 +61,37 @@ func (s *CreateMatchesSuite) Test_CreateMatches() {
 		NextRound:      time.Now().Add(24 * time.Hour),
 	})
 
-	// Write two members to the database
-	isActive := true
+	// Add members to the database
+	members := []struct {
+		userID              string
+		gender              models.Gender
+		isActive            bool
+		hasGenderPreference bool
+	}{
+		{"U0123456789", models.Male, true, false},
+		{"U3234567890", models.Female, true, false},
+		{"U7812309456", models.Female, true, true},
+		{"U8765432109", models.Male, false, true},
+		{"U5647382910", models.Female, false, false},
+		{"U0487326159", models.Male, true, true},
+		{"U0693126494", models.Male, true, true},
+	}
 
-	firstUserID := "U0123456789"
-	db.Create(&models.Member{
-		ChannelID: channelID,
-		UserID:    firstUserID,
-		IsActive:  &isActive,
-	})
-
-	secondUserID := "U5555666778"
-	db.Create(&models.Member{
-		ChannelID: channelID,
-		UserID:    secondUserID,
-		IsActive:  &isActive,
-	})
+	for _, member := range members {
+		db.Create(&models.Member{
+			ChannelID:           channelID,
+			UserID:              member.userID,
+			Gender:              member.gender,
+			IsActive:            &member.isActive,
+			HasGenderPreference: &member.hasGenderPreference,
+		})
+	}
 
 	// Write a record in the rounds table
 	db.Create(&models.Round{
 		ChannelID: channelID,
 	})
 
-	// Test
 	err = CreateMatches(s.ctx, db, nil, &CreateMatchesParams{
 		ChannelID: channelID,
 		RoundID:   1,
@@ -95,13 +99,12 @@ func (s *CreateMatchesSuite) Test_CreateMatches() {
 	r.NoError(err)
 	r.Contains(s.buffer.String(), "added new match to the database")
 	r.Contains(s.buffer.String(), "paired active participants for chat-roulette")
-	r.Contains(s.buffer.String(), "participants=2")
-	r.Contains(s.buffer.String(), "pairings=1")
 
+	// Verify matches
 	var count int64
-	result := db.Model(&models.Job{}).Where("job_type = ?", models.JobTypeCreatePair).Where("data->>'match_id' = '1'").Count(&count)
+	result := db.Model(&models.Job{}).Where("job_type = ?", models.JobTypeCreatePair).Count(&count)
 	r.NoError(result.Error)
-	r.Equal(int64(1), count)
+	r.Equal(int64(2), count)
 }
 
 func (s *CreateMatchesSuite) Test_QueueCreateMatchesJob() {

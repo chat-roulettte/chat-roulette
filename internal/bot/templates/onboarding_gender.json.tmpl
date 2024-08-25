@@ -1,0 +1,100 @@
+{
+    "response_action": "update",
+    "view": {
+        "type": "modal",
+        "callback_id": "onboarding-gender",
+        "private_metadata": "{{ .PrivateMetadata }}",
+        "title": {
+            "type": "plain_text",
+            "text": "Chat Roulette for Slack",
+            "emoji": true
+        },
+        "close": {
+            "type": "plain_text",
+            "text": "Cancel",
+            "emoji": true
+        },
+        "submit": {
+            "type": "plain_text",
+            "text": "Next",
+            "emoji": true
+        },
+        "blocks": [
+            {
+                "type": "section",
+                "block_id": "onboarding",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "To allow participants to match with only others of the same gender, Chat Roulette for Slack needs to know your gender."
+                }
+            },
+            {
+                "type": "divider"
+            },
+            {
+                "type": "input",
+                "block_id": "onboarding-gender-select",
+                "element": {
+                    "type": "static_select",
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "...",
+                        "emoji": true
+                    },
+                    "options": [
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Male",
+                                "emoji": true
+                            },
+                            "value": "male"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Female",
+                                "emoji": true
+                            },
+                            "value": "female"
+                        }
+                    ],
+                    "action_id": "onboarding-gender-select"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Select your gender",
+                    "emoji": true
+                }
+            },
+            {
+                "type": "input",
+                "block_id": "onboarding-gender-checkbox",
+                "element": {
+                    "type": "checkboxes",
+                    "options": [
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "I would like to opt-in to this feature",
+                                "emoji": true
+                            },
+                            "value": "true",
+                            "description": {
+                                "type": "mrkdwn",
+                                "text": "*Note*: this option may result in fewer matches"
+                            }
+                        }
+                    ],
+                    "action_id": "onboarding-gender-checkbox"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Tick the box below if you prefer to only be matched with other participants of the same gender",
+                    "emoji": true
+                },
+                "optional": true
+            }
+        ]
+    }
+}

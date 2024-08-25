@@ -64,6 +64,8 @@ func (s *AddMemberSuite) Test_AddMember() {
 			sqlmock.AnyArg(),
 			sqlmock.AnyArg(),
 			sqlmock.AnyArg(),
+			sqlmock.AnyArg(),
+			false,
 			false,
 			database.AnyTime(),
 			database.AnyTime(),

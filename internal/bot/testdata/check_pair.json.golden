@@ -38,7 +38,6 @@
                         "text": ":x: No",
                         "emoji": true
                     },
-                    "style": "danger",
                     "value": "{\"match_id\":99,\"has_met\":false,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\"}"
                 }
             ]

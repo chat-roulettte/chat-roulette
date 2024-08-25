@@ -70,16 +70,20 @@ func (s *DeleteMemberSuite) Test_DeleteMember() {
 
 	firstUserID := "U0123456789"
 	db.Create(&models.Member{
-		ChannelID: channelID,
-		UserID:    firstUserID,
-		IsActive:  &isActive,
+		ChannelID:           channelID,
+		UserID:              firstUserID,
+		Gender:              models.Female,
+		IsActive:            &isActive,
+		HasGenderPreference: new(bool),
 	})
 
 	secondUserID := "U5555666778"
 	db.Create(&models.Member{
-		ChannelID: channelID,
-		UserID:    secondUserID,
-		IsActive:  &isActive,
+		ChannelID:           channelID,
+		UserID:              secondUserID,
+		Gender:              models.Male,
+		IsActive:            &isActive,
+		HasGenderPreference: new(bool),
 	})
 
 	err = DeleteMember(s.ctx, db, nil, &DeleteMemberParams{

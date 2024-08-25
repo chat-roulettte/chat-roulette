@@ -31,6 +31,8 @@ func Test_UpdateMember(t *testing.T) {
 		WithArgs(
 			userID,
 			channelID,
+			models.Male.String(),
+			true,
 			true,
 			database.AnyTime(),
 			channelID,
@@ -40,9 +42,11 @@ func Test_UpdateMember(t *testing.T) {
 	mock.ExpectCommit()
 
 	p := &UpdateMemberParams{
-		ChannelID: channelID,
-		UserID:    userID,
-		IsActive:  true,
+		ChannelID:           channelID,
+		UserID:              userID,
+		Gender:              models.Male.String(),
+		IsActive:            true,
+		HasGenderPreference: true,
 	}
 
 	err := UpdateMember(ctx, db, nil, p)
@@ -70,6 +74,7 @@ func Test_ExecUpdateMember(t *testing.T) {
 			userID,
 			channelID,
 			true,
+			false,
 			database.AnyTime(),
 			channelID,
 			userID,

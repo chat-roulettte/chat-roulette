@@ -447,6 +447,75 @@ b3N0L2FjdGlvbnMvYS9iL2MifQ==`,
 	assert.Nil(t, err)
 }
 
+func Test_RenderOnboardingGenderView(t *testing.T) {
+	g := goldie.New(t)
+
+	interaction := &slack.InteractionCallback{
+		User: slack.User{
+			ID: "U0123456789",
+		},
+		View: slack.View{
+			PrivateMetadata: "base64-encoded-data-here",
+		},
+	}
+
+	content, err := RenderOnboardingGenderView(context.Background(), interaction, "http://localhost/")
+	assert.Nil(t, err)
+	assert.NotNil(t, content)
+
+	g.Assert(t, "onboarding_gender.json", content)
+}
+
+func Test_UpsertMemberGenderInfo(t *testing.T) {
+	userID := "U0123456789"
+	gender := models.Male.String()
+
+	interaction := &slack.InteractionCallback{
+		User: slack.User{
+			ID: "U0123456789",
+		},
+		View: slack.View{
+			PrivateMetadata: `eyJjaGFubmVsX2lkIjoiQzAxMjM0NTY3ODkiLCJyZXNwb25zZV91cmwiOiJodHRwOi8vbG9jYWxo
+b3N0L2FjdGlvbnMvYS9iL2MifQ==`,
+			State: &slack.ViewState{
+				Values: map[string]map[string]slack.BlockAction{
+					"onboarding-gender-select": {
+						"onboarding-gender-select": {
+							SelectedOption: slack.OptionBlockObject{
+								Value: gender,
+							},
+						},
+					},
+					"onboarding-gender-checkbox": {
+						"onboarding-gender-checkbox": {
+							SelectedOptions: []slack.OptionBlockObject{
+								{Value: "true"},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	db, mock := database.NewMockedGormDB()
+
+	database.MockQueueJob(
+		mock,
+		&UpdateMemberParams{
+			ChannelID:           "C0123456789",
+			UserID:              userID,
+			Gender:              models.Male.String(),
+			HasGenderPreference: true,
+		},
+		models.JobTypeUpdateMember.String(),
+		models.JobPriorityHigh,
+	)
+
+	err := UpsertMemberGenderInfo(context.Background(), db, interaction)
+	assert.Nil(t, err)
+}
+
 func Test_RenderOnboardingProfileView(t *testing.T) {
 	g := goldie.New(t)
 

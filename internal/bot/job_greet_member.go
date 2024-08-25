@@ -34,6 +34,7 @@ const (
 	onboardingModalTemplateFilename    = "onboarding_modal.json.tmpl"
 	onboardingLocationTemplateFilename = "onboarding_location.json.tmpl"
 	onboardingTimezoneTemplateFilename = "onboarding_timezone.json.tmpl"
+	onboardingGenderTemplateFilename   = "onboarding_gender.json.tmpl"
 	onboardingProfileTemplateFilename  = "onboarding_profile.json.tmpl"
 	onboardingCalendlyTemplateFilename = "onboarding_calendly.json.tmpl"
 )
@@ -346,6 +347,74 @@ func UpsertMemberTimezoneInfo(ctx context.Context, db *gorm.DB, interaction *sla
 		UserID:    interaction.User.ID,
 		ChannelID: pm.ChannelID,
 		Timezone:  sqlcrypter.NewEncryptedBytes(timezone),
+	}
+
+	if err := QueueUpdateMemberJob(ctx, db, p); err != nil {
+		return errors.Wrap(err, "failed to add UPDATE_MEMBER job to the queue")
+	}
+
+	return nil
+}
+
+// RenderOnboardingGenderView renders the view template for collecting
+// a new member's gender info.
+func RenderOnboardingGenderView(ctx context.Context, interaction *slack.InteractionCallback, baseURL string) ([]byte, error) {
+	// Start new span
+	tracer := otel.Tracer("")
+	_, span := tracer.Start(ctx, "render.gender")
+	defer span.End()
+
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse base URL")
+	}
+	u.Path = path.Join(u.Path, "static/img/social-icons.png")
+
+	// Render the template
+	t := onboardingMemberTemplate{
+		UserID:          interaction.User.ID,
+		PrivateMetadata: interaction.View.PrivateMetadata,
+		ImageURL:        u.String(),
+	}
+
+	content, err := renderTemplate(onboardingGenderTemplateFilename, t)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to render template")
+	}
+
+	return []byte(content), nil
+}
+
+// UpsertMemberGenderInfo collects a new member's gender info during
+// the onboarding flow and updates it in the database.
+func UpsertMemberGenderInfo(ctx context.Context, db *gorm.DB, interaction *slack.InteractionCallback) error {
+	// Start new span
+	tracer := otel.Tracer("")
+	ctx, span := tracer.Start(ctx, "upsert.gender")
+	defer span.End()
+
+	// Extract the ChannelID from the private_metadata field
+	var pm privateMetadata
+	if err := pm.Decode(interaction.View.PrivateMetadata); err != nil {
+		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
+	}
+
+	// Extract the values from the view state
+	gender := interaction.View.State.Values["onboarding-gender-select"]["onboarding-gender-select"].SelectedOption.Value
+
+	hasGenderPreference := false
+	if len(interaction.View.State.Values["onboarding-gender-checkbox"]["onboarding-gender-checkbox"].SelectedOptions) > 0 {
+		hasGenderPreference = true
+	}
+
+	// Schedule an UPDATE_MEMBER job to update the member's gender.
+	// UpdateMember() could be called directly here, however
+	// scheduling a background job will ensure it is reliably executed.
+	p := &UpdateMemberParams{
+		UserID:              interaction.User.ID,
+		ChannelID:           pm.ChannelID,
+		Gender:              gender,
+		HasGenderPreference: hasGenderPreference,
 	}
 
 	if err := QueueUpdateMemberJob(ctx, db, p); err != nil {

@@ -47,9 +47,11 @@ func AddMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *AddMem
 	isActive := false
 
 	newMember := &models.Member{
-		ChannelID: p.ChannelID,
-		UserID:    p.UserID,
-		IsActive:  &isActive,
+		ChannelID:           p.ChannelID,
+		UserID:              p.UserID,
+		Gender:              models.Male,
+		IsActive:            &isActive,
+		HasGenderPreference: new(bool),
 	}
 
 	dbCtx, cancel := context.WithTimeout(ctx, 300*time.Millisecond)

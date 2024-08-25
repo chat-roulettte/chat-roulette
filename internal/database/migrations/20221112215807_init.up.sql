@@ -24,7 +24,9 @@ CREATE TABLE IF NOT EXISTS members (
     id integer GENERATED ALWAYS AS IDENTITY NOT NULL,
     user_id varchar NOT NULL,
     channel_id varchar NOT NULL,
+    -- gender GENDER DEFAULT 'male' NOT NULL, -- added in v1.3.0
     is_active boolean DEFAULT false NOT NULL,
+    -- has_gender_preference boolean DEFAULT false NOT NULL, -- added in v1.3.0
     country BYTEA, -- encrypted
     city BYTEA, -- encrypted
     timezone BYTEA, -- encrypted
