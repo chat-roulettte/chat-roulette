@@ -63,19 +63,24 @@ func (s *CreatePairSuite) Test_CreatePair() {
 
 	// Write two members to the database
 	isActive := true
+	hasGenderPreference := true
 
 	firstUserID := "U0123456789"
 	db.Create(&models.Member{
-		ChannelID: channelID,
-		UserID:    firstUserID,
-		IsActive:  &isActive,
+		ChannelID:           channelID,
+		UserID:              firstUserID,
+		Gender:              models.Male,
+		IsActive:            &isActive,
+		HasGenderPreference: &hasGenderPreference,
 	})
 
 	secondUserID := "U5555666778"
 	db.Create(&models.Member{
-		ChannelID: channelID,
-		UserID:    secondUserID,
-		IsActive:  &isActive,
+		ChannelID:           channelID,
+		UserID:              secondUserID,
+		Gender:              models.Male,
+		IsActive:            &isActive,
+		HasGenderPreference: &hasGenderPreference,
 	})
 
 	// Write a record in the rounds and matches table

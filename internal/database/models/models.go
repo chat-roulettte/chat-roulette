@@ -49,6 +49,9 @@ type Member struct {
 	// ChannelID is the ID of the Slack channel that the user is a member of
 	ChannelID string `gorm:"foreignKey:ChannelID;references:Channel"`
 
+	// Gender is the gender of the user
+	Gender Gender
+
 	// Country is the country in which the Slack user resides
 	Country sqlcrypter.EncryptedBytes
 
@@ -71,6 +74,12 @@ type Member struct {
 	//
 	// A pointer is used here to ensure non-zero value (ie. false) is saved.
 	IsActive *bool
+
+	// HasGenderPreference is a boolean flag for if the user wishes to only be matched
+	// with other participants of the same gender.
+	//
+	// A pointer is used here to ensure non-zero value (ie. false) is saved.
+	HasGenderPreference *bool
 
 	// CreatedAt is the timestamp of when the record was first created
 	CreatedAt time.Time

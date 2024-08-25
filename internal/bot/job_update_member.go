@@ -16,15 +16,17 @@ import (
 
 // UpdateMemberParams are the parameters for the UPDATE_MEMBER job.
 type UpdateMemberParams struct {
-	ChannelID    string                    `json:"channel_id"`
-	UserID       string                    `json:"user_id"`
-	Country      sqlcrypter.EncryptedBytes `json:"country,omitempty"`
-	City         sqlcrypter.EncryptedBytes `json:"city,omitempty"`
-	Timezone     sqlcrypter.EncryptedBytes `json:"timezone,omitempty"`
-	ProfileType  sqlcrypter.EncryptedBytes `json:"profile_type,omitempty"`
-	ProfileLink  sqlcrypter.EncryptedBytes `json:"profile_link,omitempty"`
-	CalendlyLink sqlcrypter.EncryptedBytes `json:"calendly_link,omitempty"`
-	IsActive     bool                      `json:"is_active"`
+	ChannelID           string                    `json:"channel_id"`
+	UserID              string                    `json:"user_id"`
+	Gender              string                    `json:"gender,omitempty"`
+	Country             sqlcrypter.EncryptedBytes `json:"country,omitempty"`
+	City                sqlcrypter.EncryptedBytes `json:"city,omitempty"`
+	Timezone            sqlcrypter.EncryptedBytes `json:"timezone,omitempty"`
+	ProfileType         sqlcrypter.EncryptedBytes `json:"profile_type,omitempty"`
+	ProfileLink         sqlcrypter.EncryptedBytes `json:"profile_link,omitempty"`
+	CalendlyLink        sqlcrypter.EncryptedBytes `json:"calendly_link,omitempty"`
+	IsActive            bool                      `json:"is_active"`
+	HasGenderPreference bool                      `json:"has_gender_preference"`
 }
 
 // UpdateMember updates the participation status for a member of a Slack channel.
@@ -39,15 +41,25 @@ func UpdateMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Upd
 
 	// Update the row for the member in the database
 	member := models.Member{
-		UserID:       p.UserID,
-		ChannelID:    p.ChannelID,
-		IsActive:     &p.IsActive,
-		Country:      p.Country,
-		City:         p.City,
-		Timezone:     p.Timezone,
-		ProfileType:  p.ProfileType,
-		ProfileLink:  p.ProfileLink,
-		CalendlyLink: p.CalendlyLink,
+		UserID:              p.UserID,
+		ChannelID:           p.ChannelID,
+		Country:             p.Country,
+		City:                p.City,
+		Timezone:            p.Timezone,
+		ProfileType:         p.ProfileType,
+		ProfileLink:         p.ProfileLink,
+		CalendlyLink:        p.CalendlyLink,
+		HasGenderPreference: &p.HasGenderPreference,
+		IsActive:            &p.IsActive,
+	}
+
+	if p.Gender != "" {
+		v, err := models.ParseGender(p.Gender)
+		if err != nil {
+			logger.Error("failed to parse gender", "error", err)
+			return err
+		}
+		member.Gender = v
 	}
 
 	dbCtx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)

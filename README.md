@@ -17,19 +17,15 @@ It works by inviting the `@chat-roulette-bot` to your Slack channel. The bot wil
 
 *Click on the images to view full-screen.*
 
-
-| ![App Home](./docs/images/screenshots/app-home.png) | ![Intro Message](./docs/images/screenshots/intro-message.png) | ![Onboarding](./docs/images/screenshots/onboarding.png) |
-| :--------: | :---------: | :-----: |
-| __App Home__ | __Intro Message__  | __Onboarding__ |
-| ![Onboarding Location](./docs/images/screenshots/onboarding-location.png) | ![Calendly](./docs/images/screenshots/calendly.png) | ![Match](./docs/images/screenshots/match.png) |
-| __Onboarding Location__ | __Calendly__ | __Match__ |
-| ![Check In](./docs/images/screenshots/check-in.png) | ![Check In Response](./docs/images/screenshots/check-in-response.png) | ![Report Stats](./docs/images/screenshots/report-stats.png) |
-| __Check In__ | __Check In Response__  | __Report Stats__ |
-| ![Sign In](./docs/images/screenshots/sign-in.png) | ![UI](./docs/images/screenshots/ui.png) | ![History](./docs/images/screenshots/history.png) |
-| __Sign In__ | __UI__  | __History__ |
-| ![Channel Settings](./docs/images/screenshots/channel-settings.png) | ![Profile Settings](./docs/images/screenshots/profile-settings.png) | |
-|  __Channel Settings__ | __Profile Settings__ |  |
-
+| ![App Home](./docs/images/screenshots/app-home.png) | ![Intro Message](./docs/images/screenshots/intro-message.png) | ![Onboarding](./docs/images/screenshots/onboarding.png) | ![Onboarding Location](./docs/images/screenshots/onboarding-location.png) |
+| :--------: | :---------: | :-----: | :-----: |
+| __App Home__ | __Intro Message__  | __Onboarding__ | __Onboarding Location__ |
+![Onboarding Profile](./docs/images/screenshots/onboarding-profile.png) | ![Gender](./docs/images/screenshots/onboarding-gender.png) | ![Calendly](./docs/images/screenshots/calendly.png) | ![Match](./docs/images/screenshots/match.png) |
+| __Onboarding Profile__ |  __Gender__ | __Calendly__ | __Match__ |
+| ![Check In](./docs/images/screenshots/check-in.png) | ![Check In Response](./docs/images/screenshots/check-in-response.png) | ![Report Stats](./docs/images/screenshots/report-stats.png) | ![Sign In](./docs/images/screenshots/sign-in.png) |
+| __Check In__ | __Check In Response__  | __Report Stats__  | __Sign In__ |
+| ![UI](./docs/images/screenshots/ui.png) | ![History](./docs/images/screenshots/history.png) | ![Channel Settings](./docs/images/screenshots/channel-settings.png) | ![Profile Settings](./docs/images/screenshots/profile-settings.png) | |
+| __UI__  | __History__ |  __Channel Settings__ | __Profile Settings__ |
 
 
 ## Deployment

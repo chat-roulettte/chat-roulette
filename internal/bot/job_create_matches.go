@@ -13,6 +13,12 @@ import (
 	"github.com/chat-roulettte/chat-roulette/internal/o11y/attributes"
 )
 
+// chatRoulettePair is a pair of participants for chat-roulette
+type chatRoulettePair struct {
+	Participant string
+	Partner     string
+}
+
 // CreateMatchesParams are the parameters for the CREATE_MATCHES job.
 type CreateMatchesParams struct {
 	ChannelID string `json:"channel_id"`
@@ -33,31 +39,30 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 		return err
 	}
 
-	// Retrieve possible matches
+	// Retrieve matches for this round of chat-roulette
 	dbCtx, cancel := context.WithTimeout(ctx, 300*time.Millisecond)
 	defer cancel()
 
-	logger.Info("retrieving possible matches for this round of chat-roulette")
-	var matches []ChatRoulettePair
+	logger.Info("retrieving matches for this round of chat-roulette")
+	var matches []chatRoulettePair
 
 	result := db.WithContext(dbCtx).
-		Raw("SELECT * FROM GetRandomMatches(?)", p.ChannelID).
+		Raw("SELECT * FROM GetRandomMatchesV2(?)", p.ChannelID).
 		Scan(&matches)
 
 	if result.Error != nil {
-		message := "failed to retrieve possible matches for chat-roulette"
+		message := "failed to retrieve matches for chat-roulette"
 		logger.Error(message, "error", result.Error)
 		return errors.Wrap(result.Error, message)
 	}
-	logger.Debug("retrieved possible matches for chat-roulette", "matches", result.RowsAffected)
+	logger.Debug("retrieved matches for chat-roulette", "matches", result.RowsAffected)
 
-	// Pair the active participants
-	logger.Info("pairing active participants for chat-roulette")
+	// Create a database record in the matches table for each pair and queue a CREATE_PAIR job
+	for _, pair := range matches {
+		if pair.Partner == "" {
+			continue
+		}
 
-	pairings := PairParticipants(matches)
-
-	for participant, partner := range pairings {
-		// Create a database record in the matches table for this pair
 		newMatch := &models.Match{
 			RoundID: p.RoundID,
 		}
@@ -72,12 +77,11 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 
 		logger.Info("added new match to the database", "match_id", newMatch.ID)
 
-		// Queue a CREATE_PAIR job for this pair
 		params := &CreatePairParams{
 			MatchID:     newMatch.ID,
 			ChannelID:   p.ChannelID,
-			Participant: participant,
-			Partner:     partner,
+			Participant: pair.Participant,
+			Partner:     pair.Partner,
 		}
 
 		dbCtx, cancel = context.WithTimeout(ctx, 500*time.Millisecond)
@@ -92,7 +96,7 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 		logger.Info("queued CREATE_PAIR job for this match", "match_id", newMatch.ID)
 	}
 
-	logger.Info("paired active participants for chat-roulette", "participants", len(pairings)*2, "pairings", len(pairings))
+	logger.Info("paired active participants for chat-roulette", "participants", len(matches)*2, "pairings", len(matches))
 
 	return nil
 }

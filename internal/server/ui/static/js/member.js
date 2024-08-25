@@ -25,6 +25,7 @@ document
       profile_link: data.get("profile-link"),
       calendly_link: data.get("calendly"),
       is_active: data.get("is-active") === "true",
+      has_gender_preference: data.get("has-gender-preference") === "true",
     };
 
     let response = await fetch(form.action, {

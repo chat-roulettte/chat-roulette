@@ -20,15 +20,16 @@ import (
 
 // TODO: convert received json to bot.UpdateMemberParams struct
 type updateMemberRequest struct {
-	ChannelID    string `json:"channel_id"`
-	UserID       string `json:"user_id"`
-	Country      string `json:"country,omitempty"`
-	City         string `json:"city,omitempty"`
-	Timezone     string `json:"timezone,omitempty"`
-	ProfileType  string `json:"profile_type,omitempty"`
-	ProfileLink  string `json:"profile_link,omitempty"`
-	CalendlyLink string `json:"calendly_link,omitempty"`
-	IsActive     bool   `json:"is_active"`
+	ChannelID           string `json:"channel_id"`
+	UserID              string `json:"user_id"`
+	Country             string `json:"country,omitempty"`
+	City                string `json:"city,omitempty"`
+	Timezone            string `json:"timezone,omitempty"`
+	ProfileType         string `json:"profile_type,omitempty"`
+	ProfileLink         string `json:"profile_link,omitempty"`
+	CalendlyLink        string `json:"calendly_link,omitempty"`
+	IsActive            bool   `json:"is_active"`
+	HasGenderPreference bool   `json:"has_gender_preference"`
 }
 
 // updateMemberHandler handles updating a member's profile settings
@@ -120,9 +121,10 @@ func (s *implServer) updateMemberHandler(w http.ResponseWriter, r *http.Request)
 
 	// Convert updateMemberRequest struct to bot.UpdateMemberParams struct
 	p := &bot.UpdateMemberParams{
-		ChannelID: req.ChannelID,
-		UserID:    req.UserID,
-		IsActive:  req.IsActive,
+		ChannelID:           req.ChannelID,
+		UserID:              req.UserID,
+		IsActive:            req.IsActive,
+		HasGenderPreference: req.HasGenderPreference,
 	}
 
 	if req.Country != "" {
