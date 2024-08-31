@@ -7,6 +7,8 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/pkg/errors"
 	"github.com/slack-go/slack"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"gorm.io/gorm"
 
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
@@ -57,12 +59,31 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 	}
 	logger.Debug("retrieved matches for chat-roulette", "matches", result.RowsAffected)
 
-	// Create a database record in the matches table for each pair and queue a CREATE_PAIR job
+	var unpaired int
 	for _, pair := range matches {
+		//  Queue a NOTIFY_MEMBER job for any participants who did not get matched
 		if pair.Partner == "" {
+			params := &NotifyMemberParams{
+				ChannelID: p.ChannelID,
+				UserID:    pair.Participant,
+			}
+
+			dbCtx, cancel = context.WithTimeout(ctx, 500*time.Millisecond)
+			defer cancel()
+
+			if err := QueueNotifyMemberJob(dbCtx, db, params); err != nil {
+				message := "failed to add CREATE_PAIR job to the queue"
+				logger.Error(message, "error", result.Error)
+				return errors.Wrap(result.Error, message)
+			}
+			logger.Info("queued NOTIFY_MEMBER job for this unmatched participant")
+
+			unpaired++
+
 			continue
 		}
 
+		// Create a database record in the matches table for each pair and queue a CREATE_PAIR job
 		newMatch := &models.Match{
 			RoundID: p.RoundID,
 		}
@@ -96,7 +117,16 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 		logger.Info("queued CREATE_PAIR job for this match", "match_id", newMatch.ID)
 	}
 
-	logger.Info("paired active participants for chat-roulette", "participants", len(matches)*2, "pairings", len(matches))
+	pairsCount := len(matches) - unpaired
+	participantsCount := (pairsCount*2 + unpaired)
+
+	logger.Info("paired active participants for chat-roulette", "participants", participantsCount, "pairs", pairsCount, "unpaired", unpaired)
+
+	trace.SpanFromContext(ctx).SetAttributes(
+		attribute.Int("participants", participantsCount),
+		attribute.Int("pairs", pairsCount),
+		attribute.Int("unpaired", unpaired),
+	)
 
 	return nil
 }

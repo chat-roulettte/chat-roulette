@@ -1,0 +1,32 @@
+{
+	"blocks": [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Hi <@{{ .UserID }}> :wave:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "A new round of Chat Roulette has started for <#{{ .ChannelID }}>"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "I'm really sorry, I was unable to match you with someone this time :cry:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "The next Chat Roulette round will be on *{{ .NextRound | prettyDate }}*. I'm hopeful that I will be able to connect you with someone then! :sweat_smile:"
+			}
+		}
+	]
+}

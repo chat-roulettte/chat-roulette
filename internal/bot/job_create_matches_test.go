@@ -92,6 +92,7 @@ func (s *CreateMatchesSuite) Test_CreateMatches() {
 		ChannelID: channelID,
 	})
 
+	// Test
 	err = CreateMatches(s.ctx, db, nil, &CreateMatchesParams{
 		ChannelID: channelID,
 		RoundID:   1,
@@ -99,12 +100,20 @@ func (s *CreateMatchesSuite) Test_CreateMatches() {
 	r.NoError(err)
 	r.Contains(s.buffer.String(), "added new match to the database")
 	r.Contains(s.buffer.String(), "paired active participants for chat-roulette")
+	r.Contains(s.buffer.String(), "participants=5")
+	r.Contains(s.buffer.String(), "pairs=2")
+	r.Contains(s.buffer.String(), "unpaired=1")
 
 	// Verify matches
 	var count int64
 	result := db.Model(&models.Job{}).Where("job_type = ?", models.JobTypeCreatePair).Count(&count)
 	r.NoError(result.Error)
 	r.Equal(int64(2), count)
+
+	// Verify unmatched participants were notified
+	result = db.Model(&models.Job{}).Where("job_type = ?", models.JobTypeNotifyMember).Count(&count)
+	r.NoError(result.Error)
+	r.Equal(int64(1), count)
 }
 
 func (s *CreateMatchesSuite) Test_QueueCreateMatchesJob() {

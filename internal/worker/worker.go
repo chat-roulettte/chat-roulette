@@ -305,6 +305,9 @@ func (w *Worker) execJob(ctx context.Context, job *models.Job, tx *gorm.DB) erro
 	case models.JobTypeNotifyPair:
 		err = bot.ExecJob(ctx, tx, w.slackClient, job, bot.NotifyPair)
 
+	case models.JobTypeNotifyMember:
+		err = bot.ExecJob(ctx, tx, w.slackClient, job, bot.NotifyMember)
+
 	case models.JobTypeCheckPair:
 		err = bot.ExecJob(ctx, nil, w.slackClient, job, bot.CheckPair)
 
