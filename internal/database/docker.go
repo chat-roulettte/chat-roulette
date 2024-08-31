@@ -36,7 +36,7 @@ func NewTestPostgresDB(migrate bool) (*dockertest.Resource, string, error) {
 		},
 	}, func(config *docker.HostConfig) {
 		config.AutoRemove = true
-		config.RestartPolicy = docker.RestartPolicy{Name: "no"}
+		config.RestartPolicy = docker.NeverRestart()
 	})
 	if err != nil {
 		return nil, "", err

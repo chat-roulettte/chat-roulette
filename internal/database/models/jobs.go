@@ -78,6 +78,9 @@ const (
 	// JobTypeNotifyPair is the job for notifying a pair for a round of chat roulette
 	JobTypeNotifyPair
 
+	// JobTypeNotifyMember is the job for notifying a Slack member that they have not been matched in a round of chat roulette
+	JobTypeNotifyMember
+
 	// JobTypeCheckPair is the job for checking if a pair has met for a round of chat roulette
 	JobTypeCheckPair
 
@@ -101,6 +104,7 @@ var jobTypes = map[string]jobTypeEnum{
 	"UPDATE_MATCH":   JobTypeUpdateMatch,
 	"CREATE_PAIR":    JobTypeCreatePair,
 	"NOTIFY_PAIR":    JobTypeNotifyPair,
+	"NOTIFY_MEMBER":  JobTypeNotifyMember,
 	"CHECK_PAIR":     JobTypeCheckPair,
 	"REPORT_STATS":   JobTypeReportStats,
 }
@@ -137,6 +141,8 @@ func (j jobTypeEnum) String() string {
 		return "CREATE_PAIR"
 	case JobTypeNotifyPair:
 		return "NOTIFY_PAIR"
+	case JobTypeNotifyMember:
+		return "NOTIFY_MEMBER"
 	case JobTypeCheckPair:
 		return "CHECK_PAIR"
 	case JobTypeReportStats:
