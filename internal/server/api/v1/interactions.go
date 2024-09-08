@@ -91,7 +91,45 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 	case slack.InteractionTypeViewSubmission:
 
 		switch interaction.View.CallbackID {
-		case "onboarding-modal":
+		case "onboarding-admin-modal":
+			// Respond to the HTTP request with the new view
+			body, err := bot.RenderOnboardingChannelView(r.Context(), &interaction)
+			if err != nil {
+				span.RecordError(err)
+				logger.Error("failed to load onboarding channel template", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write(body)
+			return
+
+		case "onboarding-channel":
+			// Parse the contents of the view and queue ADD_CHANNEL job
+			if err := bot.UpsertChannelSettings(r.Context(), s.GetDB(), &interaction); err != nil {
+				span.RecordError(err)
+				logger.Error("failed to configure Slack channel settings", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			// Update the original GREET_ADMIN message to remove the button
+			if err := bot.RespondGreetAdminWebhook(r.Context(), s.GetHTTPClient(), &interaction); err != nil {
+				span.RecordError(err)
+				logger.Error("failed to respond to GREET_ADMIN webhook", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			// Close the modal
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(`{"response_action": "clear"}`))
+			return
+
+		case "onboarding-member-modal":
 			// Respond to the HTTP request with the new view
 			body, err := bot.RenderOnboardingLocationView(r.Context(), &interaction, s.GetBaseURL())
 			if err != nil {
@@ -289,6 +327,15 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 			}
 
 			switch jobType { //nolint:gocritic
+			case models.JobTypeGreetAdmin:
+				// Handle GREET_ADMIN button
+				if err := bot.HandleGreetAdminButton(r.Context(), s.GetSlackClient(), &interaction); err != nil {
+					span.RecordError(err)
+					logger.Error("failed to handle greet admin button", "error", err)
+					w.WriteHeader(http.StatusInternalServerError)
+					return
+				}
+
 			case models.JobTypeGreetMember:
 				// Handle GREET_MEMBER button
 				if err := bot.HandleGreetMemberButton(r.Context(), s.GetSlackClient(), &interaction); err != nil {

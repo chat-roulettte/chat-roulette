@@ -1,9 +1,7 @@
 package bot
 
 import (
-	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,7 +12,6 @@ import (
 
 	"github.com/bincyber/go-sqlcrypter"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-playground/tz"
 	"github.com/hashicorp/go-hclog"
 	"github.com/pkg/errors"
 	"github.com/slack-go/slack"
@@ -31,7 +28,6 @@ import (
 const (
 	greetMemberTemplateFilename = "greet_member.json.tmpl"
 
-	onboardingModalTemplateFilename    = "onboarding_modal.json.tmpl"
 	onboardingLocationTemplateFilename = "onboarding_location.json.tmpl"
 	onboardingTimezoneTemplateFilename = "onboarding_timezone.json.tmpl"
 	onboardingGenderTemplateFilename   = "onboarding_gender.json.tmpl"
@@ -42,44 +38,11 @@ const (
 // greetMemberTemplate is used with templates/greet_member.json.tmpl
 type greetMemberTemplate struct {
 	ChannelID      string
-	Invitor        string
+	Inviter        string
 	UserID         string
 	NextRound      time.Time
 	When           string
 	ConnectionMode string
-}
-
-type privateMetadata struct {
-	ChannelID   string       `json:"channel_id,omitempty"`
-	ResponseURL string       `json:"response_url,omitempty"`
-	Blocks      slack.Blocks `json:"blocks,omitempty"`
-}
-
-// Encode encodes privateMetadata from struct to json to base64
-func (p *privateMetadata) Encode() (string, error) {
-	var b bytes.Buffer
-
-	encoder := base64.NewEncoder(base64.StdEncoding, &b)
-	if err := json.NewEncoder(encoder).Encode(p); err != nil {
-		return "", err
-	}
-	encoder.Close()
-
-	return b.String(), nil
-}
-
-// Decode decodes privateMetadata from base64 to json to struct
-func (p *privateMetadata) Decode(s string) error {
-	decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(s))
-	return json.NewDecoder(decoder).Decode(p)
-}
-
-// onboardingMemberTemplate is used with templates/onboarding_*.json.tmpl templates
-type onboardingMemberTemplate struct {
-	UserID          string
-	PrivateMetadata string
-	ImageURL        string
-	Zones           []tz.Zone
 }
 
 // GreetMemberParams are the parameters for the GREET_MEMBER job.
@@ -111,7 +74,7 @@ func GreetMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Gree
 	// Render template
 	t := greetMemberTemplate{
 		ChannelID:      p.ChannelID,
-		Invitor:        channel.Inviter,
+		Inviter:        channel.Inviter,
 		UserID:         p.UserID,
 		NextRound:      channel.NextRound,
 		When:           formatSchedule(channel.Interval, channel.NextRound),
@@ -199,9 +162,10 @@ func HandleGreetMemberButton(ctx context.Context, client *slack.Client, interact
 		}
 
 		// Render the template
-		t := onboardingMemberTemplate{
+		t := onboardingTemplate{
 			UserID:          interaction.User.ID,
 			PrivateMetadata: s,
+			IsAdmin:         false,
 		}
 
 		content, err := renderTemplate(onboardingModalTemplateFilename, t)
@@ -239,7 +203,7 @@ func RenderOnboardingLocationView(ctx context.Context, interaction *slack.Intera
 	u.Path = path.Join(u.Path, "static/img/globe.jpg")
 
 	// Render the template
-	t := onboardingMemberTemplate{
+	t := onboardingTemplate{
 		PrivateMetadata: interaction.View.PrivateMetadata,
 		ImageURL:        u.String(),
 	}
@@ -309,7 +273,7 @@ func RenderOnboardingTimezoneView(ctx context.Context, interaction *slack.Intera
 		return nil, fmt.Errorf("invalid country provided")
 	}
 
-	t := onboardingMemberTemplate{
+	t := onboardingTemplate{
 		PrivateMetadata: interaction.View.PrivateMetadata,
 		ImageURL:        u.String(),
 		Zones:           country.Zones,
@@ -371,7 +335,7 @@ func RenderOnboardingGenderView(ctx context.Context, interaction *slack.Interact
 	u.Path = path.Join(u.Path, "static/img/social-icons.png")
 
 	// Render the template
-	t := onboardingMemberTemplate{
+	t := onboardingTemplate{
 		UserID:          interaction.User.ID,
 		PrivateMetadata: interaction.View.PrivateMetadata,
 		ImageURL:        u.String(),
@@ -439,7 +403,7 @@ func RenderOnboardingProfileView(ctx context.Context, interaction *slack.Interac
 	u.Path = path.Join(u.Path, "static/img/social-icons.png")
 
 	// Render the template
-	t := onboardingMemberTemplate{
+	t := onboardingTemplate{
 		UserID:          interaction.User.ID,
 		PrivateMetadata: interaction.View.PrivateMetadata,
 		ImageURL:        u.String(),
@@ -531,7 +495,7 @@ func RenderOnboardingCalendlyView(ctx context.Context, interaction *slack.Intera
 	u.Path = path.Join(u.Path, "static/img/calendly.jpg")
 
 	// Render the template
-	t := onboardingMemberTemplate{
+	t := onboardingTemplate{
 		UserID:          interaction.User.ID,
 		PrivateMetadata: interaction.View.PrivateMetadata,
 		ImageURL:        u.String(),

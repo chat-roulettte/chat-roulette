@@ -107,26 +107,16 @@ func (s *implServer) slackEventHandler(w http.ResponseWriter, r *http.Request) {
 						w.WriteHeader(http.StatusServiceUnavailable)
 						return
 					}
-
 				} else {
-					c := s.GetChatRouletteConfig()
-
-					// Get the timestamp for the first chat-roulette round
-					firstRound := bot.FirstChatRouletteRound(time.Now().UTC(), c.Weekday, c.Hour)
-
-					p := &bot.AddChannelParams{
-						ChannelID:      ev.Channel,
-						Inviter:        ev.Inviter,
-						ConnectionMode: c.ConnectionMode,
-						Interval:       c.Interval,
-						Weekday:        c.Weekday,
-						Hour:           c.Hour,
-						NextRound:      firstRound,
+					// Queue a GREET_ADMIN job for the new Slack channel
+					p := &bot.GreetAdminParams{
+						ChannelID: ev.Channel,
+						Inviter:   ev.Inviter,
 					}
 
-					if err := bot.QueueAddChannelJob(r.Context(), db, p); err != nil {
+					if err := bot.QueueGreetAdminJob(r.Context(), db, p); err != nil {
 						span.RecordError(err)
-						logger.Error("failed to add job to the queue", "error", err, "job", models.JobTypeSyncChannels.String())
+						logger.Error("failed to add job to the queue", "error", err, "job", models.JobTypeGreetAdmin.String())
 						// Return HTTP 503 so that Slack marks the event as failed to deliver and retries up to 3 times.
 						w.WriteHeader(http.StatusServiceUnavailable)
 						return

@@ -1,0 +1,4 @@
+ALTER TYPE JOB_TYPE ADD VALUE 'GREET_ADMIN';
+
+-- ALTER TABLE channels ADD COLUMN is_active boolean DEFAULT false;
+-- ALTER TABLE channels ALTER COLUMN is_active SET NOT NULL;

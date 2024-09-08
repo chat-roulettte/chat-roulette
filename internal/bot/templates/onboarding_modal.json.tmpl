@@ -1,6 +1,6 @@
 {
 	"type": "modal",
-	"callback_id": "onboarding-modal",
+	"callback_id": "{{ if .IsAdmin }}onboarding-admin-modal{{ else }}onboarding-member-modal{{ end }}",
 	"private_metadata": "{{ .PrivateMetadata }}",
 	"clear_on_close": true,
 	"notify_on_close": false,
@@ -24,9 +24,19 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": ":wave: Hi *<@{{ .UserID }}>*!"
+				"text": "Hi *<@{{ .UserID }}>* :wave:"
 			}
 		},
+		{{- if .IsAdmin }}		
+		{
+			"type": "section",
+			"text": {
+				"type": "plain_text",
+				"text": "Thanks for your interest in using Chat Roulette for Slack. Let's configure some settings before starting our first round!",
+				"emoji": true
+			}
+		}
+		{{- else }}		
 		{
 			"type": "section",
 			"text": {
@@ -35,5 +45,6 @@
 				"emoji": true
 			}
 		}
+		{{- end }}
 	]
 }

@@ -48,7 +48,7 @@ then
     make -s migrate/up
 
     echo "[*] Running jaeger and grafana"
-    docker run -d -p 16686:16686 -p 4318:4318 --name "${JAEGER_CONTAINER_NAME}" docker.io/jaegertracing/all-in-one:1.52
+    docker run -d -p 16686:16686 -p 4317:4317 -p 4318:4318 --name "${JAEGER_CONTAINER_NAME}" docker.io/jaegertracing/all-in-one:1.52
     docker run -d -p 3000:3000 --name="${GRAFANA_CONTAINER_NAME}" docker.io/grafana/grafana:11.1.3
 
     make -s go/run

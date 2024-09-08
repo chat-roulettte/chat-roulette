@@ -14,9 +14,9 @@ type chatRouletteChannel struct {
 	// ChannelID is the id of the Slack channel
 	ChannelID string
 
-	// Invitor is the user who invited the chat-roulette bot
+	// Inviter is the user who invited the chat-roulette bot
 	// to the Slack channel or the creator of the Slack channel
-	Invitor string
+	Inviter string
 
 	// Create is set to true if the Slack channel exists in Slack
 	// but not in the database, therefore it must be created.
@@ -68,7 +68,7 @@ func getChannels(ctx context.Context, client *slack.Client, botUserID string) ([
 	for _, i := range resp {
 		channel := chatRouletteChannel{
 			ChannelID: i.Conversation.ID,
-			Invitor:   i.Creator,
+			Inviter:   i.Creator,
 		}
 		slackChannels = append(slackChannels, channel)
 	}

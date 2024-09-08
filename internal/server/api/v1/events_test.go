@@ -168,7 +168,7 @@ func Test_slackEventHandler_BotJoinedChannelEvent(t *testing.T) {
 	// Validate the contents of the single row added
 	var job models.Job
 	r.NoError(db.First(&job).Error)
-	r.Equal(job.JobType, models.JobTypeAddChannel)
+	r.Equal(job.JobType, models.JobTypeGreetAdmin)
 }
 
 func Test_slackEventHandler_BotJoinedChannelEvent_failure(t *testing.T) {
@@ -202,8 +202,8 @@ func Test_slackEventHandler_BotJoinedChannelEvent_failure(t *testing.T) {
 	mock.ExpectQuery(`INSERT INTO "jobs" (.+) VALUES (.+) RETURNING`).
 		WithArgs(
 			sqlmock.AnyArg(),
-			models.JobTypeAddChannel.String(),
-			models.JobPriorityHighest,
+			models.JobTypeGreetAdmin.String(),
+			models.JobPriorityHigh,
 			models.JobStatusPending,
 			false,
 			sqlmock.AnyArg(),

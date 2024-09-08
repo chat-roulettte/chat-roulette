@@ -151,7 +151,7 @@ func Test_greetMemberTemplate(t *testing.T) {
 
 	p := greetMemberTemplate{
 		ChannelID: "C0123456789",
-		Invitor:   "U9876543210",
+		Inviter:   "U9876543210",
 		UserID:    "U0123456789",
 		NextRound: nextRound,
 	}

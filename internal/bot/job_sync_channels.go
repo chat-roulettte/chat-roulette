@@ -7,10 +7,12 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/pkg/errors"
 	"github.com/slack-go/slack"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"github.com/chat-roulettte/chat-roulette/internal/config"
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
+	"github.com/chat-roulettte/chat-roulette/internal/o11y/attributes"
 )
 
 // SyncChannelsParams are the parameters for SYNC_CHANNEL job.
@@ -55,25 +57,37 @@ func SyncChannels(ctx context.Context, db *gorm.DB, client *slack.Client, p *Syn
 	channels := reconcileChannels(ctx, slackChannels, dbChannels)
 
 	for _, channel := range channels {
+		logger = logger.With(
+			attributes.SlackChannelID, channel.ChannelID,
+		)
+
 		switch {
 		case channel.Create:
-			// Get the timestamp for the first chat roulette round
-			firstRound := FirstChatRouletteRound(time.Now().UTC(), p.ChatRouletteConfig.Weekday, p.ChatRouletteConfig.Hour)
+			// Skip scheduling GREET_ADMIN job if it has already been done
+			dbCtx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)
+			defer cancel()
 
-			// Queue an ADD_CHANNEL job for the new Slack channel.
-			p := &AddChannelParams{
-				ChannelID:      channel.ChannelID,
-				Inviter:        channel.Invitor,
-				ConnectionMode: p.ChatRouletteConfig.ConnectionMode,
-				Interval:       p.ChatRouletteConfig.Interval,
-				Weekday:        p.ChatRouletteConfig.Weekday,
-				Hour:           p.ChatRouletteConfig.Hour,
-				NextRound:      firstRound,
+			var count int64
+			if err := db.WithContext(dbCtx).Model(&models.Job{}).Where("job_type = ?", models.JobTypeGreetAdmin).
+				Where(datatypes.JSONQuery("data").Equals(channel.ChannelID, "channel_id")).
+				Count(&count).Error; err != nil {
+				logger.Error("failed to check if GREET_ADMIN job has already been scheduled for this channel", "error", err)
 			}
 
-			if err := QueueAddChannelJob(ctx, db, p); err != nil {
+			if count == 1 {
+				logger.Info("Skipping as GREET_ADMIN job has already been scheduled for this channel")
+				continue
+			}
+
+			// Queue a GREET_ADMIN job for the new Slack channel to start onboarding
+			p := &GreetAdminParams{
+				ChannelID: channel.ChannelID,
+				Inviter:   channel.Inviter,
+			}
+
+			if err := QueueGreetAdminJob(ctx, db, p); err != nil {
 				message := "failed to add job to the queue"
-				logger.Error(message, "error", err, "job", "ADD_CHANNEL")
+				logger.Error(message, "error", err, "job", models.JobTypeGreetAdmin.String())
 				return errors.Wrap(err, message)
 			}
 
@@ -85,7 +99,7 @@ func SyncChannels(ctx context.Context, db *gorm.DB, client *slack.Client, p *Syn
 
 			if err := QueueDeleteChannelJob(ctx, db, p); err != nil {
 				message := "failed to add job to the queue"
-				logger.Error(message, "error", err, "job", "DELETE_CHANNEL")
+				logger.Error(message, "error", err, "job", models.JobTypeDeleteChannel.String())
 				return errors.Wrap(err, message)
 			}
 
@@ -97,7 +111,7 @@ func SyncChannels(ctx context.Context, db *gorm.DB, client *slack.Client, p *Syn
 
 			if err := QueueSyncMembersJob(ctx, db, syncMembersParams); err != nil {
 				// Don't fail the entire job if this errors. SYNC_MEMBERS will be scheduled before the start of each round.
-				logger.Error("failed to add job to the queue", "error", err, "job", "SYNC_MEMBERS")
+				logger.Error("failed to add job to the queue", "error", err, "job", models.JobTypeSyncMembers.String())
 			}
 		}
 	}

@@ -49,9 +49,9 @@ func Test_getChannels(t *testing.T) {
 		assert.Len(t, channels, 2)
 		assert.Nil(t, err)
 		assert.Equal(t, channels[0].ChannelID, "C012AB3CD")
-		assert.Equal(t, channels[0].Invitor, "U012A3CDE")
+		assert.Equal(t, channels[0].Inviter, "U012A3CDE")
 		assert.Equal(t, channels[1].ChannelID, "G01L6TE6MCK")
-		assert.Equal(t, channels[1].Invitor, "U061F7AUR")
+		assert.Equal(t, channels[1].Inviter, "U061F7AUR")
 	})
 
 	t.Run("mocked failure", func(t *testing.T) {

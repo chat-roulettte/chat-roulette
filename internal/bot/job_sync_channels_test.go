@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
 	"testing"
 	"time"
 
@@ -46,16 +44,21 @@ func (s *SyncChannelsSuite) AfterTest(_, _ string) {
 func (s *SyncChannelsSuite) Test_SyncChannels() {
 	r := require.New(s.T())
 
+	resource, databaseURL, err := database.NewTestPostgresDB(false)
+	r.NoError(err)
+	defer resource.Close()
+
+	r.NoError(database.Migrate(databaseURL))
+
+	db, err := database.NewGormDB(databaseURL)
+	r.NoError(err)
+
 	inviter := "U9876543210"
 
-	addChannel := "C5555555555"
-	deleteChannel := "C9999999999"
-	syncChannel := "C0123456789"
-
-	slackChannels := []string{
-		fmt.Sprintf("%s,%s", syncChannel, inviter),
-		fmt.Sprintf("%s,%s", addChannel, inviter),
-	}
+	addChannel := "C5555555555"      // Does not exist
+	awaitingChannel := "C1928374560" // Does not exist in DB, awaiting admin onboarding
+	deleteChannel := "C9999999999"   // Exists in DB, but needs to be deleted
+	syncChannel := "C0123456789"     // Exists in DB
 
 	// Mock Slack API call
 	handlerFn := func(w http.ResponseWriter, r *http.Request) {
@@ -90,49 +93,22 @@ func (s *SyncChannelsSuite) Test_SyncChannels() {
 
 	client := slack.New("xoxb-test-token-here", slack.OptionAPIURL(slackServer.GetAPIURL()))
 
-	// Mock DB call to retrieve the list of Slack channels
-	dbChannels := append([]string{}, slackChannels[0])
-	dbChannels = append(dbChannels, fmt.Sprintf("%s,%s", deleteChannel, inviter))
+	// Write any existing channels to the database
+	db.Create(&models.Channel{
+		ChannelID:      deleteChannel,
+		Inviter:        inviter,
+		ConnectionMode: models.VirtualConnectionMode,
+		Interval:       models.Biweekly,
+		Weekday:        time.Friday,
+		Hour:           12,
+		NextRound:      time.Now().Add(24 * time.Hour),
+	})
 
-	s.mock.ExpectQuery(`SELECT "channel_id","inviter" FROM "channels"`).
-		WillReturnRows(sqlmock.NewRows([]string{"channel_id", "inviter"}).FromCSVString(strings.Join(dbChannels, "\n")))
-
-	// Mock the SYNC_MEMBERS job
-	database.MockQueueJob(
-		s.mock,
-		&SyncMembersParams{
-			ChannelID: syncChannel,
-		},
-		models.JobTypeSyncMembers.String(),
-		models.JobPriorityHigh,
-	)
-
-	// Mock the ADD_CHANNEL job
-	nextRound := FirstChatRouletteRound(time.Now().UTC(), "Monday", 12)
-
-	database.MockQueueJob(
-		s.mock,
-		&AddChannelParams{
-			ChannelID: addChannel,
-			Inviter:   inviter,
-			Interval:  "weekly",
-			Weekday:   "Monday",
-			Hour:      12,
-			NextRound: nextRound,
-		},
-		models.JobTypeAddChannel.String(),
-		models.JobPriorityHighest,
-	)
-
-	// Mock the DELETE_CHANNEL job
-	database.MockQueueJob(
-		s.mock,
-		&DeleteChannelParams{
-			ChannelID: deleteChannel,
-		},
-		models.JobTypeDeleteChannel.String(),
-		models.JobPriorityHighest,
-	)
+	// Add job record for GREET_ADMIN to show admin onboarding hasnt been completed
+	QueueGreetAdminJob(context.Background(), db, &GreetAdminParams{
+		ChannelID: awaitingChannel,
+		Inviter:   inviter,
+	})
 
 	p := &SyncChannelsParams{
 		BotUserID: "U1111111111",
@@ -143,8 +119,18 @@ func (s *SyncChannelsSuite) Test_SyncChannels() {
 		},
 	}
 
-	err := SyncChannels(s.ctx, s.db, client, p)
+	err = SyncChannels(s.ctx, db, client, p)
 	r.NoError(err)
+
+	// Verify new jobs were queued
+	var count int64
+	err = db.Model(&models.Job{}).
+		Where("job_type = ?", models.JobTypeGreetAdmin).
+		Or("job_type = ?", models.JobTypeDeleteChannel).
+		Or("job_type = ?", models.JobTypeSyncMembers).
+		Count(&count).Error
+	r.NoError(err)
+	r.Equal(int64(4), count)
 }
 
 func (s *SyncChannelsSuite) Test_SyncChannelsJob() {
