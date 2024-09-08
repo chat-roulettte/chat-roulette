@@ -160,7 +160,7 @@ func Test_slackInteractionHandler_ViewSubmission(t *testing.T) {
   "trigger_id": "a.b.cd",
   "view": {
     "id": "V0123456789",
-    "callback_id": "onboarding-modal",
+    "callback_id": "onboarding-member-modal",
     "type": "modal",
     "blocks": [],
     "private_metadata": "base64-encoded-blob-here",

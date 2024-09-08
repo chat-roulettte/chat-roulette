@@ -36,6 +36,9 @@ const (
 	// JobTypeAddChannel is the job for adding a new Slack channel
 	JobTypeAddChannel
 
+	// JobTypeGreetAdmin is the job for greeting the admin of a new Slack channel
+	JobTypeGreetAdmin
+
 	// JobTypeUpdateChannel is the job for updating settings for a Slack channel
 	JobTypeUpdateChannel
 
@@ -93,6 +96,7 @@ var jobTypes = map[string]jobTypeEnum{
 	"UPDATE_CHANNEL": JobTypeUpdateChannel,
 	"DELETE_CHANNEL": JobTypeDeleteChannel,
 	"SYNC_CHANNELS":  JobTypeSyncChannels,
+	"GREET_ADMIN":    JobTypeGreetAdmin,
 	"ADD_MEMBER":     JobTypeAddMember,
 	"GREET_MEMBER":   JobTypeGreetMember,
 	"UPDATE_MEMBER":  JobTypeUpdateMember,
@@ -119,6 +123,8 @@ func (j jobTypeEnum) String() string {
 		return "DELETE_CHANNEL"
 	case JobTypeSyncChannels:
 		return "SYNC_CHANNELS"
+	case JobTypeGreetAdmin:
+		return "GREET_ADMIN"
 	case JobTypeAddMember:
 		return "ADD_MEMBER"
 	case JobTypeGreetMember:
@@ -294,9 +300,10 @@ func ExtractJobFromActionID(actionID string) (jobTypeEnum, error) {
 	return 0, ErrInvalidJobType
 }
 
+// JobRequiresSlackChannel ...
 func JobRequiresSlackChannel(jobType jobTypeEnum) bool {
 	switch jobType {
-	case JobTypeSyncChannels, JobTypeAddChannel, JobTypeUpdateMatch:
+	case JobTypeSyncChannels, JobTypeGreetAdmin, JobTypeAddChannel, JobTypeUpdateMatch:
 		return false
 	default:
 		return true

@@ -17,9 +17,9 @@ It works by inviting the `@chat-roulette-bot` to your Slack channel. The bot wil
 
 *Click on the images to view full-screen.*
 
-| ![App Home](./docs/images/screenshots/app-home.png) | ![Intro Message](./docs/images/screenshots/intro-message.png) | ![Onboarding](./docs/images/screenshots/onboarding.png) | ![Onboarding Location](./docs/images/screenshots/onboarding-location.png) |
+| ![App Home](./docs/images/screenshots/app-home.png) | ![Greet Admin](./docs/images/screenshots/greet-admin.png) | ![Greet User](./docs/images/screenshots/intro-message.png) | ![Onboarding Location](./docs/images/screenshots/onboarding-location.png) |
 | :--------: | :---------: | :-----: | :-----: |
-| __App Home__ | __Intro Message__  | __Onboarding__ | __Onboarding Location__ |
+| __App Home__ | __Greet Admin__  | __Greet User__ | __Onboarding Location__ |
 ![Onboarding Profile](./docs/images/screenshots/onboarding-profile.png) | ![Gender](./docs/images/screenshots/onboarding-gender.png) | ![Calendly](./docs/images/screenshots/calendly.png) | ![Match](./docs/images/screenshots/match.png) |
 | __Onboarding Profile__ |  __Gender__ | __Calendly__ | __Match__ |
 | ![Check In](./docs/images/screenshots/check-in.png) | ![Check In Response](./docs/images/screenshots/check-in-response.png) | ![Report Stats](./docs/images/screenshots/report-stats.png) | ![Sign In](./docs/images/screenshots/sign-in.png) |

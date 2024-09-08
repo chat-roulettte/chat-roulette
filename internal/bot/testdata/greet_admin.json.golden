@@ -1,0 +1,54 @@
+{
+    "blocks": [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Hi <@U9876543210> :wave:"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Thank you for inviting me to the <#C0123456789> channel :tada:"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "I'm here to help your Slack community stay connected by introducing members of <#C0123456789> to each other on a regular cadence.",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Before we can begin our first round of Chat Roulette, we'll need to complete setup!",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "divider"
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*Click the following button to enable Chat Roulette for this channel:*"
+            },
+            "accessory": {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Let's Go!",
+                    "emoji": true
+                },
+                "value": "C0123456789",
+                "action_id": "GREET_ADMIN|confirm"
+            }
+        }
+    ]
+}

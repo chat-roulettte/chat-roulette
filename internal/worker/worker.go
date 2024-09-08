@@ -272,6 +272,9 @@ func (w *Worker) execJob(ctx context.Context, job *models.Job, tx *gorm.DB) erro
 	case models.JobTypeDeleteChannel:
 		err = bot.ExecJob(ctx, tx, w.slackClient, job, bot.DeleteChannel)
 
+	case models.JobTypeGreetAdmin:
+		err = bot.ExecJob(ctx, tx, w.slackClient, job, bot.GreetAdmin)
+
 	case models.JobTypeSyncMembers:
 		err = bot.ExecJob(ctx, tx, w.slackClient, job, bot.SyncMembers)
 

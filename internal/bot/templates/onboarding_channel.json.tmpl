@@ -1,0 +1,156 @@
+{
+	"response_action": "update",
+	"view": {
+		"type": "modal",
+		"callback_id": "onboarding-channel",
+		"private_metadata": "{{ .PrivateMetadata }}",
+		"title": {
+			"type": "plain_text",
+			"text": "Chat Roulette for Slack",
+			"emoji": true
+		},
+		"close": {
+			"type": "plain_text",
+			"text": "Cancel",
+			"emoji": true
+		},
+		"submit": {
+			"type": "plain_text",
+			"text": "Next",
+			"emoji": true
+		},
+		"blocks": [
+			{
+				"type": "section",
+				"block_id": "intro",
+				"text": {
+					"type": "mrkdwn",
+					"text": "The following settings will apply for channel <#{{ .ChannelID }}>"
+				}
+			},
+			{
+				"type": "input",
+				"block_id": "onboarding-channel-connection-mode",
+				"element": {
+					"type": "static_select",
+					"options": [
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "Virtual",
+								"emoji": true
+							},
+							"value": "virtual"
+						},
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "In Person",
+								"emoji": true
+							},
+							"value": "physical"
+						},
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "Hybrid",
+								"emoji": true
+							},
+							"value": "hybrid"
+						}
+					],
+					"initial_option": {
+						"text": {
+							"type": "plain_text",
+							"text": "Virtual",
+							"emoji": true
+						},
+						"value": "virtual"
+					},
+					"action_id": "onboarding-channel-connection-mode"
+				},
+				"label": {
+					"type": "plain_text",
+					"text": "Select the Connection Mode that will be used:",
+					"emoji": true
+				}
+			},
+			{
+				"type": "input",
+				"block_id": "onboarding-channel-interval",
+				"element": {
+					"type": "static_select",
+					"options": [
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "Every week",
+								"emoji": true
+							},
+							"value": "weekly"
+						},
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "Every 2 weeks",
+								"emoji": true
+							},
+							"value": "biweekly"
+						},
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "Every 3 weeks",
+								"emoji": true
+							},
+							"value": "triweekly"
+						},
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "Every 4 weeks",
+								"emoji": true
+							},
+							"value": "quadweekly"
+						},
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "Monthly",
+								"emoji": true
+							},
+							"value": "monthly"
+						}
+					],
+					"initial_option": {
+						"text": {
+							"type": "plain_text",
+							"text": "Every 2 weeks",
+							"emoji": true
+						},
+						"value": "biweekly"
+					},
+					"action_id": "onboarding-channel-interval"
+				},
+				"label": {
+					"type": "plain_text",
+					"text": "How frequently should rounds occur?",
+					"emoji": true
+				}
+			},
+			{
+				"type": "input",
+				"block_id": "onboarding-channel-datetime",
+				"element": {
+					"type": "datetimepicker",
+					"action_id": "onboarding-channel-datetime"
+				},
+				"label": {
+					"type": "plain_text",
+					"text": "Select the date and time for the first round of Chat Roulette\n\nNote: the weekday and hour will be the same for every round!",
+					"emoji": true
+				}
+			}
+		]
+	}
+}
