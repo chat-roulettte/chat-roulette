@@ -64,6 +64,10 @@
 			]
 		},
 {{ range .Channels }}
+	{{- $connectionMode := .ConnectionMode.String | capitalize }}
+	{{- if eq $connectionMode "Physical" }}
+		{{ $connectionMode = "In Person" }}
+	{{- end }}
 		{
 			"type": "section",
 			"text": {
@@ -81,7 +85,7 @@
 				},
 				{
 					"type": "mrkdwn",
-					"text": ":busts_in_silhouette: Connection Mode: *{{ .ConnectionMode.String | capitalize  }}*"
+					"text": ":busts_in_silhouette: Connection Mode: *{{ $connectionMode }}*"
 				},
 				{
 					"type": "mrkdwn",
