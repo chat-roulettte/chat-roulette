@@ -5,9 +5,14 @@
     <p class="font-medium text-xl">Chat Roulette Channels</p>
   </div>
 
-  {{ if .Channels }}
+{{ if .Channels }}
   <div class="pt-2 flex flex-wrap">
-    {{ range .Channels }}
+    {{- range .Channels }}
+      {{- $connectionMode := .ConnectionMode | capitalize }}
+
+      {{- if eq $connectionMode "Physical" }}
+          {{- $connectionMode = "In Person" }}
+      {{- end }}
     <div class="mx-1 my-1 max-w-sm rounded overflow-hidden border-solid border-2 border-inherit">
       <div class="px-6 py-4">
         <a href="/history/{{ .ChannelID }}">
@@ -18,8 +23,7 @@
           .Participants }}
         </p>
         <p class="text-gray-700 text-base" id="{{ .ChannelID }}-connection-mode">
-          <span class="font-bold">Connection Mode: </span>{{
-          .ConnectionMode }}
+          <span class="font-bold">Connection Mode: </span>{{ $connectionMode }}
         </p>
         <p class="text-gray-700 text-base">
           <span class="font-bold">Interval: </span>
