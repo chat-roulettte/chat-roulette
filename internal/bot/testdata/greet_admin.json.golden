@@ -18,7 +18,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "I'm here to help your Slack community stay connected by introducing members of <#C0123456789> to each other on a regular cadence.",
+                "text": "I'm here to help your Slack community stay connected by introducing members of <#C0123456789> to each other on a regular cadence :smile:",
                 "verbatim": false
             }
         },
@@ -37,13 +37,13 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*Click the following button to enable Chat Roulette for this channel:*"
+                "text": "*Click on the following button to enable Chat Roulette for this channel:*"
             },
             "accessory": {
                 "type": "button",
                 "text": {
                     "type": "plain_text",
-                    "text": "Let's Go!",
+                    "text": ":rocket: Let's Go!",
                     "emoji": true
                 },
                 "value": "C0123456789",

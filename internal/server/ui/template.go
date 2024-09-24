@@ -30,6 +30,7 @@ var (
 				"capitalize":         templatex.Capitalize,
 				"capitalizeInterval": templatex.CapitalizeInterval,
 				"prettyDate":         templatex.PrettyDate,
+				"prettyURL":          templatex.PrettyURL,
 				"derefBool":          templatex.DerefBool,
 			},
 			sprig.HtmlFuncMap(),

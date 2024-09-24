@@ -17,16 +17,21 @@ b3N0L2FjdGlvbnMvYS9iL2MifQ==",
 		},
 		"submit": {
 			"type": "plain_text",
-			"text": "Next",
+			"text": "Submit",
 			"emoji": true
 		},
 		"blocks": [
+            {
+                "type": "image",
+                "image_url": "http://localhost/static/img/coffee-machine.jpg",
+                "alt_text": "configuration"
+            },
 			{
 				"type": "section",
 				"block_id": "intro",
 				"text": {
 					"type": "mrkdwn",
-					"text": "The following settings will apply for channel <#C0123456789>"
+					"text": "The following settings will apply for <#C0123456789>"
 				}
 			},
 			{
@@ -148,9 +153,14 @@ b3N0L2FjdGlvbnMvYS9iL2MifQ==",
 				},
 				"label": {
 					"type": "plain_text",
-					"text": "Select the date and time for the first round of Chat Roulette\n\nNote: the weekday and hour will be the same for every round!",
+					"text": "Select the date and time for the first round of Chat Roulette:",
 					"emoji": true
-				}
+				},
+				"hint": {
+					"type": "plain_text",
+					"text": "Note: the same weekday and hour will be used for every round!",
+					"emoji": true
+				},				
 			}
 		]
 	}

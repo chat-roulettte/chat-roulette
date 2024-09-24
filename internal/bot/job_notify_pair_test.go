@@ -47,7 +47,7 @@ func Test_notifyPairTemplate(t *testing.T) {
 			UserID:       "U0123456789",
 			Country:      sqlcrypter.NewEncryptedBytes("Kenya"),
 			City:         sqlcrypter.NewEncryptedBytes("Nairobi"),
-			ProfileType:  sqlcrypter.NewEncryptedBytes("Github"),
+			ProfileType:  sqlcrypter.NewEncryptedBytes("GitHub"),
 			ProfileLink:  sqlcrypter.NewEncryptedBytes("https://github.com/AhmedARmohamed"),
 			CalendlyLink: sqlcrypter.NewEncryptedBytes("https://calendly.com/AhmedARmohamed"),
 		},
@@ -56,7 +56,7 @@ func Test_notifyPairTemplate(t *testing.T) {
 			UserID:      "U9876543210",
 			Country:     sqlcrypter.NewEncryptedBytes("United States"),
 			City:        sqlcrypter.NewEncryptedBytes("Phoenix"),
-			ProfileType: sqlcrypter.NewEncryptedBytes("Github"),
+			ProfileType: sqlcrypter.NewEncryptedBytes("GitHub"),
 			ProfileLink: sqlcrypter.NewEncryptedBytes("https://github.com/bincyber"),
 		},
 		PartnerTimezone: "MST (UTC-07:00)",
@@ -123,7 +123,7 @@ func (s *NotifyPairSuite) Test_NotifyPair() {
 	db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.VirtualConnectionMode,
+		ConnectionMode: models.PhysicalConnectionMode,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,
@@ -142,6 +142,9 @@ func (s *NotifyPairSuite) Test_NotifyPair() {
 		HasGenderPreference: new(bool),
 		Country:             sqlcrypter.NewEncryptedBytes("Canada"),
 		City:                sqlcrypter.NewEncryptedBytes("Toronto"),
+		ProfileType:         sqlcrypter.NewEncryptedBytes("GitHub"),
+		ProfileLink:         sqlcrypter.NewEncryptedBytes("github.com/user1"),
+		CalendlyLink:        sqlcrypter.NewEncryptedBytes("https://calendly.com/example"),
 	})
 
 	secondUserID := "U5555666778"
@@ -153,6 +156,8 @@ func (s *NotifyPairSuite) Test_NotifyPair() {
 		HasGenderPreference: new(bool),
 		Country:             sqlcrypter.NewEncryptedBytes("United Kingdom"),
 		City:                sqlcrypter.NewEncryptedBytes("Manchester"),
+		ProfileType:         sqlcrypter.NewEncryptedBytes("Twitter"),
+		ProfileLink:         sqlcrypter.NewEncryptedBytes("twitter.com/user2"),
 	})
 
 	// Write records in the rounds and matches table
@@ -186,15 +191,16 @@ func (s *NotifyPairSuite) Test_NotifyPair() {
 			w.Write([]byte(`{"ok":false}`))
 		}
 
-		r.Len(blocks.BlockSet, 8)
+		r.Len(blocks.BlockSet, 12)
 
-		participantSection, ok := blocks.BlockSet[5].(*slack.SectionBlock)
+		// Verify
+		participantSection, ok := blocks.BlockSet[4].(*slack.SectionBlock)
 		r.True(ok)
-		r.Contains(participantSection.Text.Text, "*Name:* <@U0123456789>\n*Location:* Toronto, Canada")
+		r.Contains(participantSection.Text.Text, fmt.Sprintf(":identification_card: *Name:* <@%s>", firstUserID))
 
-		partnerSection, ok := blocks.BlockSet[7].(*slack.SectionBlock)
+		partnerSection, ok := blocks.BlockSet[8].(*slack.SectionBlock)
 		r.True(ok)
-		r.Contains(partnerSection.Text.Text, "*Name:* <@U5555666778>\n*Location:* Manchester, United Kingdom")
+		r.Contains(partnerSection.Text.Text, fmt.Sprintf(":identification_card: *Name:* <@%s>", secondUserID))
 
 		w.Write([]byte(`{
 			"ok": true,
@@ -208,7 +214,6 @@ func (s *NotifyPairSuite) Test_NotifyPair() {
 	url := fmt.Sprintf("%s/", httpServer.URL)
 	client := slack.New("xoxb-test-token-here", slack.OptionAPIURL(url))
 
-	// Test
 	err = NotifyPair(s.ctx, db, client, &NotifyPairParams{
 		ChannelID:   channelID,
 		MatchID:     1,

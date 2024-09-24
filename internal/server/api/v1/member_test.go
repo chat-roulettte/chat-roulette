@@ -43,10 +43,12 @@ func Test_updateMemberHandler(t *testing.T) {
 	router := mux.NewRouter()
 	router.HandleFunc(path, s.updateMemberHandler).Methods(method)
 
+	isActive := false
+
 	params := updateMemberRequest{
 		ChannelID:   "C9876543210",
 		UserID:      "U0123456789",
-		IsActive:    true,
+		IsActive:    &isActive,
 		Country:     "United States of America",
 		City:        "Phoenix",
 		Timezone:    "America/Phoenix",
@@ -89,10 +91,12 @@ func Test_updateMemberHandler(t *testing.T) {
 	t.Run("validation", func(t *testing.T) {
 		r := require.New(t)
 
+		isActive := true
+
 		p := &bot.UpdateMemberParams{
 			ChannelID: "C9876543210",
 			UserID:    "U0123456789",
-			IsActive:  true,
+			IsActive:  &isActive,
 		}
 
 		body := new(bytes.Buffer)

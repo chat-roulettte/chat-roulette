@@ -212,7 +212,7 @@ func Test_HandleCheckPairButtons(t *testing.T) {
 
 		err := json.NewDecoder(r.Body).Decode(&webhook)
 		assert.Nil(t, err)
-		assert.Len(t, webhook.Blocks.BlockSet, 2)
+		assert.Len(t, webhook.Blocks.BlockSet, 3)
 		assert.True(t, webhook.ReplaceOriginal)
 
 		// Assert that the response matches the right template

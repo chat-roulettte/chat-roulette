@@ -500,13 +500,15 @@ b3N0L2FjdGlvbnMvYS9iL2MifQ==`,
 
 	db, mock := database.NewMockedGormDB()
 
+	hasGenderPreference := true
+
 	database.MockQueueJob(
 		mock,
 		&UpdateMemberParams{
 			ChannelID:           "C0123456789",
 			UserID:              userID,
 			Gender:              models.Male.String(),
-			HasGenderPreference: true,
+			HasGenderPreference: &hasGenderPreference,
 		},
 		models.JobTypeUpdateMember.String(),
 		models.JobPriorityHigh,
@@ -577,7 +579,6 @@ b3N0L2FjdGlvbnMvYS9iL2MifQ==`,
 			UserID:      userID,
 			ProfileType: sqlcrypter.NewEncryptedBytes(profileType),
 			ProfileLink: sqlcrypter.NewEncryptedBytes(profileLink),
-			IsActive:    true,
 		},
 		models.JobTypeUpdateMember.String(),
 		models.JobPriorityHigh,
@@ -774,7 +775,6 @@ b3N0L2FjdGlvbnMvYS9iL2MifQ==`,
 			ChannelID:    "C0123456789",
 			UserID:       userID,
 			CalendlyLink: sqlcrypter.NewEncryptedBytes(calendlyLink),
-			IsActive:     true,
 		},
 		models.JobTypeUpdateMember.String(),
 		models.JobPriorityHigh,
@@ -782,6 +782,10 @@ b3N0L2FjdGlvbnMvYS9iL2MifQ==`,
 
 	err := UpsertMemberCalendlyLink(context.Background(), db, interaction)
 	assert.Nil(t, err)
+}
+
+func Test_SetMemberIsActive(t *testing.T) {
+	// TODO
 }
 
 func Test_RespondGreetMemberWebhook(t *testing.T) {

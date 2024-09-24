@@ -85,6 +85,7 @@ func Test_CalendlyLink(t *testing.T) {
 		{"empty", "", false},
 		{"invalid domain", "twitter.com/bincyber", true},
 		{"no user", "calendly.com/", true},
+		{"ignore case", "HTTPS://Calendly.com/bincyber", false},
 	}
 
 	for _, tc := range tt {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 	"sync"
 	"time"
 
@@ -172,6 +173,10 @@ func (s *implServer) historyHandler(w http.ResponseWriter, r *http.Request) {
 				history[i].Image = match.Profile.Image192
 			}
 
+			// Ensure social links include the scheme
+			u, _ := url.Parse(history[i].Social.String()) // We already know it's a valid URL
+			u.Scheme = "https"
+			history[i].Social = sqlcrypter.NewEncryptedBytes(u.String())
 		}(i, e)
 	}
 

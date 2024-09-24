@@ -2,6 +2,8 @@ package templatex
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize"
@@ -15,7 +17,7 @@ import (
 //
 // strings.Title is not used because it is deprecated.
 func Capitalize(source string) string {
-	return cases.Title(language.English, cases.NoLower).String(source)
+	return cases.Title(language.English, cases.NoLower).String(strings.ToLower(source))
 }
 
 func CapitalizeInterval(i models.IntervalEnum) string {
@@ -40,6 +42,12 @@ func PrettierDate(t time.Time) string {
 	first := t.Format("Monday, January")
 
 	return fmt.Sprintf("%s %s, %d", first, day, year)
+}
+
+// PrettyURL returns a URL with the schema removed
+func PrettyURL(s string) string {
+	re := regexp.MustCompile(`^(https?://)?`)
+	return re.ReplaceAllString(s, "")
 }
 
 // DerefBool derefences a pointer to a boolean.

@@ -4,7 +4,15 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": ":wave: <@U0123456789> <@U9876543210>\n\nTime for an end of round check-in!",
+                "text": ":wave: Hi <@U0123456789> <@U9876543210>",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Time for a check-in!",
                 "verbatim": false
             }
         },

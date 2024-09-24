@@ -31,82 +31,60 @@ func GetCountryByName(name string) (*tz.Country, bool) {
 }
 
 // GetCountriesWithPrefix returns the list of countries
-// that begin with the prefix s, for up to the first 5
+// that begin with the prefix s, for up to the first 7
 // characters of the country name.
 func GetCountriesWithPrefix(s string) []tz.Country {
 	if s == "" {
 		return nil
 	}
 
-	// Country name must be capitalized to match contents of tz.GetCountries()
 	s = cases.Title(language.English, cases.NoLower).String(s)
-
-	var (
-		prefix string
-		stop   string
-	)
-
-	// Handle up to the first 5 characters of the country name
-	switch len(s) {
-	case 1:
-		prefix = s[0:1]
-		stop = nextLetter(prefix)
-	case 2:
-		prefix = s[0:2]
-		secondChar := s[1:2]
-		next := nextLetter(secondChar)
-		stop = fmt.Sprintf("%s%s", s[0:1], next)
-	case 3:
-		prefix = s[0:3]
-		thirdChar := s[2:3]
-		next := nextLetter(thirdChar)
-		stop = strings.Join([]string{s[0:2], next}, "")
-	case 4:
-		prefix = s[0:4]
-		fourthChar := s[3:4]
-		next := nextLetter(fourthChar)
-		stop = strings.Join([]string{s[0:3], next}, "")
-	case 5:
-		prefix = s[0:5]
-		fifthChar := s[4:5]
-		next := nextLetter(fifthChar)
-		stop = strings.Join([]string{s[0:4], next}, "")
-	}
-
-	matches := make([]tz.Country, 0)
+	maxLen := 7
+	prefix := s[:min(len(s), maxLen)]
+	stop := generateStopPrefix(prefix)
 
 	countries := tz.GetCountries()
-	for i := range countries {
-		// Stop the loop once the stop prefix is reached
-		if strings.HasPrefix(countries[i].Name, stop) {
+	matches := make([]tz.Country, 0, len(countries))
+
+	for _, country := range countries {
+		if strings.HasPrefix(country.Name, stop) {
 			break
 		}
-
-		if strings.HasPrefix(countries[i].Name, prefix) {
-			matches = append(matches, countries[i])
+		if strings.HasPrefix(country.Name, prefix) {
+			matches = append(matches, country)
 		}
 	}
 
 	return matches
 }
 
-// nextLetter returns the letter in the English alphabetic
-// that comes after the provided letter l.
-func nextLetter(l string) string {
-	if len(l) != 1 {
+// generateStopPrefix creates a stop prefix by taking the provided prefix
+// and replacing its last character with the next character in the alphabet.
+// If the prefix is empty, it returns an empty string.
+func generateStopPrefix(prefix string) string {
+	if len(prefix) == 0 {
 		return ""
 	}
 
-	l = strings.ToLower(l)
+	// Get the last character of the prefix
+	lastChar := prefix[len(prefix)-1]
 
-	// Instead of returning '{', loop back around after Z
-	if l == "z" {
-		return "a"
+	// Create a new prefix by replacing the last character with its successor
+	nextChar := nextLetter(lastChar)
+
+	// Return the modified prefix
+	return prefix[:len(prefix)-1] + string(nextChar)
+}
+
+// nextLetter returns the letter in the English alphabetic
+// that comes after the provided letter c.
+func nextLetter(c byte) byte {
+	if c == 'z' {
+		return 'a'
+	} else if c == 'Z' {
+		return 'A'
 	}
-
-	r := []rune(l)
-
-	return fmt.Sprintf("%c", r[0]+1)
+	return c + 1
 }
 
 // GetAbbreviatedTimezone returns the abbreviated

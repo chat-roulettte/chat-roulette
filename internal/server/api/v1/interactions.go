@@ -93,7 +93,7 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 		switch interaction.View.CallbackID {
 		case "onboarding-admin-modal":
 			// Respond to the HTTP request with the new view
-			body, err := bot.RenderOnboardingChannelView(r.Context(), &interaction)
+			body, err := bot.RenderOnboardingChannelView(r.Context(), &interaction, s.GetBaseURL())
 			if err != nil {
 				span.RecordError(err)
 				logger.Error("failed to load onboarding channel template", "error", err)
@@ -262,7 +262,7 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 			calendlyLink := strings.ToLower(interaction.View.State.Values["onboarding-calendly"]["onboarding-calendly"].Value)
 
 			if calendlyLink != "" {
-				// Validate the Slack user's calendly link, if provided
+				// Validate the Slack user's calendly link
 				if err := bot.ValidateMemberCalendlyLink(r.Context(), calendlyLink); err != nil {
 					span.RecordError(err)
 
@@ -290,6 +290,14 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 					w.WriteHeader(http.StatusInternalServerError)
 					return
 				}
+			}
+
+			// Mark the user as active since they have completed onboarding
+			if err := bot.SetMemberIsActive(r.Context(), s.GetDB(), &interaction); err != nil {
+				span.RecordError(err)
+				logger.Error("failed to upsert Slack member's profile info", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
 			}
 
 			// Update the original GREET_MEMBER message to remove the Opt-In button

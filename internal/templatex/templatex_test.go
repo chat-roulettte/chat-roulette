@@ -10,12 +10,23 @@ import (
 )
 
 func Test_Capitalize(t *testing.T) {
-	s := "friday"
+	testCases := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{"weekday", "friday", "Friday"},
+		{"city", "New york", "New York"},
+		{"city", "new York", "New York"},
+		{"city", "ABU DHABI", "Abu Dhabi"},
+		{"country", "united states of america", "United States Of America"},
+	}
 
-	actual := Capitalize(s)
-	expected := "Friday"
-
-	assert.Equal(t, expected, actual)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, Capitalize(tc.input))
+		})
+	}
 }
 
 func Test_CapitalizeInterval(t *testing.T) {
@@ -41,6 +52,24 @@ func Test_PrettierDate(t *testing.T) {
 	expected := "Monday, January 4th, 2021"
 
 	assert.Equal(t, expected, actual)
+}
+
+func Test_PrettyURL(t *testing.T) {
+	testCases := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{"http", "http://www.example.com/path/to/resource", "www.example.com/path/to/resource"},
+		{"with query param", "https://www.example.com/path/to/resource?query=param", "www.example.com/path/to/resource?query=param"},
+		{"with port", "http://www.example.com:8080/path", "www.example.com:8080/path"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, PrettyURL(tc.input))
+		})
+	}
 }
 
 func Test_DerefBool(t *testing.T) {

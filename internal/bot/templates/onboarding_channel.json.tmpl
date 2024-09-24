@@ -16,16 +16,21 @@
 		},
 		"submit": {
 			"type": "plain_text",
-			"text": "Next",
+			"text": "Submit",
 			"emoji": true
 		},
 		"blocks": [
+            {
+                "type": "image",
+                "image_url": "{{ .ImageURL }}",
+                "alt_text": "configuration"
+            },
 			{
 				"type": "section",
 				"block_id": "intro",
 				"text": {
 					"type": "mrkdwn",
-					"text": "The following settings will apply for channel <#{{ .ChannelID }}>"
+					"text": "The following settings will apply for <#{{ .ChannelID }}>"
 				}
 			},
 			{
@@ -147,9 +152,14 @@
 				},
 				"label": {
 					"type": "plain_text",
-					"text": "Select the date and time for the first round of Chat Roulette\n\nNote: the weekday and hour will be the same for every round!",
+					"text": "Select the date and time for the first round of Chat Roulette:",
 					"emoji": true
-				}
+				},
+				"hint": {
+					"type": "plain_text",
+					"text": "Note: the same weekday and hour will be used for every round!",
+					"emoji": true
+				},				
 			}
 		]
 	}

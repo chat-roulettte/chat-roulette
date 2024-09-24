@@ -60,7 +60,7 @@ func HandleAppHomeEvent(ctx context.Context, client *slack.Client, db *gorm.DB, 
 	}
 
 	if _, err = client.PublishViewContext(ctx, p.UserID, view, ""); err != nil {
-		return err
+		return errors.Wrap(err, "failed to publish AppHome view")
 	}
 
 	return nil

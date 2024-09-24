@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_GetCountriesByLetter(t *testing.T) {
+func Test_GetCountriesByPrefix(t *testing.T) {
 
 	type TestCase struct {
 		letter string
@@ -21,6 +21,9 @@ func Test_GetCountriesByLetter(t *testing.T) {
 		{"Cam", 2},
 		{"Camb", 1},
 		{"Unite", 4},
+		{"United", 4},
+		{"Sweden", 1},
+		{"Netherl", 1},
 	}
 
 	for _, tc := range testCases {
@@ -32,17 +35,30 @@ func Test_GetCountriesByLetter(t *testing.T) {
 	}
 }
 
-func BenchmarkGetCountriesByLetter(b *testing.B) {
+func BenchmarkGetCountriesByPrefix(b *testing.B) {
 	matches := GetCountriesWithPrefix("S")
 
-	assert.Len(b, matches, 33)
+	assert.Len(b, matches, 32)
 }
 
-func Test_nextLetter(t *testing.T) {
-	assert.Equal(t, "b", nextLetter("a"))
-	assert.Equal(t, "e", nextLetter("d"))
-	assert.Equal(t, "z", nextLetter("y"))
-	assert.Equal(t, "a", nextLetter("z"))
+func Test_NextLetter(t *testing.T) {
+	testCases := []struct {
+		name     string
+		input    byte
+		expected byte
+	}{
+		{"b to c", 'b', 'c'},
+		{"y to z", 'y', 'z'},
+		{"wraparound lowercase", 'z', 'a'},
+		{"uppercase", 'A', 'B'},
+		{"wraparound uppercase", 'Z', 'A'},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, nextLetter(tc.input))
+		})
+	}
 }
 
 func Test_GetCountryByName(t *testing.T) {

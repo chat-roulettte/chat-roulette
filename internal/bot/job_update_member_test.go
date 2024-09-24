@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/bincyber/go-sqlcrypter"
 	"github.com/hashicorp/go-hclog"
 	"github.com/stretchr/testify/require"
 
@@ -21,40 +23,72 @@ func Test_UpdateMember(t *testing.T) {
 	logger, out := o11y.NewBufferedLogger()
 	ctx := hclog.WithContext(context.Background(), logger)
 
-	db, mock := database.NewMockedGormDB()
+	resource, databaseURL, err := database.NewTestPostgresDB(false)
+	r.NoError(err)
+	defer resource.Close()
+
+	r.NoError(database.Migrate(databaseURL))
+
+	db, err := database.NewGormDB(databaseURL)
+	r.NoError(err)
+
+	sqlcrypter.Init(database.NoOpCrypter{})
 
 	channelID := "C9876543210"
 	userID := "U0123456789"
 
-	mock.ExpectBegin()
-	mock.ExpectExec(`UPDATE "members" SET .* WHERE channel_id = (.+) AND user_id = (.+)`).
-		WithArgs(
-			userID,
-			channelID,
-			models.Male.String(),
-			true,
-			true,
-			database.AnyTime(),
-			channelID,
-			userID,
-		).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	// Write channel to the database
+	db.Create(&models.Channel{
+		ChannelID:      channelID,
+		Inviter:        "U9876543210",
+		ConnectionMode: models.VirtualConnectionMode,
+		Interval:       models.Biweekly,
+		Weekday:        time.Friday,
+		Hour:           12,
+		NextRound:      time.Now().Add(72 * time.Hour),
+	})
+
+	// Write member to the database
+	isActive := true
+	hasGenderPreference := true
+
+	db.Create(&models.Member{
+		ChannelID:           channelID,
+		UserID:              userID,
+		Gender:              models.Male,
+		Country:             sqlcrypter.NewEncryptedBytes("United States of America"),
+		City:                sqlcrypter.NewEncryptedBytes("New York"),
+		IsActive:            &isActive,
+		HasGenderPreference: &hasGenderPreference,
+	})
+
+	// Update member
+	isActive = false
+	hasGenderPreference = false
 
 	p := &UpdateMemberParams{
 		ChannelID:           channelID,
 		UserID:              userID,
 		Gender:              models.Male.String(),
-		IsActive:            true,
-		HasGenderPreference: true,
+		City:                sqlcrypter.NewEncryptedBytes("Los Angeles"),
+		IsActive:            &isActive,
+		HasGenderPreference: &hasGenderPreference,
 	}
 
-	err := UpdateMember(ctx, db, nil, p)
+	err = UpdateMember(ctx, db, nil, p)
 	r.NoError(err)
-	r.NoError(mock.ExpectationsWereMet())
 	r.Contains(out.String(), "[INFO]")
 	r.Contains(out.String(), "updated database row for the member")
 	r.Contains(out.String(), fmt.Sprintf("slack_user_id=%s", userID))
+
+	// Verify changes
+	var member *models.Member
+	result := db.Model(&models.Member{}).Where("user_id = ?", userID).Where("channel_id = ?", channelID).First(&member)
+	r.NoError(result.Error)
+	r.Equal(result.RowsAffected, int64(1))
+	r.False(*member.IsActive)
+	r.False(*member.HasGenderPreference)
+	r.Equal(member.City.String(), "Los Angeles")
 }
 
 func Test_ExecUpdateMember(t *testing.T) {
@@ -74,7 +108,6 @@ func Test_ExecUpdateMember(t *testing.T) {
 			userID,
 			channelID,
 			true,
-			false,
 			database.AnyTime(),
 			channelID,
 			userID,
@@ -82,10 +115,12 @@ func Test_ExecUpdateMember(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
+	isActive := true
+
 	p := &UpdateMemberParams{
 		ChannelID: channelID,
 		UserID:    userID,
-		IsActive:  true,
+		IsActive:  &isActive,
 	}
 
 	data, _ := json.Marshal(p)

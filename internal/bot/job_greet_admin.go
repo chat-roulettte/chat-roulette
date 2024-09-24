@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"net/url"
+	"path"
 	"time"
 
 	"github.com/hashicorp/go-hclog"
@@ -158,7 +160,7 @@ func HandleGreetAdminButton(ctx context.Context, client *slack.Client, interacti
 
 // RenderOnboardingChannelView renders the view template for collecting settings
 // to enable a new chat-roulette channel.
-func RenderOnboardingChannelView(ctx context.Context, interaction *slack.InteractionCallback) ([]byte, error) {
+func RenderOnboardingChannelView(ctx context.Context, interaction *slack.InteractionCallback, baseURL string) ([]byte, error) {
 	// Start new span
 	tracer := otel.Tracer("")
 	_, span := tracer.Start(ctx, "render.channel")
@@ -171,9 +173,16 @@ func RenderOnboardingChannelView(ctx context.Context, interaction *slack.Interac
 	}
 
 	// Render the template
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse base URL")
+	}
+	u.Path = path.Join(u.Path, "static/img/coffee-machine.jpg")
+
 	t := onboardingTemplate{
 		ChannelID:       pm.ChannelID,
 		PrivateMetadata: interaction.View.PrivateMetadata,
+		ImageURL:        u.String(),
 	}
 
 	content, err := renderTemplate(onboardingChannelTemplateFilename, t)
@@ -237,7 +246,7 @@ func RespondGreetAdminWebhook(ctx context.Context, client *http.Client, interact
 		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
 	}
 
-	confirmationText := `*Chat Roulette is now enabled! I hope you enjoy using this app* :smile:`
+	confirmationText := `*Chat Roulette is now enabled! I hope you enjoy using this app* :grin:`
 
 	text := slack.NewTextBlockObject("mrkdwn", confirmationText, false, false)
 	section := slack.NewSectionBlock(text, nil, nil)

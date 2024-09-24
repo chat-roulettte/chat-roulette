@@ -16,9 +16,9 @@ import (
 	"github.com/chat-roulettte/chat-roulette/internal/bot"
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
 	"github.com/chat-roulettte/chat-roulette/internal/isx"
+	"github.com/chat-roulettte/chat-roulette/internal/templatex"
 )
 
-// TODO: convert received json to bot.UpdateMemberParams struct
 type updateMemberRequest struct {
 	ChannelID           string `json:"channel_id"`
 	UserID              string `json:"user_id"`
@@ -28,8 +28,8 @@ type updateMemberRequest struct {
 	ProfileType         string `json:"profile_type,omitempty"`
 	ProfileLink         string `json:"profile_link,omitempty"`
 	CalendlyLink        string `json:"calendly_link,omitempty"`
-	IsActive            bool   `json:"is_active"`
-	HasGenderPreference bool   `json:"has_gender_preference"`
+	IsActive            *bool  `json:"is_active,omitempty"`
+	HasGenderPreference *bool  `json:"has_gender_preference,omitempty"`
 }
 
 // updateMemberHandler handles updating a member's profile settings
@@ -132,7 +132,11 @@ func (s *implServer) updateMemberHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	if req.City != "" {
-		p.City = sqlcrypter.NewEncryptedBytes(req.City)
+		p.City = sqlcrypter.NewEncryptedBytes(
+			strings.TrimSpace(
+				templatex.Capitalize(req.City),
+			),
+		)
 	}
 
 	if req.Timezone != "" {
@@ -144,11 +148,18 @@ func (s *implServer) updateMemberHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	if req.ProfileLink != "" {
-		p.ProfileLink = sqlcrypter.NewEncryptedBytes(req.ProfileLink)
+		p.ProfileLink = sqlcrypter.NewEncryptedBytes(
+			strings.TrimSpace(
+				strings.ToLower(req.ProfileLink),
+			),
+		)
 	}
 
 	if req.CalendlyLink != "" {
-		p.CalendlyLink = sqlcrypter.NewEncryptedBytes(req.CalendlyLink)
+		p.CalendlyLink = sqlcrypter.NewEncryptedBytes(
+			strings.TrimSpace(
+				strings.ToLower(req.CalendlyLink),
+			))
 	}
 
 	// Schedule an UPDATE_MEMBER job to update the member's participation status

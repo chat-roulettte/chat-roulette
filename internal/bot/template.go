@@ -19,6 +19,7 @@ var (
 	funcMap = template.FuncMap{
 		"capitalize": templatex.Capitalize,
 		"prettyDate": templatex.PrettierDate,
+		"prettyURL":  templatex.PrettyURL,
 	}
 
 	templates = template.New("custom").Funcs(funcMap).Funcs(sprig.TxtFuncMap())
