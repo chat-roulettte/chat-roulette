@@ -4,7 +4,15 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": ":wave: <@{{ .Participant }}> <@{{ .Partner }}>\n\nTime for an end of round check-in!",
+                "text": ":wave: Hi <@{{ .Participant }}> <@{{ .Partner }}>",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Time for a check-in!",
                 "verbatim": false
             }
         },
@@ -13,9 +21,9 @@
             "text": {
                 "type": "mrkdwn",
                 {{ if .HasMet -}}
-                "text": ":white_check_mark: <@{{ .Responder }}> said that you met. Awesome!",
+                "text": ":white_check_mark: <@{{ .Responder }}> said that you met! That's awesome :tada:",
                 {{ else -}}
-                "text": ":x: <@{{ .Responder }}> said that you did not meet. Sorry to hear that!",
+                "text": ":x: <@{{ .Responder }}> said that you did not meet. I'm really sorry to hear that :sob:",
                 {{ end -}}
                 "verbatim": false
             }

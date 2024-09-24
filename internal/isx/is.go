@@ -133,11 +133,10 @@ func CalendlyLink(value interface{}) error {
 	s, _ := value.(string)
 
 	if s != "" {
-		regex := regexp.MustCompile(`(?:https:\/\/)?calendly.com\/\S+`)
+		regex := regexp.MustCompile(`(?i)(?:https:\/\/)?calendly.com\/\S+`)
 
 		if err := validation.Validate(s,
 			validation.Required,
-			is.URL,
 			validation.Match(regex).Error("URL is malformed"),
 		); err != nil {
 			return fmt.Errorf("invalid Calendly link")

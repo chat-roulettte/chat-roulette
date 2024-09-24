@@ -25,8 +25,8 @@ type UpdateMemberParams struct {
 	ProfileType         sqlcrypter.EncryptedBytes `json:"profile_type,omitempty"`
 	ProfileLink         sqlcrypter.EncryptedBytes `json:"profile_link,omitempty"`
 	CalendlyLink        sqlcrypter.EncryptedBytes `json:"calendly_link,omitempty"`
-	IsActive            bool                      `json:"is_active"`
-	HasGenderPreference bool                      `json:"has_gender_preference"`
+	IsActive            *bool                     `json:"is_active,omitempty"`
+	HasGenderPreference *bool                     `json:"has_gender_preference,omitempty"`
 }
 
 // UpdateMember updates the participation status for a member of a Slack channel.
@@ -39,6 +39,9 @@ func UpdateMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Upd
 
 	logger.Info("updating member")
 
+	// Normalize strings - TODO
+	// city := templatex.Capitalize(p.City.String()) // Only necessary if not nil
+
 	// Update the row for the member in the database
 	member := models.Member{
 		UserID:              p.UserID,
@@ -49,8 +52,8 @@ func UpdateMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Upd
 		ProfileType:         p.ProfileType,
 		ProfileLink:         p.ProfileLink,
 		CalendlyLink:        p.CalendlyLink,
-		HasGenderPreference: &p.HasGenderPreference,
-		IsActive:            &p.IsActive,
+		HasGenderPreference: p.HasGenderPreference,
+		IsActive:            p.IsActive,
 	}
 
 	if p.Gender != "" {

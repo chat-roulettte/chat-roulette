@@ -232,7 +232,12 @@ func UpsertMemberLocationInfo(ctx context.Context, db *gorm.DB, interaction *sla
 
 	// Extract the values from the view state
 	country := interaction.View.State.Values["onboarding-country"]["onboarding-location-country"].SelectedOption.Value
-	city := templatex.Capitalize(interaction.View.State.Values["onboarding-city"]["onboarding-location-city"].Value)
+
+	city := strings.TrimSpace(
+		templatex.Capitalize(
+			interaction.View.State.Values["onboarding-city"]["onboarding-location-city"].Value,
+		),
+	)
 
 	// Schedule an UPDATE_MEMBER job to update the member's location.
 	// UpdateMember() could be called directly here, however
@@ -332,7 +337,7 @@ func RenderOnboardingGenderView(ctx context.Context, interaction *slack.Interact
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse base URL")
 	}
-	u.Path = path.Join(u.Path, "static/img/social-icons.png")
+	u.Path = path.Join(u.Path, "static/img/gender.jpg")
 
 	// Render the template
 	t := onboardingTemplate{
@@ -367,7 +372,7 @@ func UpsertMemberGenderInfo(ctx context.Context, db *gorm.DB, interaction *slack
 	gender := interaction.View.State.Values["onboarding-gender-select"]["onboarding-gender-select"].SelectedOption.Value
 
 	hasGenderPreference := false
-	if len(interaction.View.State.Values["onboarding-gender-checkbox"]["onboarding-gender-checkbox"].SelectedOptions) > 0 {
+	if len(interaction.View.State.Values["onboarding-gender-checkbox"]["onboarding-gender-checkbox"].SelectedOptions) != 0 {
 		hasGenderPreference = true
 	}
 
@@ -378,7 +383,7 @@ func UpsertMemberGenderInfo(ctx context.Context, db *gorm.DB, interaction *slack
 		UserID:              interaction.User.ID,
 		ChannelID:           pm.ChannelID,
 		Gender:              gender,
-		HasGenderPreference: hasGenderPreference,
+		HasGenderPreference: &hasGenderPreference,
 	}
 
 	if err := QueueUpdateMemberJob(ctx, db, p); err != nil {
@@ -460,7 +465,12 @@ func UpsertMemberProfileInfo(ctx context.Context, db *gorm.DB, interaction *slac
 
 	// Extract the values from the view state
 	profileType := interaction.View.State.Values["onboarding-profile-type"]["onboarding-profile-type"].SelectedOption.Value
-	profileLink := interaction.View.State.Values["onboarding-profile-link"]["onboarding-profile-link"].Value
+
+	profileLink := strings.ToLower(
+		strings.TrimSpace(
+			interaction.View.State.Values["onboarding-profile-link"]["onboarding-profile-link"].Value,
+		),
+	)
 
 	// Schedule an UPDATE_MEMBER job to update the member's location.
 	// UpdateMember() could be called directly here, however
@@ -470,7 +480,38 @@ func UpsertMemberProfileInfo(ctx context.Context, db *gorm.DB, interaction *slac
 		ChannelID:   pm.ChannelID,
 		ProfileType: sqlcrypter.NewEncryptedBytes(profileType),
 		ProfileLink: sqlcrypter.NewEncryptedBytes(profileLink),
-		IsActive:    true,
+	}
+
+	if err := QueueUpdateMemberJob(ctx, db, p); err != nil {
+		return errors.Wrap(err, "failed to add UPDATE_MEMBER job to the queue")
+	}
+
+	return nil
+}
+
+// SetMemberIsActive marks a new member as active in the database
+// after they have completed the onboarding flow.
+func SetMemberIsActive(ctx context.Context, db *gorm.DB, interaction *slack.InteractionCallback) error {
+	// Start new span
+	tracer := otel.Tracer("")
+	ctx, span := tracer.Start(ctx, "upsert.is_active")
+	defer span.End()
+
+	// Extract the ChannelID from the private_metadata field
+	var pm privateMetadata
+	if err := pm.Decode(interaction.View.PrivateMetadata); err != nil {
+		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
+	}
+
+	// Schedule an UPDATE_MEMBER job to update the member's location.
+	// UpdateMember() could be called directly here, however
+	// scheduling a background job will ensure it is reliably executed.
+	isActive := true
+
+	p := &UpdateMemberParams{
+		UserID:    interaction.User.ID,
+		ChannelID: pm.ChannelID,
+		IsActive:  &isActive,
 	}
 
 	if err := QueueUpdateMemberJob(ctx, db, p); err != nil {
@@ -553,7 +594,6 @@ func UpsertMemberCalendlyLink(ctx context.Context, db *gorm.DB, interaction *sla
 		UserID:       interaction.User.ID,
 		ChannelID:    pm.ChannelID,
 		CalendlyLink: sqlcrypter.NewEncryptedBytes(calendlyLink),
-		IsActive:     true,
 	}
 
 	if err := QueueUpdateMemberJob(ctx, db, p); err != nil {

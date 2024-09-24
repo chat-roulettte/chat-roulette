@@ -138,7 +138,9 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 	// We can marshal the template into View as it contains Blocks
 	var view slack.View
 	if err := json.Unmarshal([]byte(content), &view); err != nil {
-		return errors.Wrap(err, "failed to marshal JSON")
+		message := "failed to marshal JSON"
+		logger.Error(message, "error", err)
+		return errors.Wrap(err, message)
 	}
 
 	// Send the Slack group message to the pair

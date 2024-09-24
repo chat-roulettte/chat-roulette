@@ -4,29 +4,21 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": ":wave: <@U0123456789> <@U9876543210>"
+				"text": ":wave: Hi <@U0123456789> <@U9876543210>"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "I'm here to help facilitate a little human connection by introducing everyone in <#C0123456789> biweekly."
+				"text": "I'm here to help facilitate a little human connection by introducing everyone in <#C0123456789> *biweekly*!"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "You two have been paired for this round of Chat Roulette. Now that you're here, why not schedule an in person meet up over coffee at a location that works for both of you!"
-			}
-		},
-		{
-			"type": "header",
-			"text": {
-				"type": "plain_text",
-				"text": "Match Info",
-				"emoji": true
+				"text": "You two have been paired up for this round of Chat Roulette :tada:"
 			}
 		},
 		{
@@ -36,17 +28,48 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*Name:* <@U0123456789>\n*Location:* Nairobi, Kenya\n*Timezone*: EAT (UTC+03:00)\n*Github:* https://github.com/AhmedARmohamed\n*Calendly*: https://calendly.com/AhmedARmohamed"
+				"text": ":identification_card: *Name:* <@U0123456789>"
 			}
 		},
 		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":sparkles: *GitHub:* github.com/AhmedARmohamed"
+			}
+		}
+		,{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":spiral_calendar_pad: *Calendly:* calendly.com/AhmedARmohamed"
+			}
+		}
+		,{
 			"type": "divider"
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*Name:* <@U9876543210>\n*Location:* Phoenix, United States\n*Timezone*: MST (UTC-07:00)\n*Github:* https://github.com/bincyber"
+				"text": ":identification_card: *Name:* <@U9876543210>"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":sparkles: *GitHub:* github.com/bincyber"
+			}
+		}
+		,{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Now that you're here, why don't we start with introductions! Then, schedule an in person meet up over :coffee: or :shallow_pan_of_food: at a location that works for the both of you to get acquainted!"
 			}
 		}
 	]

@@ -261,7 +261,7 @@ b3N0L2FjdGlvbnMvYS9iL2MifQ==`,
 		},
 	}
 
-	content, err := RenderOnboardingChannelView(context.Background(), interaction)
+	content, err := RenderOnboardingChannelView(context.Background(), interaction, "http://localhost/")
 	assert.Nil(t, err)
 	assert.NotNil(t, content)
 

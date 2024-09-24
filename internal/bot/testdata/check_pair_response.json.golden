@@ -4,7 +4,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": ":wave: <@U0123456789> <@U9876543210>\n\nTime for an end of round check-in!",
+                "text": ":wave: Hi <@U0123456789> <@U9876543210>",
                 "verbatim": false
             }
         },
@@ -12,7 +12,15 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": ":white_check_mark: <@U9876543210> said that you met. Awesome!",
+                "text": "Time for a check-in!",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": ":white_check_mark: <@U9876543210> said that you met! That's awesome :tada:",
                 "verbatim": false
             }
         }

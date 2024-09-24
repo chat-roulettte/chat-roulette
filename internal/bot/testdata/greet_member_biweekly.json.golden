@@ -11,14 +11,14 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Welcome to the <#C0123456789> channel!"
+                "text": "Welcome to the <#C0123456789> channel :tada:"
             }
         },
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Chat Roulette has been enabled on this channel. *Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet in person at a location of your choosing, whether it's for coffee or a meal!",
+                "text": "*Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet in person at a location of your choosing, whether it's for :coffee: or :shallow_pan_of_food:!",
                 "verbatim": false
             }
         },
@@ -26,14 +26,14 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "The next Chat Roulette round begins on *Monday, January 3rd, 2022*!"
+                "text": "The next Chat Roulette round begins on *Monday, January 3rd, 2022* :smile:"
             }
         },
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Chat Roulette has been enabled on this channel by <@U9876543210>, so if you have any questions, please reach out to them."
+                "text": "Chat Roulette has been enabled on this channel by <@U9876543210>, so if you have any questions, please reach out to them!"
             }
         },
         {
@@ -49,7 +49,7 @@
                 "type": "button",
                 "text": {
                     "type": "plain_text",
-                    "text": "Opt In",
+                    "text": ":white_check_mark: Opt In!",
                     "emoji": true
                 },
                 "value": "C0123456789",

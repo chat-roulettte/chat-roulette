@@ -4,29 +4,21 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": ":wave: <@{{ .Participant.UserID }}> <@{{ .Partner.UserID }}>"
+				"text": ":wave: Hi <@{{ .Participant.UserID }}> <@{{ .Partner.UserID }}>"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "I'm here to help facilitate a little human connection by introducing everyone in <#{{ .ChannelID }}> {{ .Interval }}."
+				"text": "I'm here to help facilitate a little human connection by introducing everyone in <#{{ .ChannelID }}> *{{ .Interval }}*!"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "You two have been paired for this round of Chat Roulette. Now that you're here, why not schedule {{ if eq .ConnectionMode "virtual" }}a video call using Zoom, Google Meet, or Microsoft Teams to get to know each other{{ else if eq .ConnectionMode "physical" }}an in person meet up over coffee at a location that works for both of you{{ else if eq .ConnectionMode "hybrid" }}an in person meet up over coffee or a video call to get to know each other{{ end }}!"
-			}
-		},
-		{
-			"type": "header",
-			"text": {
-				"type": "plain_text",
-				"text": "Match Info",
-				"emoji": true
+				"text": "You two have been paired up for this round of Chat Roulette :tada:"
 			}
 		},
 		{
@@ -36,17 +28,91 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*Name:* <@{{ .Participant.UserID }}>\n*Location:* {{ .Participant.City }}, {{ .Participant.Country }}\n*Timezone*: {{ .ParticipantTimezone }}\n*{{ .Participant.ProfileType }}:* {{ .Participant.ProfileLink }}{{ if .Participant.CalendlyLink }}\n*Calendly*: {{ .Participant.CalendlyLink }}{{ end }}"
+				"text": ":identification_card: *Name:* <@{{ .Participant.UserID }}>"
+			}
+		},
+		{{- if ne .ConnectionMode "physical" }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":earth_americas: *Location*: {{ .Participant.City }}, {{ .Participant.Country }}"
 			}
 		},
 		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":clock4: *Timezone*: {{ .ParticipantTimezone }}"
+			}
+		},
+		{{- end }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":sparkles: *{{ .Participant.ProfileType }}:* {{ .Participant.ProfileLink.String | prettyURL }}"
+			}
+		}
+		{{- if .Participant.CalendlyLink }}
+		,{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":spiral_calendar_pad: *Calendly:* {{ .Participant.CalendlyLink.String | prettyURL }}"
+			}
+		}
+		{{- end }}
+		,{
 			"type": "divider"
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*Name:* <@{{ .Partner.UserID }}>\n*Location:* {{ .Partner.City }}, {{ .Partner.Country }}\n*Timezone*: {{ .PartnerTimezone }}\n*{{ .Partner.ProfileType }}:* {{ .Partner.ProfileLink }}{{ if .Partner.CalendlyLink }}\n*Calendly*: {{ .Partner.CalendlyLink }}{{ end }}"
+				"text": ":identification_card: *Name:* <@{{ .Partner.UserID }}>"
+			}
+		},
+		{{- if ne .ConnectionMode "physical" }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":earth_americas: *Location*: {{ .Partner.City }}, {{ .Partner.Country }}"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":clock4: *Timezone*: {{ .PartnerTimezone }}"
+			}
+		},
+		{{- end }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":sparkles: *{{ .Partner.ProfileType }}:* {{ .Partner.ProfileLink.String | prettyURL }}"
+			}
+		}
+		{{- if .Partner.CalendlyLink }}
+		,{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": ":spiral_calendar_pad: *Calendly:* {{ .Partner.CalendlyLink.String | prettyURL }}"
+			}
+		}
+		{{- end }}
+		,{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Now that you're here, why don't we start with introductions! Then, schedule {{ if eq .ConnectionMode "virtual" }}a :video_camera: call using Zoom, Google Meet, or Microsoft Teams{{ else if eq .ConnectionMode "physical" }}an in person meet up over :coffee: or :shallow_pan_of_food: at a location that works for the both of you{{ else if eq .ConnectionMode "hybrid" }}an in person meet up over :coffee: or :shallow_pan_of_food: or a :video_camera: call{{ end }} to get acquainted!"
 			}
 		}
 	]

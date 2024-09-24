@@ -21,15 +21,17 @@
         },
         "blocks": [
             {
+                "type": "image",
+                "image_url": "http://localhost/static/img/gender.jpg",
+                "alt_text": "gender"
+            },
+            {
                 "type": "section",
                 "block_id": "onboarding",
                 "text": {
                     "type": "mrkdwn",
                     "text": "To allow participants to match with only others of the same gender, Chat Roulette for Slack needs to know your gender."
                 }
-            },
-            {
-                "type": "divider"
             },
             {
                 "type": "input",
@@ -76,7 +78,7 @@
                         {
                             "text": {
                                 "type": "plain_text",
-                                "text": "I would like to opt-in to this feature",
+                                "text": "I would like to opt-in to this feature!",
                                 "emoji": true
                             },
                             "value": "true",

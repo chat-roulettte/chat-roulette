@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS channels (
     created_at timestamp without time zone DEFAULT NOW()::timestamp NOT NULL,
     updated_at timestamp without time zone DEFAULT NOW()::timestamp NOT NULL,
     -- 'connection_mode', -- added in v1.2.0    
-    -- is_active boolean DEFAULT false NOT NULL, -- added in v1.3.0
 
     CONSTRAINT channels_pk_channel_id PRIMARY KEY (channel_id)
 );

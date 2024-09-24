@@ -234,7 +234,7 @@ func (s *Server) GetSlackBotUserID() string {
 // GetBaseURL returns the base URL of the server
 func (s *Server) GetBaseURL() string {
 	u, _ := url.Parse(s.config.Server.RedirectURL)
-	u.Path = "/"
+	u.Path = ""
 	return u.String()
 }
 

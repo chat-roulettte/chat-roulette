@@ -116,6 +116,76 @@ func (s *CreateMatchesSuite) Test_CreateMatches() {
 	r.Equal(int64(1), count)
 }
 
+func (s *CreateMatchesSuite) Test_CreateMatches_SameGenderTwoParticipants() {
+	r := require.New(s.T())
+
+	resource, databaseURL, err := database.NewTestPostgresDB(false)
+	r.NoError(err)
+	defer resource.Close()
+
+	r.NoError(database.Migrate(databaseURL))
+
+	db, err := database.NewGormDB(databaseURL)
+	r.NoError(err)
+
+	channelID := "C0123456789"
+
+	// Write channel to the database
+	db.Create(&models.Channel{
+		ChannelID:      channelID,
+		Inviter:        "U9876543210",
+		ConnectionMode: models.VirtualConnectionMode,
+		Interval:       models.Biweekly,
+		Weekday:        time.Friday,
+		Hour:           12,
+		NextRound:      time.Now().Add(24 * time.Hour),
+	})
+
+	// Add members to the database
+	members := []struct {
+		userID              string
+		gender              models.Gender
+		isActive            bool
+		hasGenderPreference bool
+	}{
+		{"U0123456789", models.Male, true, false},
+		{"U8765432109", models.Male, true, true},
+	}
+
+	for _, member := range members {
+		db.Create(&models.Member{
+			ChannelID:           channelID,
+			UserID:              member.userID,
+			Gender:              member.gender,
+			IsActive:            &member.isActive,
+			HasGenderPreference: &member.hasGenderPreference,
+		})
+	}
+
+	// Write a record in the rounds table
+	db.Create(&models.Round{
+		ChannelID: channelID,
+	})
+
+	// Test
+	err = CreateMatches(s.ctx, db, nil, &CreateMatchesParams{
+		ChannelID: channelID,
+		RoundID:   1,
+	})
+	r.NoError(err)
+	r.Contains(s.buffer.String(), "added new match to the database")
+	r.Contains(s.buffer.String(), "paired active participants for chat-roulette")
+	r.Contains(s.buffer.String(), "participants=2")
+	r.Contains(s.buffer.String(), "pairs=1")
+	r.Contains(s.buffer.String(), "unpaired=0")
+
+	// Verify matches
+	var count int64
+	result := db.Model(&models.Job{}).Where("job_type = ?", models.JobTypeCreatePair).Count(&count)
+	r.NoError(result.Error)
+	r.Equal(int64(1), count)
+}
+
 func (s *CreateMatchesSuite) Test_QueueCreateMatchesJob() {
 	r := require.New(s.T())
 
