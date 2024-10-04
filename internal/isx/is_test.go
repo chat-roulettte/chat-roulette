@@ -133,26 +133,36 @@ func Test_ProfileType(t *testing.T) {
 
 func Test_ValidateProfileLink(t *testing.T) {
 	type test struct {
+		name  string
 		pType string
 		pLink string
 		isErr bool
 	}
 
 	tt := []test{
-		{"Twitter", "twitter.com/joe", false},
-		{"Instagram", "https://instagram.com/ahmed", false},
-		{"LinkedIn", "facebook.com/bincyber", true},
-		{"LinkedIn", "ca.linkedin.com/bincyber", false},
-		{"github", "https://github.com/bincyber", false},
-		{"twitter", "github.com/bincyber", true},
-		{"tiktok", "tiktok.com/@example", false},
-		{"pinterest", "p i n t e r e s t.com", true},
-		{"snapchat", "m.snapchat.com", true},
-		{"twitter", "twitter.com/", true},
+		{"Twitter", "Twitter", "twitter.com/joe", false},
+		{"X", "Twitter", "x.com/john", false},
+		{"mobile Twitter", "Twitter", "m.twitter.com/john", false},
+		{"mobile X", "Twitter", "m.x.com/john", false},
+		{"missing twitter username", "Twitter", "twitter.com/", true},
+		{"YouTube", "YouTube", "youtube.com/@mkbhd", false},
+		{"mobile YouTube", "YouTube", "m.youtube.com/@mkbhd", false},
+		{"invalid short YouTube", "YouTube", "youtu.be.com/@mkbhd", true},
+		{"Insta", "Instagram", "https://instagram.com/ahmed", false},
+		{"LinkedIn", "LinkedIn", "ca.linkedin.com/bincyber", false},
+		{"invalid LinkedIn", "LinkedIn", "linked.in/bincyber", true},
+		{"mismatch Facebook", "LinkedIn", "facebook.com/bincyber", true},
+		{"github", "github", "https://github.com/bincyber", false},
+		{"www github", "github", "www.github.com/bincyber", false},
+		{"invalid github", "GitHub", "m.github.com/bincyber", true},
+		{"mismatch GitHub", "LinkedIn", "github.com/bincyber", true},
+		{"TikTok", "TikTok", "tiktok.com/@example", false},
+		{"invalid pinterest", "Pinterest", "p i n t e r e s t.com", true},
+		{"invalid mobile snapchat", "Snapshot", "m.snapchat.com", true},
 	}
 
 	for _, tc := range tt {
-		t.Run(tc.pType, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			err := ValidProfileLink(tc.pType, tc.pLink)
 
 			if tc.isErr {
