@@ -125,6 +125,8 @@ The following config options control the default chat-roulette settings for ever
 | `endpoint` | `TRACING_JAEGER_ENDPOINT` | String | No |  | The URL of the Jaeger OTLP HTTP collector. This must be set if the tracing exporter is set to `jaeger`.
 | `team` | `TRACING_HONEYCOMB_TEAM` | String | No |  | The [honeycomb.io](https://www.honeycomb.io/) API key. This must be set if the tracing exporter is set to `honeycomb`.
 | `dataset` | `TRACING_HONEYCOMB_DATASET` | String | No |  | The dataset to send traces to. This must be set if the tracing exporter is set to `honeycomb`.
+| - | `OTEL_TRACES_SAMPLER` | String | No | `always_on` | Configure the sampling strategy to be used.<br /><br />Options: <ul><li>`always_on`</li><li>`traceidratio`</li><li>`parentbased_traceidratio`</li></ul><br />Refer to: [General SDK Configuration](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler)
+| - | `OTEL_TRACES_SAMPLER_ARG` | String | No |  | Configure additional arguments for the sampler<br />Refer to: [General SDK Configuration](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg)
 
 ###### JSON
 ```json

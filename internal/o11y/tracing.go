@@ -63,7 +63,6 @@ func NewTracerProvider(cfg *config.TracingConfig) (*sdktrace.TracerProvider, err
 		}
 
 		tp = sdktrace.NewTracerProvider(
-			sdktrace.WithSampler(sdktrace.AlwaysSample()),
 			sdktrace.WithBatcher(exp),
 			sdktrace.WithResource(res),
 		)
