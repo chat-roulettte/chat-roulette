@@ -158,8 +158,7 @@ func run() error {
 
 	// Sync channels during startup
 	if err := bot.QueueSyncChannelsJob(ctx, s.GetDB(), &bot.SyncChannelsParams{
-		BotUserID:          s.GetSlackBotUserID(),
-		ChatRouletteConfig: s.GetChatRouletteConfig(),
+		BotUserID: s.GetSlackBotUserID(),
 	}); err != nil {
 		logger.Error("failed to queue SYNC_CHANNELS job on startup", "error", err)
 	}

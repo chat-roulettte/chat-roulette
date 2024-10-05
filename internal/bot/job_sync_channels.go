@@ -10,15 +10,13 @@ import (
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
-	"github.com/chat-roulettte/chat-roulette/internal/config"
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
 	"github.com/chat-roulettte/chat-roulette/internal/o11y/attributes"
 )
 
 // SyncChannelsParams are the parameters for SYNC_CHANNEL job.
 type SyncChannelsParams struct {
-	BotUserID          string                    `json:"bot_user_id"`
-	ChatRouletteConfig config.ChatRouletteConfig `json:"config"`
+	BotUserID string `json:"bot_user_id"`
 }
 
 // SyncChannels ensures that there is no discrepancy between the Slack channels in

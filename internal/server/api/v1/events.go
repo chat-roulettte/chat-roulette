@@ -96,8 +96,7 @@ func (s *implServer) slackEventHandler(w http.ResponseWriter, r *http.Request) {
 				// Inviter is blank if the bot is added by default to the channel
 				if ev.Inviter == "" {
 					p := &bot.SyncChannelsParams{
-						BotUserID:          ev.User,
-						ChatRouletteConfig: s.GetChatRouletteConfig(),
+						BotUserID: ev.User,
 					}
 
 					if err := bot.QueueSyncChannelsJob(r.Context(), db, p); err != nil {

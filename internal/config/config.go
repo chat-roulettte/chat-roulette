@@ -19,13 +19,12 @@ import (
 
 // Config stores the configuration for the application
 type Config struct {
-	Bot          SlackBotConfig
-	ChatRoulette ChatRouletteConfig
-	Database     DatabaseConfig
-	Server       ServerConfig
-	Worker       WorkerConfig
-	Tracing      TracingConfig
-	Dev          bool
+	Bot      SlackBotConfig
+	Database DatabaseConfig
+	Server   ServerConfig
+	Worker   WorkerConfig
+	Tracing  TracingConfig
+	Dev      bool
 }
 
 // DatabaseConfig stores the configuration for using the database
@@ -175,40 +174,6 @@ type SlackBotConfig struct {
 	AuthToken string `mapstructure:"auth_token"`
 }
 
-// ChatRouletteConfig stores the configuration for chat roulette
-type ChatRouletteConfig struct {
-	// Interval is the interval or frequency that matches will be made.
-	// Valid values are "weekly", "biweekly", "triweekly", "quadweekly", or "monthly".
-	//
-	// Optional
-	//
-	// Default: biweekly
-	Interval string `mapstructure:"interval"`
-
-	// Weekday is the day of the week that matches will be made.
-	// eg, Monday
-	//
-	// Optional
-	//
-	// Default: Monday
-	Weekday string `mapstructure:"weekday"`
-
-	// Hour is the hour (in UTC) that matches will be made.
-	//
-	// Optional
-	//
-	// Default: 12
-	Hour int `mapstructure:"hour"`
-
-	// ConnectionMode is the mode (physical) of connections that will be made.
-	// Valid values are "virtual", "physical", or "hybrid".
-	//
-	// Optional
-	//
-	// Default: virtual
-	ConnectionMode string `mapstructure:"connection_mode"`
-}
-
 // TracingConfig stores the configuration for OpenTelemetry tracing.
 // Only one exporter can be configured at a time.
 type TracingConfig struct {
@@ -256,17 +221,11 @@ type HoneycombTracing struct {
 	Dataset string `mapstructure:"dataset"`
 }
 
-func newDefaultConfig() Config {
-	return Config{
+func newDefaultConfig() *Config {
+	return &Config{
 		Server: ServerConfig{
 			Address: DefaultServerAddr,
 			Port:    DefaultServerPort,
-		},
-		ChatRoulette: ChatRouletteConfig{
-			Interval:       DefaultChatRouletteInterval,
-			Weekday:        DefaultChatRouletteWeekday,
-			Hour:           DefaultChatRouletteHour,
-			ConnectionMode: DefaultChatRouletteConnectionMode,
 		},
 		Worker: WorkerConfig{
 			Concurrency: DefaultWorkerConcurrency,
@@ -319,10 +278,7 @@ func LoadConfig(path string) (*Config, error) {
 		return nil, err
 	}
 
-	// Normalize settings
-	config.ChatRoulette.Interval = strings.ToLower(config.ChatRoulette.Interval)
-
-	return &config, nil
+	return config, nil
 }
 
 // Validate verifies the configuration
@@ -332,16 +288,6 @@ func (c Config) Validate() error {
 		validation.Field(&c.Bot.AuthToken, validation.By(isx.SlackBotAuthToken)),
 	); err != nil {
 		return errors.Wrap(err, "failed to validate bot config")
-	}
-
-	// Validate chat-roulette config
-	if err := validation.ValidateStruct(&c.ChatRoulette,
-		validation.Field(&c.ChatRoulette.Interval, validation.By(isx.Interval)),
-		validation.Field(&c.ChatRoulette.Weekday, validation.By(isx.Weekday)),
-		validation.Field(&c.ChatRoulette.Hour, validation.Required, validation.Min(0), validation.Max(23)),
-		validation.Field(&c.ChatRoulette.ConnectionMode, validation.By(isx.ConnectionMode)),
-	); err != nil {
-		return errors.Wrap(err, "failed to validate chat-roulette config")
 	}
 
 	// Validate database config

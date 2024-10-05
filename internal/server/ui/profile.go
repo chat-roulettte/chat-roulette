@@ -117,7 +117,7 @@ func (s *implServer) profileHandler(w http.ResponseWriter, r *http.Request) {
 		channel, err := lookupSlackChannel(r.Context(), cache, slackClient, c.ChannelID)
 		if err != nil {
 			span.RecordError(err)
-			logger.Error("failed to lookup Slack channel", "error", err, c.ChannelID)
+			logger.Error("failed to lookup Slack channel", "error", err, attributes.SlackChannelID, c.ChannelID)
 			rend.HTML(w, http.StatusInternalServerError, "500", nil)
 			return
 		}

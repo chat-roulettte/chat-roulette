@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/hashicorp/go-hclog"
@@ -103,17 +102,7 @@ func Test_slackEventHandler_BotJoinedChannelEvent(t *testing.T) {
 	userID := "U1111111111"
 	inviter := "U2222222222"
 
-	conf := &config.Config{
-		ChatRoulette: config.ChatRouletteConfig{
-			Interval:       models.Weekly.String(),
-			Weekday:        time.Monday.String(),
-			Hour:           12,
-			ConnectionMode: models.VirtualConnectionMode.String(),
-		},
-	}
-
 	opts := &server.ServerOptions{
-		Config:         conf,
 		DB:             db,
 		DevMode:        true,
 		SlackBotUserID: userID,
@@ -179,17 +168,7 @@ func Test_slackEventHandler_BotJoinedChannelEvent_failure(t *testing.T) {
 	userID := "U1111111111"
 	inviter := "U2222222222"
 
-	conf := &config.Config{
-		ChatRoulette: config.ChatRouletteConfig{
-			Interval:       "weekly",
-			Weekday:        "Monday",
-			Hour:           12,
-			ConnectionMode: "virtual",
-		},
-	}
-
 	opts := &server.ServerOptions{
-		Config:         conf,
 		DB:             db,
 		DevMode:        true,
 		SlackBotUserID: userID,
