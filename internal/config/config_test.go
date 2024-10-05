@@ -9,11 +9,11 @@ import (
 func Test_Validate(t *testing.T) {
 	type test struct {
 		name  string
-		conf  Config
+		conf  *Config
 		isErr bool
 	}
 
-	newValidConfig := func() Config {
+	newValidConfig := func() *Config {
 		conf := newDefaultConfig()
 
 		conf.Bot.AuthToken = "xoxb-9876543210123-4567778889990-f0A2GclR80dgPZLTUEq5asHm"
@@ -33,29 +33,20 @@ func Test_Validate(t *testing.T) {
 	tt := []test{
 		{"default", newDefaultConfig(), true},
 		{"valid", newValidConfig(), false},
-		{"invalid database config", func() Config {
+		{"invalid database config", func() *Config {
 			conf := newValidConfig()
 
 			conf.Database.URL = "postgres://"
 			return conf
 		}(), true},
-		{"invalid chat-roulette config", func() Config {
-			conf := newValidConfig()
-
-			conf.ChatRoulette.Hour = 24
-			conf.ChatRoulette.Interval = "every 2 weeks"
-			conf.ChatRoulette.Weekday = "foo"
-			conf.ChatRoulette.ConnectionMode = "other"
-			return conf
-		}(), true},
-		{"invalid tracing config", func() Config {
+		{"invalid tracing config", func() *Config {
 			conf := newValidConfig()
 
 			conf.Tracing.Enabled = true
 			conf.Tracing.Exporter = "x-ray"
 			return conf
 		}(), true},
-		{"invalid server config", func() Config {
+		{"invalid server config", func() *Config {
 			conf := newValidConfig()
 
 			conf.Server.RedirectURL = "https://example.com/callback"

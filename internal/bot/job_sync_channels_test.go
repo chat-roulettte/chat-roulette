@@ -16,7 +16,6 @@ import (
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 
-	"github.com/chat-roulettte/chat-roulette/internal/config"
 	"github.com/chat-roulettte/chat-roulette/internal/database"
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
 	"github.com/chat-roulettte/chat-roulette/internal/o11y"
@@ -112,11 +111,6 @@ func (s *SyncChannelsSuite) Test_SyncChannels() {
 
 	p := &SyncChannelsParams{
 		BotUserID: "U1111111111",
-		ChatRouletteConfig: config.ChatRouletteConfig{
-			Interval: "weekly",
-			Weekday:  "Monday",
-			Hour:     12,
-		},
 	}
 
 	err = SyncChannels(s.ctx, db, client, p)
@@ -138,11 +132,6 @@ func (s *SyncChannelsSuite) Test_SyncChannelsJob() {
 
 	p := &SyncChannelsParams{
 		BotUserID: "U1111111111",
-		ChatRouletteConfig: config.ChatRouletteConfig{
-			Interval: "weekly",
-			Weekday:  "Monday",
-			Hour:     12,
-		},
 	}
 
 	database.MockQueueJob(

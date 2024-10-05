@@ -196,11 +196,6 @@ func (s *Server) GetDB() *gorm.DB {
 	return s.db
 }
 
-// GetConfig retrieves the chat roulette config
-func (s *Server) GetChatRouletteConfig() config.ChatRouletteConfig {
-	return s.config.ChatRoulette
-}
-
 // GetHTTPClient retrieves the http client
 func (s *Server) GetHTTPClient() *http.Client {
 	return s.httpClient

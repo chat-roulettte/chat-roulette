@@ -2,12 +2,6 @@
     "bot": {
         "auth_token": "xoxb-slackbot-oauthtoken-here"
     },
-    "chatroulette": {
-        "interval": "biweekly",
-        "weekday": "Monday",
-        "hour": 12,
-        "connection_mode": "virtual"
-    },
     "server": {
         "client_id": "oauth-client-id-here",
         "client_secret": "oauth-client-secret-here",

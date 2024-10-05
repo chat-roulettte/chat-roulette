@@ -1,6 +1,6 @@
 # Configuration
 
-_Chat Roulette for Slack_ supports configuration via JSON config file and/or environment variables. Environment variables take precedence over whatever is in the config file.
+_Chat Roulette for Slack_ supports configuration via a JSON config file and/or environment variables. Environment variables take precedence over whatever is in the config file.
 
 See [config.example.json](./examples/config.example.json) for an example of how to modify the configuration of the app using a JSON config file.
 
@@ -17,29 +17,6 @@ See [config.example.json](./examples/config.example.json) for an example of how 
 {
     "bot": {
         "auth_token": "xoxb-9876543210123-4567778889990-f0A2GclR80dgPZLTUEq5asHm"
-    }
-}
-```
-
-#### Chat Roulette Config
-
-The following config options control the default chat-roulette settings for every new Slack channel. Customizing settings per channel can be done via the UI.
-
-| Key | Environment Variable | Type | Required | Default Value | Description
-| -------- | -------- | -------- | :--------: | -------- | ------
-| `interval` | `CHATROULETTE_INTERVAL` | String | No | `biweekly` | The interval or frequency that matches will be made. <br /><br />Options: <ul><li>`weekly`</li><li>`biweekly`</li><li>`triweekly`</li><li>`quadweekly`</li><li>`monthly`</li></ul>
-| `weekday` | `CHATROULETTE_WEEKDAY` | String | No | `Monday` | The day of the week that matches will be made. Supports short form (eg, `Tue` or `Thurs`)
-| `hour` | `CHATROULETTE_HOUR` | Integer | No | `12` | The hour (in UTC) that matches will be made.
-| `connection_mode` | `CHATROULETTE_CONNECTION_MODE` | String | No | `virtual` | The type of connections that the chat-roulette bot will encourage. <br /><br />Options: <ul><li>`virtual`</li><li>`physical`</li><li>`hybrid`</li></ul>
-
-###### JSON
-```json
-{
-    "chatroulette": {
-        "interval": "monthly",
-        "weekday": "Friday",
-        "hour": 10,
-        "connection_mode": "hybrid"
     }
 }
 ```
