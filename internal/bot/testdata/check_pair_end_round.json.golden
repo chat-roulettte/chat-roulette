@@ -12,7 +12,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Time for a check-in!",
+                "text": "Time for an *end of round* check-in!",
                 "verbatim": false
             }
         },
@@ -35,8 +35,7 @@
                         "text": ":white_check_mark: Yes",
                         "emoji": true
                     },
-                    "style": "primary",
-                    "value": "{\"match_id\":99,\"has_met\":true,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\"}"
+                    "value": "{\"match_id\":99,\"has_met\":true,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\",\"is_mid_round\":false}"
                 },
                 {
                     "type": "button",
@@ -46,7 +45,7 @@
                         "text": ":x: No",
                         "emoji": true
                     },
-                    "value": "{\"match_id\":99,\"has_met\":false,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\"}"
+                    "value": "{\"match_id\":99,\"has_met\":false,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\",\"is_mid_round\":false}"
                 }
             ]
         }

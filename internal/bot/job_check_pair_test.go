@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/hashicorp/go-hclog"
 	"github.com/sebdah/goldie/v2"
 	"github.com/slack-go/slack"
@@ -67,23 +68,67 @@ func Test_checkPairTemplate(t *testing.T) {
 		Partner:     "U9876543210",
 		MatchID:     int32(99),
 		Responder:   "U9876543210",
+		IsMidRound:  false,
 	}
 
-	t.Run("default", func(t *testing.T) {
+	t.Run("mid round", func(t *testing.T) {
+		data.IsMidRound = true
+
 		content, err := renderTemplate(checkPairTemplateFilename, data)
 		assert.Nil(t, err)
 
-		g.Assert(t, "check_pair.json", []byte(content))
+		g.Assert(t, "check_pair_mid_round.json", []byte(content))
 
 	})
 
-	t.Run("HasMet", func(t *testing.T) {
+	t.Run("end of round", func(t *testing.T) {
+		data.IsMidRound = false
+
+		content, err := renderTemplate(checkPairTemplateFilename, data)
+		assert.Nil(t, err)
+
+		g.Assert(t, "check_pair_end_round.json", []byte(content))
+
+	})
+}
+
+func Test_checkPairResponseTemplate(t *testing.T) {
+	g := goldie.New(t)
+
+	data := checkPairTemplate{
+		Participant: "U0123456789",
+		Partner:     "U9876543210",
+		MatchID:     int32(99),
+		Responder:   "U9876543210",
+		IsMidRound:  false,
+	}
+
+	t.Run("has met", func(t *testing.T) {
 		data.HasMet = true
 
 		content, err := renderTemplate(checkPairResponseTemplateFilename, data)
 		assert.Nil(t, err)
 
-		g.Assert(t, "check_pair_response.json", []byte(content))
+		g.Assert(t, "check_pair_response_yes.json", []byte(content))
+	})
+
+	t.Run("has not met", func(t *testing.T) {
+		data.HasMet = false
+
+		content, err := renderTemplate(checkPairResponseTemplateFilename, data)
+		assert.Nil(t, err)
+
+		g.Assert(t, "check_pair_response_no.json", []byte(content))
+	})
+
+	t.Run("has not met yet", func(t *testing.T) {
+		data.HasMet = false
+		data.IsMidRound = true
+
+		content, err := renderTemplate(checkPairResponseTemplateFilename, data)
+		assert.Nil(t, err)
+
+		g.Assert(t, "check_pair_response_not_yet.json", []byte(content))
 	})
 }
 
@@ -99,6 +144,7 @@ func Test_checkPairButtonValue(t *testing.T) {
 				HasMet:      true,
 				Participant: participant,
 				Partner:     partner,
+				IsMidRound:  false,
 			}
 
 			s := v.Encode()
@@ -107,6 +153,7 @@ func Test_checkPairButtonValue(t *testing.T) {
 			assert.Contains(t, s, "has_met")
 			assert.Contains(t, s, "participant")
 			assert.Contains(t, s, "partner")
+			assert.Contains(t, s, "is_mid_round")
 		})
 	})
 
@@ -115,7 +162,7 @@ func Test_checkPairButtonValue(t *testing.T) {
 			var v checkPairButtonValue
 
 			s := fmt.Sprintf(
-				`{"match_id":%d,"has_met":true,"participant":"%s","partner":"%s"}`,
+				`{"match_id":%d,"has_met":true,"participant":"%s","partner":"%s","is_mid_round":false}`,
 				matchID,
 				participant,
 				partner)
@@ -127,7 +174,7 @@ func Test_checkPairButtonValue(t *testing.T) {
 	})
 }
 
-func Test_HandleCheckPairButtons(t *testing.T) {
+func Test_HandleCheckPairButtons_No(t *testing.T) {
 	raw := []byte(`
 {
     "user": {
@@ -142,15 +189,148 @@ func Test_HandleCheckPairButtons(t *testing.T) {
         "user": "U0123456789",
         "team": "T0123456789",
         "blocks": [
-            {
+			{
+				"type": "section",
+				"text": {
+					"type": "mrkdwn",
+					"text": ":wave: Hi <@U0123456789> <@U9876543210>",
+					"verbatim": false
+				}
+			},
+			{
+				"type": "section",
+				"text": {
+					"type": "mrkdwn",
+					"text": "Time for an *end of round* check-in!",
+					"verbatim": false
+				}
+			},
+			{
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": ":wave <@U0123456789> <@U9876543210>\n\nTime for an end of round check-in!",
+                    "text": "*Did you get a chance to connect?*",
                     "verbatim": false
                 }
             },
             {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "action_id": "CHECK_PAIR|no",
+                        "text": {
+                            "type": "plain_text",
+                            "text": ":x: No",
+                            "emoji": true
+                        },
+                        "style": "primary",
+                        "value": "true"
+                    }
+                ]
+            }
+        ]
+    },
+    "response_url": "REPLACE ME",
+    "actions": [
+        {
+            "type": "button",
+			"block_id": "Xd4ny",
+            "action_id": "CHECK_PAIR|no",
+            "text": {
+                "type": "plain_text",
+                "text": ":x: No",
+                "emoji": true
+            },
+            "style": "primary",
+            "value": "{\"match_id\":99,\"has_met\":false,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\",\"is_mid_round\":false}",
+            "action_ts": "1638032136.985353"
+        }
+    ]
+}
+`)
+
+	var interaction slack.InteractionCallback
+	assert.Nil(t, interaction.UnmarshalJSON(raw))
+
+	db, mock := database.NewMockedGormDB()
+
+	p := &UpdateMatchParams{
+		MatchID: 99,
+		HasMet:  false,
+	}
+
+	database.MockQueueJob(mock, p, models.JobTypeUpdateMatch.String(), models.JobPriorityHigh)
+
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		var webhook *slack.WebhookMessage
+
+		err := json.NewDecoder(r.Body).Decode(&webhook)
+		assert.Nil(t, err)
+		assert.Len(t, webhook.Blocks.BlockSet, 3)
+		assert.True(t, webhook.ReplaceOriginal)
+
+		// Assert that the response matches the right template
+		data := checkPairTemplate{
+			Participant: "U0123456789",
+			Partner:     "U9876543210",
+			MatchID:     int32(99),
+			Responder:   "U0123456789",
+			HasMet:      false,
+		}
+
+		content, err := renderTemplate(checkPairResponseTemplateFilename, data)
+		assert.Nil(t, err)
+
+		var view slack.View
+		err = json.Unmarshal([]byte(content), &view)
+		assert.Nil(t, err)
+
+		assert.Equal(t, *webhook.Blocks, view.Blocks)
+	}))
+
+	defer server.Close()
+
+	interaction.ResponseURL = server.URL
+
+	err := HandleCheckPairButtons(context.Background(), http.DefaultClient, db, &interaction)
+	assert.Nil(t, err)
+
+	assert.Nil(t, mock.ExpectationsWereMet())
+}
+
+func Test_HandleCheckPairButtons_Yes_MidRound(t *testing.T) {
+	raw := []byte(`
+{
+    "user": {
+        "id": "U0123456789",
+        "username": "testuser",
+        "name": "testuser",
+        "team_id": "T0123456789"
+    },
+    "message": {
+        "bot_id": "B0123456789",
+        "type": "message",
+        "user": "U0123456789",
+        "team": "T0123456789",
+        "blocks": [
+			{
+				"type": "section",
+				"text": {
+					"type": "mrkdwn",
+					"text": ":wave: Hi <@U0123456789> <@U9876543210>",
+					"verbatim": false
+				}
+			},
+			{
+				"type": "section",
+				"text": {
+					"type": "mrkdwn",
+					"text": "Time for a check-in!",
+					"verbatim": false
+				}
+			},
+			{
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
@@ -188,7 +368,7 @@ func Test_HandleCheckPairButtons(t *testing.T) {
                 "emoji": true
             },
             "style": "primary",
-            "value": "{\"match_id\":99,\"has_met\":true,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\"}",
+            "value": "{\"match_id\":99,\"has_met\":true,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\",\"is_mid_round\":true}",
             "action_ts": "1638032136.985353"
         }
     ]
@@ -198,8 +378,23 @@ func Test_HandleCheckPairButtons(t *testing.T) {
 	var interaction slack.InteractionCallback
 	assert.Nil(t, interaction.UnmarshalJSON(raw))
 
+	// Mock cancel end of round CHECK_PAIR job
 	db, mock := database.NewMockedGormDB()
 
+	mock.ExpectBegin()
+	mock.ExpectExec(`UPDATE "jobs" SET "status"=(.+),"updated_at"=(.+) WHERE .* status = (.+) AND is_completed = false AND job_type = (.+)`).
+		WithArgs(
+			models.JobStatusCanceled,
+			database.AnyTime(),
+			"match_id",
+			"99",
+			models.JobStatusPending,
+			models.JobTypeCheckPair.String(),
+		).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	// Mock adding UPDATE_MATCH job
 	p := &UpdateMatchParams{
 		MatchID: 99,
 		HasMet:  true,
@@ -222,6 +417,7 @@ func Test_HandleCheckPairButtons(t *testing.T) {
 			MatchID:     int32(99),
 			Responder:   "U0123456789",
 			HasMet:      true,
+			IsMidRound:  true,
 		}
 
 		content, err := renderTemplate(checkPairResponseTemplateFilename, data)

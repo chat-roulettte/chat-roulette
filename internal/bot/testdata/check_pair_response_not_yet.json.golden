@@ -20,7 +20,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": ":white_check_mark: <@U9876543210> said that you met! That's awesome :tada:",
+                "text": ":x: <@U9876543210> said that you did not meet yet. Don't worry, there is still time remaining in this round to connect :pleading_face:",
                 "verbatim": false
             }
         }

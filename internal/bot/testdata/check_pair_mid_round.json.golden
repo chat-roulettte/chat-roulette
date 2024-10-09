@@ -4,7 +4,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": ":wave: Hi <@{{ .Participant }}> <@{{ .Partner }}>",
+                "text": ":wave: Hi <@U0123456789> <@U9876543210>",
                 "verbatim": false
             }
         },
@@ -12,7 +12,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Time for a{{ if not .IsMidRound }}n *end of round*{{ end }} check-in!",
+                "text": "Time for a check-in!",
                 "verbatim": false
             }
         },
@@ -35,9 +35,8 @@
                         "text": ":white_check_mark: Yes",
                         "emoji": true
                     },
-                    "value": "{\"match_id\":{{ .MatchID }},\"has_met\":true,\"participant\":\"{{ .Participant }}\",\"partner\":\"{{ .Partner }}\",\"is_mid_round\":{{ .IsMidRound }}}"
+                    "value": "{\"match_id\":99,\"has_met\":true,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\",\"is_mid_round\":true}"
                 },
-                {{- if .IsMidRound }}
                 {
                     "type": "button",
                     "action_id": "CHECK_PAIR|not-yet",
@@ -46,9 +45,8 @@
                         "text": ":hourglass_flowing_sand: Not Yet",
                         "emoji": true
                     },
-                    "value": "{\"match_id\":{{ .MatchID }},\"has_met\":false,\"participant\":\"{{ .Participant }}\",\"partner\":\"{{ .Partner }}\",\"is_mid_round\":{{ .IsMidRound }}}"
+                    "value": "{\"match_id\":99,\"has_met\":false,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\",\"is_mid_round\":true}"
                 },
-                {{- end }}
                 {
                     "type": "button",
                     "action_id": "CHECK_PAIR|no",
@@ -57,7 +55,7 @@
                         "text": ":x: No",
                         "emoji": true
                     },
-                    "value": "{\"match_id\":{{ .MatchID }},\"has_met\":false,\"participant\":\"{{ .Participant }}\",\"partner\":\"{{ .Partner }}\",\"is_mid_round\":{{ .IsMidRound }}}"
+                    "value": "{\"match_id\":99,\"has_met\":false,\"participant\":\"U0123456789\",\"partner\":\"U9876543210\",\"is_mid_round\":true}"
                 }
             ]
         }

@@ -175,3 +175,54 @@ func TestFormatMonthlyInterval(t *testing.T) {
 		assert.Equal(t, tt.expected, actual)
 	}
 }
+
+func TestMidPoint(t *testing.T) {
+	testCases := []struct {
+		name     string
+		t1       time.Time
+		t2       time.Time
+		expected time.Time
+		isErr    bool
+	}{
+		{
+			name:     "weekly",
+			t1:       time.Date(2024, 10, 1, 0, 0, 0, 0, time.UTC),
+			t2:       time.Date(2024, 10, 8, 12, 0, 0, 0, time.UTC),
+			expected: time.Date(2024, 10, 4, 12, 0, 0, 0, time.UTC),
+			isErr:    false,
+		},
+		{
+			name:     "biweekly",
+			t1:       time.Date(2024, 10, 1, 0, 0, 0, 0, time.UTC),
+			t2:       time.Date(2024, 10, 15, 12, 0, 0, 0, time.UTC),
+			expected: time.Date(2024, 10, 8, 12, 0, 0, 0, time.UTC),
+			isErr:    false,
+		},
+		{
+			name:     "monthly",
+			t1:       time.Date(2024, 10, 1, 0, 0, 0, 0, time.UTC),
+			t2:       time.Date(2024, 11, 1, 15, 0, 0, 0, time.UTC),
+			expected: time.Date(2024, 10, 16, 15, 0, 0, 0, time.UTC),
+			isErr:    false,
+		},
+		{
+			name:     "t2 is in the past",
+			t1:       time.Date(2024, 10, 3, 11, 15, 0, 0, time.UTC),
+			t2:       time.Date(2024, 10, 1, 11, 45, 0, 0, time.UTC),
+			expected: time.Time{},
+			isErr:    true,
+		},
+	}
+
+	for _, tc := range testCases {
+		actual, err := MidPoint(tc.t1, tc.t2)
+		switch tc.isErr {
+		case true:
+			assert.Error(t, err)
+		case false:
+			assert.Nil(t, err)
+		}
+
+		assert.Equal(t, tc.expected, actual)
+	}
+}

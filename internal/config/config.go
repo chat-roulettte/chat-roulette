@@ -380,6 +380,12 @@ func bindEnvs(v *viper.Viper, iface interface{}, parts ...string) {
 	ifValue := reflect.ValueOf(iface)
 	ifType := reflect.TypeOf(iface)
 
+	// Dereference if iface is a pointer
+	if ifType.Kind() == reflect.Ptr {
+		ifValue = ifValue.Elem()
+		ifType = ifType.Elem()
+	}
+
 	for i := 0; i < ifType.NumField(); i++ {
 		value := ifValue.Field(i)
 		t := ifType.Field(i)

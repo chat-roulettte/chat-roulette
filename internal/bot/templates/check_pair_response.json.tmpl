@@ -12,7 +12,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Time for a check-in!",
+                "text": "Time for a{{ if not .IsMidRound }}n *end of round*{{ end }} check-in!",
                 "verbatim": false
             }
         },
@@ -20,11 +20,15 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                {{ if .HasMet -}}
+                {{- if .HasMet }}
                 "text": ":white_check_mark: <@{{ .Responder }}> said that you met! That's awesome :tada:",
-                {{ else -}}
+                {{- else }}
+                {{- if .IsMidRound }}
+                "text": ":x: <@{{ .Responder }}> said that you did not meet yet. Don't worry, there is still time remaining in this round to connect :pleading_face:",
+                {{- else }}
                 "text": ":x: <@{{ .Responder }}> said that you did not meet. I'm really sorry to hear that :sob:",
-                {{ end -}}
+                {{- end }}
+                {{- end }}
                 "verbatim": false
             }
         }

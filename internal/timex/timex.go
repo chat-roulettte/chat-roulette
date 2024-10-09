@@ -142,3 +142,24 @@ func FormatMonthlyOccurrence(t time.Time) string {
 
 	return formattedString
 }
+
+// MidPoint calculates the mid-point between two timestamps
+func MidPoint(t1, t2 time.Time) (time.Time, error) {
+	if t2.Before(t1) {
+		return time.Time{}, fmt.Errorf("t2 cannot be before t1")
+	}
+
+	duration := t2.Sub(t1)
+	midpoint := t1.Add(duration / 2)
+
+	return time.Date(
+		midpoint.Year(),
+		midpoint.Month(),
+		midpoint.Day(),
+		t2.Hour(),
+		0,
+		0,
+		0,
+		time.UTC,
+	), nil
+}

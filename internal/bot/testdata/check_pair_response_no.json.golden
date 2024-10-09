@@ -1,0 +1,28 @@
+{
+    "blocks": [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": ":wave: Hi <@U0123456789> <@U9876543210>",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Time for an *end of round* check-in!",
+                "verbatim": false
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": ":x: <@U9876543210> said that you did not meet. I'm really sorry to hear that :sob:",
+                "verbatim": false
+            }
+        }
+    ]
+}
