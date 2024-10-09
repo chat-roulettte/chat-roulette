@@ -20,6 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"github.com/chat-roulettte/chat-roulette/internal/database"
@@ -127,7 +128,7 @@ func (s *NotifyPairSuite) Test_NotifyPair() {
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,
-		NextRound:      time.Now().Add(24 * time.Hour),
+		NextRound:      time.Now().Add(168 * time.Hour),
 	})
 
 	// Write two members to the database
@@ -214,13 +215,26 @@ func (s *NotifyPairSuite) Test_NotifyPair() {
 	url := fmt.Sprintf("%s/", httpServer.URL)
 	client := slack.New("xoxb-test-token-here", slack.OptionAPIURL(url))
 
-	err = NotifyPair(s.ctx, db, client, &NotifyPairParams{
+	p := &NotifyPairParams{
 		ChannelID:   channelID,
 		MatchID:     1,
 		Participant: firstUserID,
 		Partner:     secondUserID,
-	})
+	}
+
+	err = NotifyPair(s.ctx, db, client, p)
 	r.NoError(err)
+
+	var checkPairJobs []models.Job
+	result := db.Model(&models.Job{}).
+		Where("job_type = ?", models.JobTypeCheckPair).
+		Where(datatypes.JSONQuery("data").Equals(p.MatchID, "match_id")).
+		Where(datatypes.JSONQuery("data").Equals(p.Participant, "participant")).
+		Where(datatypes.JSONQuery("data").Equals(p.Partner, "partner")).
+		Find(&checkPairJobs)
+	r.NoError(result.Error)
+	r.Len(checkPairJobs, 2)
+	r.Greater(checkPairJobs[1].ExecAt, checkPairJobs[0].ExecAt)
 }
 
 func (s *NotifyPairSuite) Test_QueueNotifyPairJob() {

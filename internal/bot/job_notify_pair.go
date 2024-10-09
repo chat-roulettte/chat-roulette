@@ -12,6 +12,7 @@ import (
 
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
 	"github.com/chat-roulettte/chat-roulette/internal/o11y/attributes"
+	"github.com/chat-roulettte/chat-roulette/internal/timex"
 	"github.com/chat-roulettte/chat-roulette/internal/tzx"
 )
 
@@ -176,7 +177,7 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 
 	logger.Info("updated was_notified for the match")
 
-	// Queue a CHECK_PAIR job for this match
+	// Queue a CHECK_PAIR job for the middle of the round
 	params := &CheckPairParams{
 		ChannelID:   p.ChannelID,
 		MatchID:     p.MatchID,
@@ -186,16 +187,41 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 		MpimID:      mpimID,
 	}
 
-	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
-	defer cancel()
-
-	if err := QueueCheckPairJob(dbCtx, db, params); err != nil {
+	midpoint, err := timex.MidPoint(time.Now().UTC(), channel.NextRound)
+	if err != nil {
 		message := "failed to add CHECK_PAIR job to the queue"
 		logger.Error(message, "error", err)
 		return errors.Wrap(err, message)
 	}
 
-	logger.Info("queued CHECK_PAIR job for this match")
+	params.IsMidRound = true
+
+	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
+	defer cancel()
+
+	if err := QueueCheckPairJob(dbCtx, db, params, midpoint); err != nil {
+		message := "failed to add CHECK_PAIR job to the queue"
+		logger.Error(message, "error", err)
+		return errors.Wrap(err, message)
+	}
+
+	logger.Info("queued CHECK_PAIR job for this match to run in the middle of the round")
+
+	// Queue a CHECK_PAIR job for the end of the round
+	params.IsMidRound = false
+
+	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
+	defer cancel()
+
+	timestamp := channel.NextRound.Add(-(12 * time.Hour)) // 12 hours before the round ends
+
+	if err := QueueCheckPairJob(dbCtx, db, params, timestamp); err != nil {
+		message := "failed to add CHECK_PAIR job to the queue"
+		logger.Error(message, "error", err)
+		return errors.Wrap(err, message)
+	}
+
+	logger.Info("queued CHECK_PAIR job for this match to run at the end of the round")
 
 	return nil
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/pkg/errors"
 	"github.com/slack-go/slack"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
@@ -20,13 +21,14 @@ const (
 	checkPairResponseTemplateFilename = "check_pair_response.json.tmpl"
 )
 
-// checkPairTemplate is used with templates/check_pair.json.tmpl
+// checkPairTemplate is used with templates/check_pair.json.tmpl and templates/check_pair_response.json.tmpl
 type checkPairTemplate struct {
 	Participant string `json:"participant"`
 	Partner     string `json:"partner"`
 	MatchID     int32  `json:"match_id"`
 	Responder   string `json:"responder"`
 	HasMet      bool   `json:"has_met"`
+	IsMidRound  bool   `json:"is_mid_round"`
 }
 
 // CheckPairParams are the parameters for the CHECK_PAIR job.
@@ -37,6 +39,7 @@ type CheckPairParams struct {
 	Participant string    `json:"participant"`
 	Partner     string    `json:"partner"`
 	MpimID      string    `json:"mpim_id"`
+	IsMidRound  bool      `json:"is_mid_round"`
 }
 
 // CheckPair sends a private group message to a chat-roulette pair
@@ -55,6 +58,7 @@ func CheckPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *CheckP
 		Participant: p.Participant,
 		Partner:     p.Partner,
 		MatchID:     p.MatchID,
+		IsMidRound:  p.IsMidRound,
 	}
 
 	content, err := renderTemplate(checkPairTemplateFilename, templateParams)
@@ -90,13 +94,12 @@ func CheckPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *CheckP
 }
 
 // QueueCheckPairJob adds a new CHECK_PAIR job to the queue.
-func QueueCheckPairJob(ctx context.Context, db *gorm.DB, p *CheckPairParams) error {
+func QueueCheckPairJob(ctx context.Context, db *gorm.DB, p *CheckPairParams, timestamp time.Time) error {
 	job := models.GenericJob[*CheckPairParams]{
 		JobType:  models.JobTypeCheckPair,
 		Priority: models.JobPriorityStandard,
 		Params:   p,
-		// This should execute before the start of the next chat-roulette round.
-		ExecAt: p.NextRound.Add(-(6 * time.Hour)),
+		ExecAt:   timestamp,
 	}
 
 	return QueueJob(ctx, db, job)
@@ -107,6 +110,7 @@ type checkPairButtonValue struct {
 	Partner     string `json:"partner"`
 	MatchID     int32  `json:"match_id"`
 	HasMet      bool   `json:"has_met"`
+	IsMidRound  bool   `json:"is_mid_round"`
 }
 
 func (v *checkPairButtonValue) Encode() string {
@@ -142,6 +146,7 @@ func HandleCheckPairButtons(ctx context.Context, client *http.Client, db *gorm.D
 			HasMet:      value.HasMet,
 			Participant: value.Participant,
 			Partner:     value.Partner,
+			IsMidRound:  value.IsMidRound,
 		}
 
 		content, err := renderTemplate(checkPairResponseTemplateFilename, t)
@@ -158,6 +163,24 @@ func HandleCheckPairButtons(ctx context.Context, client *http.Client, db *gorm.D
 		webhookMessage := &slack.WebhookMessage{
 			Blocks:          &view.Blocks,
 			ReplaceOriginal: true,
+		}
+
+		if t.HasMet && value.IsMidRound {
+			// Cancel the end of round check-in since the pair already met
+			dbCtx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)
+			defer cancel()
+
+			result := db.WithContext(dbCtx).
+				Model(&models.Job{}).
+				Where(datatypes.JSONQuery("data").Equals(value.MatchID, "match_id")).
+				Where("status = ?", models.JobStatusPending).
+				Where("is_completed = false").
+				Where("job_type = ?", models.JobTypeCheckPair.String()).
+				Updates(&models.Job{Status: models.JobStatusCanceled})
+
+			if result.Error != nil {
+				return errors.Wrap(result.Error, "failed to cancel pending CHECK_PAIR job")
+			}
 		}
 
 		// Queue an UPDATE_MATCH job to update the "has_met" column for the match

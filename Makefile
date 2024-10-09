@@ -8,7 +8,7 @@ go/install:
 
 go/tools:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.1
-	go install -tags 'postgres $(MIGRATIONS_SOURCE)' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.15.2
+	go install -tags 'postgres $(MIGRATIONS_SOURCE)' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.1
 	go install gotest.tools/gotestsum@v1.12.0
 	go install github.com/miniscruff/changie@v1.19.1
 

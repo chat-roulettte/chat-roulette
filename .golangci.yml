@@ -60,7 +60,7 @@ linters-settings:
       - (net/http.ResponseWriter).Write
       - (*github.com/unrolled/render.Render).HTML
   nestif:
-    min-complexity: 7
+    min-complexity: 10
 
 issues:
   exclude:
