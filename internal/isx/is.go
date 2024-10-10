@@ -19,15 +19,16 @@ import (
 
 var (
 	socialDomains = map[string]string{
-		"facebook":  `(?:(www\.)|(m\.))?facebook.com`,
-		"github":    `(?:(www\.))?github.com`,
-		"instagram": `(?:(www\.)|(m\.))?instagram.com`,
-		"linkedin":  `(?:(www\.)|(m\.)|([a-z]{2}\.))?linkedin.com`,
-		"pinterest": `(?:(www\.))?pinterest.com`,
-		"snapchat":  `(?:(www\.))?snapchat.com`,
-		"tiktok":    `(?:(www\.)|(m\.))?tiktok.com`,
+		"facebook":  `(?:(www\.)|(m\.))?facebook\.com`,
+		"github":    `(?:(www\.))?github\.com`,
+		"instagram": `(?:(www\.)|(m\.))?instagram\.com`,
+		"linkedin":  `(?:(www\.)|(m\.)|([a-z]{2}\.))?linkedin\.com`,
+		"pinterest": `(?:(www\.))?pinterest\.com`,
+		"snapchat":  `(?:(www\.))?snapchat\.com`,
+		"tiktok":    `(?:(www\.)|(m\.))?tiktok\.com`,
 		"twitter":   `(?:(www|m)\.)?(x\.com|twitter\.com)`,
-		"youtube":   `(?:(www\.)|(m\.))?youtube.com`,
+		"youtube":   `(?:(www\.)|(m\.))?youtube\.com`,
+		"linktree":  `(?:(www\.))?linktr\.ee`,
 	}
 )
 

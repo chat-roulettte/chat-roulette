@@ -115,6 +115,7 @@ func Test_ProfileType(t *testing.T) {
 		{"github", false},
 		{"VK", true},
 		{"Discord", true},
+		{"Linktree", false},
 	}
 
 	for _, tc := range tt {
@@ -159,6 +160,8 @@ func Test_ValidateProfileLink(t *testing.T) {
 		{"TikTok", "TikTok", "tiktok.com/@example", false},
 		{"invalid pinterest", "Pinterest", "p i n t e r e s t.com", true},
 		{"invalid mobile snapchat", "Snapshot", "m.snapchat.com", true},
+		{"valid Linktree", "LinkTree", "linktr.ee/bincyber", false},
+		{"invalid Linktree", "Linktree", "m.linktr.ee/@bincyber", true},
 	}
 
 	for _, tc := range tt {
