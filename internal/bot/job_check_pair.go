@@ -176,7 +176,7 @@ func HandleCheckPairButtons(ctx context.Context, client *http.Client, db *gorm.D
 				Where("status = ?", models.JobStatusPending).
 				Where("is_completed = false").
 				Where("job_type = ?", models.JobTypeCheckPair.String()).
-				Updates(&models.Job{Status: models.JobStatusCanceled})
+				Updates(&models.Job{IsCompleted: true, Status: models.JobStatusCanceled})
 
 			if result.Error != nil {
 				return errors.Wrap(result.Error, "failed to cancel pending CHECK_PAIR job")

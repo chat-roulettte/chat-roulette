@@ -162,7 +162,7 @@ type Job struct {
 	// Status is the completion status (success, failed, etc.) for a job
 	Status jobStatusEnum
 
-	// IsCompleted is a boolean flag for checking if the job has been completed
+	// IsCompleted is a boolean flag for checking if the job has been completed regardless of completion status
 	IsCompleted bool
 
 	// Data is the JSON data for the job

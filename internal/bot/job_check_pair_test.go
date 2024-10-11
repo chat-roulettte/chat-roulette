@@ -382,9 +382,10 @@ func Test_HandleCheckPairButtons_Yes_MidRound(t *testing.T) {
 	db, mock := database.NewMockedGormDB()
 
 	mock.ExpectBegin()
-	mock.ExpectExec(`UPDATE "jobs" SET "status"=(.+),"updated_at"=(.+) WHERE .* status = (.+) AND is_completed = false AND job_type = (.+)`).
+	mock.ExpectExec(`UPDATE "jobs" SET "status"=(.+),"is_completed"=(.+),"updated_at"=(.+) WHERE .* status = (.+) AND is_completed = false AND job_type = (.+)`).
 		WithArgs(
 			models.JobStatusCanceled,
+			true,
 			database.AnyTime(),
 			"match_id",
 			"99",
