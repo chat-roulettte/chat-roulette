@@ -12,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/slack-go/slack"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	"gorm.io/gorm"
 
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
@@ -115,10 +116,15 @@ func QueueGreetAdminJob(ctx context.Context, db *gorm.DB, p *GreetAdminParams) e
 func HandleGreetAdminButton(ctx context.Context, client *slack.Client, interaction *slack.InteractionCallback) error {
 	// Start new span
 	tracer := otel.Tracer("")
-	ctx, span := tracer.Start(ctx, "button.GREET_ADMIN")
+	ctx, span := tracer.Start(ctx, "handle.button.GREET_ADMIN")
 	defer span.End()
 
 	if interaction.Type == slack.InteractionTypeBlockActions {
+		span.SetAttributes(
+			attribute.String(attributes.SlackInteraction, string(interaction.Type)),
+			attribute.String(attributes.SlackAction, string(interaction.ActionCallback.BlockActions[0].Type)),
+		)
+
 		// ChannelID and ResponseURL will be stored in the private_metadata field
 		pm := &privateMetadata{
 			ChannelID:   interaction.ActionCallback.BlockActions[0].Value,

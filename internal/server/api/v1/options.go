@@ -8,9 +8,11 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/slack-go/slack"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/chat-roulettte/chat-roulette/internal/iox"
+	"github.com/chat-roulettte/chat-roulette/internal/o11y/attributes"
 	"github.com/chat-roulettte/chat-roulette/internal/tzx"
 )
 
@@ -88,6 +90,11 @@ func (s *implServer) slackOptionsHandler(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	span.SetAttributes(
+		attribute.String(attributes.SlackInteraction, string(interaction.Type)),
+		attribute.String(attributes.SlackBlockID, interaction.BlockID),
+	)
 
 	switch interaction.BlockID {
 	case "onboarding-country":

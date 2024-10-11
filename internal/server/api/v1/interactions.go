@@ -7,11 +7,13 @@ import (
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/slack-go/slack"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/chat-roulettte/chat-roulette/internal/bot"
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
 	"github.com/chat-roulettte/chat-roulette/internal/iox"
+	"github.com/chat-roulettte/chat-roulette/internal/o11y/attributes"
 )
 
 const (
@@ -87,8 +89,16 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	span.SetAttributes(
+		attribute.String(attributes.SlackInteraction, string(interaction.Type)),
+	)
+
 	switch interaction.Type {
 	case slack.InteractionTypeViewSubmission:
+
+		span.SetAttributes(
+			attribute.String(attributes.SlackViewCallbackID, interaction.View.CallbackID),
+		)
 
 		switch interaction.View.CallbackID {
 		case "onboarding-admin-modal":

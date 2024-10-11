@@ -10,10 +10,12 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slackevents"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/chat-roulettte/chat-roulette/internal/bot"
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
+	"github.com/chat-roulettte/chat-roulette/internal/o11y/attributes"
 )
 
 // slackEventHandler handles events sent by the Slack Events API
@@ -65,6 +67,10 @@ func (s *implServer) slackEventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	span.SetAttributes(
+		attribute.String(attributes.SlackAPIEvent, eventsAPIEvent.Type),
+	)
+
 	switch eventsAPIEvent.Type {
 	// Handle url_verification events
 	// See: https://api.slack.com/events/url_verification
@@ -83,6 +89,11 @@ func (s *implServer) slackEventHandler(w http.ResponseWriter, r *http.Request) {
 
 	case slackevents.CallbackEvent:
 		innerEvent := eventsAPIEvent.InnerEvent
+
+		span.SetAttributes(
+			attribute.String(attributes.SlackEvent, innerEvent.Type),
+		)
+
 		switch ev := innerEvent.Data.(type) {
 
 		// Handle member_joined_channel events
