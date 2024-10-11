@@ -56,9 +56,9 @@ func QueueJob[T any](ctx context.Context, db *gorm.DB, gJob models.GenericJob[T]
 	}
 
 	span.SetAttributes(
-		attribute.String("job", job.JobType.String()),
-		attribute.String("job_id", job.JobID.String()),
-		attribute.Int("job_priority", job.Priority),
+		attribute.String(attributes.JobType, job.JobType.String()),
+		attribute.String(attributes.JobID, job.JobID.String()),
+		attribute.Int(attributes.JobPriority, job.Priority),
 	)
 
 	dbCtx, cancel := context.WithTimeout(ctx, 300*time.Millisecond)

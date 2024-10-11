@@ -20,6 +20,7 @@ import (
 	"github.com/chat-roulettte/chat-roulette/internal/config"
 	"github.com/chat-roulettte/chat-roulette/internal/database"
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
+	"github.com/chat-roulettte/chat-roulette/internal/o11y/attributes"
 	"github.com/chat-roulettte/chat-roulette/internal/slackclient"
 )
 
@@ -57,10 +58,10 @@ func New(ctx context.Context, logger hclog.Logger, c *config.Config, ch <-chan b
 	// Generate a unique ID for the worker
 	workerID := ksuid.New().String()
 
-	logger = logger.With("worker_id", workerID)
+	logger = logger.With(attributes.WorkerID, workerID)
 
 	span.SetAttributes(
-		attribute.String("worker_id", workerID),
+		attribute.String(attributes.WorkerID, workerID),
 	)
 
 	// Configure gorm.DB
@@ -132,7 +133,7 @@ func (w *Worker) processJob(ctx context.Context, link trace.Link) error {
 	tracer := otel.Tracer("")
 	ctx, span := tracer.Start(ctx, "worker.run", trace.WithLinks(link), trace.WithNewRoot())
 	span.SetAttributes(
-		attribute.String("worker_id", w.id),
+		attribute.String(attributes.WorkerID, w.id),
 	)
 	defer span.End()
 
@@ -162,8 +163,9 @@ func (w *Worker) processJob(ctx context.Context, link trace.Link) error {
 	}
 
 	span.SetAttributes(
-		attribute.String("job", job.JobType.String()),
-		attribute.String("job_id", job.JobID.String()),
+		attribute.String(attributes.JobType, job.JobType.String()),
+		attribute.String(attributes.JobID, job.JobID.String()),
+		attribute.Int(attributes.JobPriority, job.Priority),
 	)
 
 	// Since almost all jobs require the Slack channel to exist in the database,
@@ -184,7 +186,7 @@ func (w *Worker) processJob(ctx context.Context, link trace.Link) error {
 			tx.Commit()
 
 			span.SetAttributes(
-				attribute.String("job_status", job.Status.String()),
+				attribute.String(attributes.JobStatus, job.Status.String()),
 			)
 
 			return fmt.Errorf("failed to unmarshal JSON and extract Slack channel ID")
@@ -217,13 +219,17 @@ func (w *Worker) processJob(ctx context.Context, link trace.Link) error {
 	}
 
 	// Execute the job
-	w.logger.Info("executing job", "job_id", job.JobID.String(), "job", job.JobType.String())
+	w.logger.Info(
+		"executing job",
+		attributes.JobID, job.JobID.String(),
+		attributes.JobType, job.JobType.String(),
+	)
 
 	if err := w.execJob(ctx, job, tx); err != nil {
 		w.logger.Error("failed to execute job",
 			"error", err,
-			"job_id", job.JobID.String(),
-			"job", job.JobType.String(),
+			attributes.JobID, job.JobID.String(),
+			attributes.JobType, job.JobType.String(),
 		)
 
 		span.SetAttributes(
@@ -251,10 +257,12 @@ func (w *Worker) execJob(ctx context.Context, job *models.Job, tx *gorm.DB) erro
 	// Start a new span
 	ctx, span := otel.Tracer("").Start(ctx, "worker.exec")
 	span.SetAttributes(
-		attribute.String("worker_id", w.id),
-		attribute.String("job", job.JobType.String()),
-		attribute.String("job_id", job.JobID.String()),
+		attribute.String(attributes.WorkerID, w.id),
+		attribute.String(attributes.JobType, job.JobType.String()),
+		attribute.String(attributes.JobID, job.JobID.String()),
+		attribute.Int(attributes.JobPriority, job.Priority),
 	)
+
 	defer span.End()
 
 	var err error
