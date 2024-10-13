@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/go-playground/tz"
+	"github.com/pkg/errors"
 	"github.com/slack-go/slack"
 )
 
@@ -33,6 +34,15 @@ func (p *privateMetadata) Encode() (string, error) {
 func (p *privateMetadata) Decode(s string) error {
 	decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(s))
 	return json.NewDecoder(decoder).Decode(p)
+}
+
+func ExtractChannelIDFromPrivateMetada(interaction *slack.InteractionCallback) (string, error) {
+	var pm privateMetadata
+	if err := pm.Decode(interaction.View.PrivateMetadata); err != nil {
+		return "", errors.Wrap(err, "failed to decode base64 string to privateMetadata")
+	}
+
+	return pm.ChannelID, nil
 }
 
 // onboardingTemplate is used with templates/onboarding_*.json.tmpl templates

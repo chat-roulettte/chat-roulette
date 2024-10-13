@@ -310,6 +310,25 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 				return
 			}
 
+			// Queue a CREATE_MATCH job for this new participant
+			channelID, err := bot.ExtractChannelIDFromPrivateMetada(&interaction)
+			if err != nil {
+				span.RecordError(err)
+				logger.Error("failed to extract Slack channelID from private metadata", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			if err := bot.QueueCreateMatchJob(r.Context(), s.GetDB(), &bot.CreateMatchParams{
+				ChannelID:   channelID,
+				Participant: interaction.User.ID,
+			}); err != nil {
+				span.RecordError(err)
+				logger.Error("failed to queue CREATE_MATCH job", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
 			// Update the original GREET_MEMBER message to remove the Opt-In button
 			if err := bot.RespondGreetMemberWebhook(r.Context(), s.GetHTTPClient(), &interaction); err != nil {
 				span.RecordError(err)
@@ -367,7 +386,7 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 				// handle CHECK_PAIR buttons
 				if err := bot.HandleCheckPairButtons(r.Context(), s.GetHTTPClient(), s.GetDB(), &interaction); err != nil {
 					span.RecordError(err)
-					logger.Error("something went wrong", "error", err)
+					logger.Error("failed to handle check pair button", "error", err)
 					w.WriteHeader(http.StatusInternalServerError)
 					return
 				}

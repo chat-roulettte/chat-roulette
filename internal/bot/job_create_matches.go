@@ -110,8 +110,8 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 
 		if err := QueueCreatePairJob(dbCtx, db, params); err != nil {
 			message := "failed to add CREATE_PAIR job to the queue"
-			logger.Error(message, "error", result.Error)
-			return errors.Wrap(result.Error, message)
+			logger.Error(message, "error", err)
+			return errors.Wrap(err, message)
 		}
 
 		logger.Info("queued CREATE_PAIR job for this match", "match_id", newMatch.ID)

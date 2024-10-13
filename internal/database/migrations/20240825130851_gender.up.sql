@@ -42,10 +42,10 @@ BEGIN
         SELECT user_id INTO v_partner
         FROM members
         WHERE channel_id = p_channel_id
-        AND is_active
-        AND gender = v_user.gender
-        AND user_id != v_user.user_id
-        AND user_id != ALL(v_matched_users)
+            AND is_active
+            AND gender = v_user.gender
+            AND user_id != v_user.user_id
+            AND user_id != ALL(v_matched_users)
         ORDER BY has_gender_preference DESC
         LIMIT 1;
 
@@ -72,9 +72,9 @@ BEGIN
         SELECT user_id INTO v_partner
         FROM members
         WHERE channel_id = p_channel_id
-        AND is_active
-        AND user_id != v_user.user_id
-        AND user_id != ALL(v_matched_users)
+            AND is_active
+            AND user_id != v_user.user_id
+            AND user_id != ALL(v_matched_users)
         LIMIT 1;
 
         IF v_partner IS NOT NULL THEN
