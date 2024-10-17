@@ -231,9 +231,9 @@ func UpsertMemberLocationInfo(ctx context.Context, db *gorm.DB, interaction *sla
 	defer span.End()
 
 	// Extract the ChannelID from the private_metadata field
-	var pm privateMetadata
-	if err := pm.Decode(interaction.View.PrivateMetadata); err != nil {
-		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
+	channelID, err := ExtractChannelIDFromPrivateMetada(interaction)
+	if err != nil {
+		return errors.Wrap(err, "failed to extract channelID from privateMetadata")
 	}
 
 	// Extract the values from the view state
@@ -250,7 +250,7 @@ func UpsertMemberLocationInfo(ctx context.Context, db *gorm.DB, interaction *sla
 	// scheduling a background job will ensure it is reliably executed.
 	p := &UpdateMemberParams{
 		UserID:    interaction.User.ID,
-		ChannelID: pm.ChannelID,
+		ChannelID: channelID,
 		Country:   sqlcrypter.NewEncryptedBytes(country),
 		City:      sqlcrypter.NewEncryptedBytes(city),
 	}
@@ -307,9 +307,9 @@ func UpsertMemberTimezoneInfo(ctx context.Context, db *gorm.DB, interaction *sla
 	defer span.End()
 
 	// Extract the ChannelID from the private_metadata field
-	var pm privateMetadata
-	if err := pm.Decode(interaction.View.PrivateMetadata); err != nil {
-		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
+	channelID, err := ExtractChannelIDFromPrivateMetada(interaction)
+	if err != nil {
+		return errors.Wrap(err, "failed to extract channelID from privateMetadata")
 	}
 
 	// Extract the timezone from the view state
@@ -320,7 +320,7 @@ func UpsertMemberTimezoneInfo(ctx context.Context, db *gorm.DB, interaction *sla
 	// scheduling a background job will ensure it is reliably executed.
 	p := &UpdateMemberParams{
 		UserID:    interaction.User.ID,
-		ChannelID: pm.ChannelID,
+		ChannelID: channelID,
 		Timezone:  sqlcrypter.NewEncryptedBytes(timezone),
 	}
 
@@ -369,9 +369,9 @@ func UpsertMemberGenderInfo(ctx context.Context, db *gorm.DB, interaction *slack
 	defer span.End()
 
 	// Extract the ChannelID from the private_metadata field
-	var pm privateMetadata
-	if err := pm.Decode(interaction.View.PrivateMetadata); err != nil {
-		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
+	channelID, err := ExtractChannelIDFromPrivateMetada(interaction)
+	if err != nil {
+		return errors.Wrap(err, "failed to extract channelID from privateMetadata")
 	}
 
 	// Extract the values from the view state
@@ -387,7 +387,7 @@ func UpsertMemberGenderInfo(ctx context.Context, db *gorm.DB, interaction *slack
 	// scheduling a background job will ensure it is reliably executed.
 	p := &UpdateMemberParams{
 		UserID:              interaction.User.ID,
-		ChannelID:           pm.ChannelID,
+		ChannelID:           channelID,
 		Gender:              gender,
 		HasGenderPreference: &hasGenderPreference,
 	}
@@ -464,9 +464,9 @@ func UpsertMemberProfileInfo(ctx context.Context, db *gorm.DB, interaction *slac
 	defer span.End()
 
 	// Extract the ChannelID from the private_metadata field
-	var pm privateMetadata
-	if err := pm.Decode(interaction.View.PrivateMetadata); err != nil {
-		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
+	channelID, err := ExtractChannelIDFromPrivateMetada(interaction)
+	if err != nil {
+		return errors.Wrap(err, "failed to extract channelID from privateMetadata")
 	}
 
 	// Extract the values from the view state
@@ -483,7 +483,7 @@ func UpsertMemberProfileInfo(ctx context.Context, db *gorm.DB, interaction *slac
 	// scheduling a background job will ensure it is reliably executed.
 	p := &UpdateMemberParams{
 		UserID:      interaction.User.ID,
-		ChannelID:   pm.ChannelID,
+		ChannelID:   channelID,
 		ProfileType: sqlcrypter.NewEncryptedBytes(profileType),
 		ProfileLink: sqlcrypter.NewEncryptedBytes(profileLink),
 	}
@@ -504,9 +504,9 @@ func SetMemberIsActive(ctx context.Context, db *gorm.DB, interaction *slack.Inte
 	defer span.End()
 
 	// Extract the ChannelID from the private_metadata field
-	var pm privateMetadata
-	if err := pm.Decode(interaction.View.PrivateMetadata); err != nil {
-		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
+	channelID, err := ExtractChannelIDFromPrivateMetada(interaction)
+	if err != nil {
+		return errors.Wrap(err, "failed to extract channelID from privateMetadata")
 	}
 
 	// Schedule an UPDATE_MEMBER job to update the member's location.
@@ -516,7 +516,7 @@ func SetMemberIsActive(ctx context.Context, db *gorm.DB, interaction *slack.Inte
 
 	p := &UpdateMemberParams{
 		UserID:    interaction.User.ID,
-		ChannelID: pm.ChannelID,
+		ChannelID: channelID,
 		IsActive:  &isActive,
 	}
 
@@ -585,9 +585,9 @@ func UpsertMemberCalendlyLink(ctx context.Context, db *gorm.DB, interaction *sla
 	defer span.End()
 
 	// Extract the ChannelID from the private_metadata field
-	var pm privateMetadata
-	if err := pm.Decode(interaction.View.PrivateMetadata); err != nil {
-		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
+	channelID, err := ExtractChannelIDFromPrivateMetada(interaction)
+	if err != nil {
+		return errors.Wrap(err, "failed to extract channelID from privateMetadata")
 	}
 
 	// Extract the Calendly link from the view state
@@ -598,7 +598,7 @@ func UpsertMemberCalendlyLink(ctx context.Context, db *gorm.DB, interaction *sla
 	// scheduling a background job will ensure it is reliably executed.
 	p := &UpdateMemberParams{
 		UserID:       interaction.User.ID,
-		ChannelID:    pm.ChannelID,
+		ChannelID:    channelID,
 		CalendlyLink: sqlcrypter.NewEncryptedBytes(calendlyLink),
 	}
 

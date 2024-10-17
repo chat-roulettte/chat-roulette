@@ -39,7 +39,7 @@ func (p *privateMetadata) Decode(s string) error {
 func ExtractChannelIDFromPrivateMetada(interaction *slack.InteractionCallback) (string, error) {
 	var pm privateMetadata
 	if err := pm.Decode(interaction.View.PrivateMetadata); err != nil {
-		return "", errors.Wrap(err, "failed to decode base64 string to privateMetadata")
+		return "", errors.Wrap(err, "failed to extract channel ID from privateMetadata")
 	}
 
 	return pm.ChannelID, nil
