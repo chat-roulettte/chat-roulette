@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-CONTAINER_NAME="postgres"
+POSTGRES_CONTAINER_NAME="postgres"
 JAEGER_CONTAINER_NAME="jaeger"
 GRAFANA_CONTAINER_NAME="grafana"
 
@@ -17,7 +17,7 @@ then
 
     echo "[*] Detected already running containers. Terminating them..."
 
-    if [ "$(docker ps --filter "name=^${CONTAINER_NAME}$" --format '{{.Names}}')" == $CONTAINER_NAME ]
+    if [ "$(docker ps --filter "name=^${POSTGRES_CONTAINER_NAME}$" --format '{{.Names}}')" == $POSTGRES_CONTAINER_NAME ]
     then
         make -s db/stop
     fi
@@ -36,7 +36,7 @@ then
 
     echo -n "[*] Waiting for postgres to be ready..."
 
-    while ! (docker logs $CONTAINER_NAME 2>&1 | grep -Pzlq '(?s)init process complete.*\n.*ready to accept connections')
+    while ! (docker logs $POSTGRES_CONTAINER_NAME 2>&1 | grep -Pzlq '(?s)init process complete.*\n.*ready to accept connections')
     do
         echo -n "."
         sleep 1
