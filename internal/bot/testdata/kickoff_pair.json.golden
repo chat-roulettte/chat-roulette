@@ -1,0 +1,32 @@
+{
+	"blocks": [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Hey <@U9876543210> <@U0123456789> :wave:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "It seems both of you are shy :blush:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "<@U9876543210> you have been randomly selected to kick us off :smile:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Why don't you take the lead and introduce your self :speech_balloon:"
+			}
+		}
+	]
+}

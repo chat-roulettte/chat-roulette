@@ -177,6 +177,25 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 
 	logger.Info("updated was_notified for the match")
 
+	// Queue a KICKOFF_PAIR job for the middle of the round
+	kickoffPairParams := &KickoffPairParams{
+		ChannelID:   p.ChannelID,
+		MatchID:     p.MatchID,
+		Participant: p.Participant,
+		Partner:     p.Partner,
+	}
+
+	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
+	defer cancel()
+
+	if err := QueueKickoffPairJob(dbCtx, db, kickoffPairParams); err != nil {
+		message := "failed to add KICKOFF_PAIR job to the queue"
+		logger.Error(message, "error", err)
+		return errors.Wrap(err, message)
+	}
+
+	logger.Info("queued KICKOFF_PAIR job for this match to run after 24 hours")
+
 	// Queue a CHECK_PAIR job for the middle of the round
 	params := &CheckPairParams{
 		ChannelID:   p.ChannelID,
