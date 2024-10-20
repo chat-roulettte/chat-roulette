@@ -41,7 +41,7 @@ func Test_IsUserABot(t *testing.T) {
 
 		client := slack.New("xoxb-test-token-here", slack.OptionAPIURL(slackServer.GetAPIURL()))
 
-		boolean, err := IsUserABot(context.Background(), client, "W012A3CDE")
+		boolean, err := isUserASlackBot(context.Background(), client, "W012A3CDE")
 		assert.Nil(t, err)
 		assert.False(t, boolean)
 	})
@@ -49,7 +49,7 @@ func Test_IsUserABot(t *testing.T) {
 	t.Run("failure", func(t *testing.T) {
 		client := slack.New("xoxb-invalid-slack-authtoken")
 
-		_, err := IsUserABot(context.Background(), client, "W012A3CDE")
+		_, err := isUserASlackBot(context.Background(), client, "W012A3CDE")
 		assert.NotNil(t, err)
 	})
 }

@@ -26,7 +26,7 @@ func SyncMembers(ctx context.Context, db *gorm.DB, client *slack.Client, p *Sync
 		attributes.SlackChannelID, p.ChannelID,
 	)
 
-	logger.Info("syncing Slack members")
+	logger.Info("syncing members of Slack channel with database")
 
 	// Get the list of channel members from Slack
 	slackMembers, err := getChannelMembers(ctx, client, p.ChannelID, 100)
@@ -57,12 +57,33 @@ func SyncMembers(ctx context.Context, db *gorm.DB, client *slack.Client, p *Sync
 
 	logger.Debug("retrieved the list of members from the database", "members_count", len(dbMembers))
 
+	// Retrieve the userID of the chat-roulette bot
+	logger.Debug("retrieving the user ID of the Slack bot")
+
+	slackCtx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	defer cancel()
+
+	botUserID, err := GetBotUserID(slackCtx, client)
+	if err != nil {
+		message := "failed to retrieve the user ID of the chat-roulette Slack bot"
+		logger.Error(message, "error", err)
+		return errors.Wrap(err, message)
+	}
+
+	logger.Debug("retrieved the user ID of the chat-roulette Slack bot")
+
 	// Reconcile between the two lists
 	members := reconcileMembers(ctx, slackMembers, dbMembers)
 
 	for _, member := range members {
 		switch {
 		case member.Create:
+			if member.UserID == botUserID {
+				// Skip as chat-roulette bot cannot participate in chat-roulette
+				logger.Debug("skipping chat-roulette bot user")
+				continue
+			}
+
 			// Queue an ADD_MEMBER job for the new member of the Slack channel.
 			p := &AddMemberParams{
 				ChannelID: p.ChannelID,

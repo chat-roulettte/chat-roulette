@@ -93,12 +93,16 @@ func New(ctx context.Context, logger hclog.Logger, c *config.Config) (*Server, e
 	slackClient, httpClient := slackclient.New(logger, c.Bot.AuthToken)
 
 	// Retrieve the user_id of the chat-roulette Slack bot
-	logger.Debug("retrieving the user ID of the Slack bot")
-	slackBotUserID, err := bot.GetBotUserID(ctx, slackClient)
+	logger.Debug("retrieving the user ID of the chat-roulette Slack bot")
+
+	slackCtx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	defer cancel()
+
+	slackBotUserID, err := bot.GetBotUserID(slackCtx, slackClient)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to retrieve the user ID of the Slack bot")
+		return nil, errors.Wrap(err, "failed to retrieve the user ID of the chat-roulette Slack bot")
 	}
-	logger.Debug("retrieved the user_id of the Slack bot", "slack_bot_user_id", slackBotUserID)
+	logger.Debug("retrieved the user ID of the chat-roulette Slack bot", "slack_bot_user_id", slackBotUserID)
 	span.SetAttributes(
 		attribute.String("slack_bot_user_id", slackBotUserID),
 	)

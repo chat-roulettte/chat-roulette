@@ -45,12 +45,14 @@ func (s *SyncMembersSuite) Test_SyncMembers() {
 
 	addMember := "U5555555555"    // this user will be created
 	deleteMember := "U9999999999" // this user will be deleted
+	botUser := "W012A3CDE"        // this bot user will be skipped
 
 	slackMembers := []string{
 		"U0123456789",
 		"U9876543210",
 		"U1111111111",
 		addMember,
+		botUser,
 	}
 
 	// Mock Slack API call
@@ -106,6 +108,7 @@ func (s *SyncMembersSuite) Test_SyncMembers() {
 
 	err := SyncMembers(s.ctx, s.db, client, p)
 	r.NoError(err)
+	r.Contains(s.buffer.String(), "skipping chat-roulette bot user")
 }
 
 func (s *SyncMembersSuite) Test_SyncMembersJob() {

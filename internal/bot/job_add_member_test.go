@@ -94,7 +94,7 @@ func (s *AddMemberSuite) Test_AddMember() {
 	err := AddMember(s.ctx, s.db, client, p)
 	r.NoError(err)
 	r.Contains(s.buffer.String(), "added Slack user to the database")
-	r.Contains(s.buffer.String(), "queued GREET_MEMBER job for this match")
+	r.Contains(s.buffer.String(), "queued GREET_MEMBER job for this user")
 }
 
 func (s *AddMemberSuite) Test_QueueAddMemberJob() {

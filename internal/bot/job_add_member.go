@@ -28,16 +28,14 @@ func AddMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *AddMem
 		attributes.SlackUserID, p.UserID,
 	)
 
-	// Skip bot users as they should not participate in chat-roulette
-	isBot, err := IsUserABot(ctx, client, p.UserID)
-	if err != nil {
-		message := "failed to check if Slack user is a bot"
+	// Skip bot users as they cannot participate in chat-roulette
+	// This checks for all bot users in the channel and not only the chat-roulette bot
+	if isBot, err := isUserASlackBot(ctx, client, p.UserID); err != nil {
+		message := "failed to check if this Slack user is a bot"
 		logger.Error(message, "error", err)
 		return errors.Wrap(err, message)
-	}
-
-	if isBot {
-		logger.Debug("skipping because Slack user is a bot")
+	} else if isBot {
+		logger.Debug("skipping because this Slack user is a bot")
 		return nil
 	}
 
@@ -90,7 +88,7 @@ func AddMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *AddMem
 			return errors.Wrap(result.Error, message)
 		}
 
-		logger.Info("queued GREET_MEMBER job for this match")
+		logger.Info("queued GREET_MEMBER job for this user")
 	}
 
 	return nil

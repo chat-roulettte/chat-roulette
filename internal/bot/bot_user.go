@@ -18,9 +18,8 @@ func GetBotUserID(ctx context.Context, client *slack.Client) (string, error) {
 	return resp.UserID, nil
 }
 
-// IsUserABot uses Slack's users.info API method
-// to check if the given user is actually a bot.
-func IsUserABot(ctx context.Context, client *slack.Client, userID string) (bool, error) {
+// isUserASlackBot uses Slack's users.info API method to check if the given user is actually a bot.
+func isUserASlackBot(ctx context.Context, client *slack.Client, userID string) (bool, error) {
 	resp, err := client.GetUserInfoContext(ctx, userID)
 	if err != nil {
 		return false, err
