@@ -128,6 +128,24 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 		attribute.Int("unpaired", unpaired),
 	)
 
+	// Queue a REPORT_MATCHES job
+	params := &ReportMatchesParams{
+		ChannelID:    p.ChannelID,
+		RoundID:      p.RoundID,
+		Participants: participantsCount,
+		Pairs:        pairsCount,
+		Unpaired:     unpaired,
+	}
+
+	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
+	defer cancel()
+
+	if err := QueueReportMatchesJob(dbCtx, db, params); err != nil {
+		message := "failed to add REPORT_MATCHES job to the queue"
+		logger.Error(message, "error", err)
+		return errors.Wrap(err, message)
+	}
+
 	return nil
 }
 

@@ -228,7 +228,6 @@ func UpsertChannelSettings(ctx context.Context, db *gorm.DB, interaction *slack.
 		Weekday:        firstRound.Weekday().String(),
 		Hour:           firstRound.Hour(),
 		NextRound:      firstRound,
-		// BotUserID:      "", // TODO
 	}
 
 	if err := QueueAddChannelJob(ctx, db, p); err != nil {

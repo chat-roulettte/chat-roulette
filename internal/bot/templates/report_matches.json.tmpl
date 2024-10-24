@@ -1,0 +1,106 @@
+{{- $participantsKeyword := "participants" }}
+{{- if eq .Participants 1 }}
+    {{- $participantsKeyword = "participant" }}
+{{- end }}
+{{- $sameGenderKeyword := "participants" }}
+{{- if eq .HasGenderPreference 1 }}
+    {{- $sameGenderKeyword = "participant" }}
+{{- end }}
+{{- $unpairedKeyword := "participants" }}
+{{- if eq .Unpaired 1 }}
+    {{- $unpairedKeyword = "participant" }}
+{{- end }}
+{{- $unpairedEmoji := ":grin:" }}
+{{- if gt .Unpaired 0 }}
+    {{- $unpairedEmoji = ":cry:" }}
+{{- end }}
+{{- $matchesEmoji := ":raised_hands:" }}
+{{- if eq .Pairs 0 }}
+    {{- $matchesEmoji = ":sob:" }}
+{{- end }}
+{{- $matchPhrase := "matches were" }}
+{{- if eq .Pairs 1 }}
+    {{- $matchPhrase = "match was" }}
+{{- end -}}
+{
+	"blocks": [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Hi {{ if .IsAdmin }}<@{{ .UserID }}>{{ else }}all{{ end }} :wave:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "A new round of Chat Roulette has just kicked off{{ if .IsAdmin }} in <#{{ .ChannelID }}>{{ end }} :rocket:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "This round will run until *{{ .NextRound | prettyDate }}*!"
+			}
+		},
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": ":bar_chart: Match Stats",
+				"emoji": true
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "This round has *{{ .Participants }}* {{ $participantsKeyword }} :tada:"
+			}
+		},
+{{- if .IsAdmin }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*{{ .Men }}* were :male_sign: and *{{ .Women }}* were :female_sign:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*{{ .HasGenderPreference }}* {{ $sameGenderKeyword }} preferred to be matched with the same gender :blush:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*{{ .Unpaired }}* {{ $unpairedKeyword }} did not get matched {{ $unpairedEmoji }}"
+			}
+		},
+{{- end }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*{{ .Pairs }}* matches were made {{ $matchesEmoji }}"
+			}
+		}
+{{- if and ( gt .Pairs 0 ) ( not .IsAdmin ) }}
+		,{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Have fun connecting!"
+			}
+		}
+{{- end }}
+	]
+}
