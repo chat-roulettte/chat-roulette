@@ -72,6 +72,9 @@ const (
 	// JobTypeCreateMatches is the job for creating matches for a round of chat roulette
 	JobTypeCreateMatches
 
+	// JobTypeReportMatch is the job for reporting matches for a round of chat roulette
+	JobTypeReportMatches
+
 	// JobTypeCreateMatch is the job for creating a single match for a round of chat roulette
 	JobTypeCreateMatch
 
@@ -111,6 +114,7 @@ var jobTypes = map[string]jobTypeEnum{
 	"CREATE_ROUND":   JobTypeCreateRound,
 	"END_ROUND":      JobTypeEndRound,
 	"CREATE_MATCHES": JobTypeCreateMatches,
+	"REPORT_MATCHES": JobTypeReportMatches,
 	"CREATE_MATCH":   JobTypeCreateMatch,
 	"UPDATE_MATCH":   JobTypeUpdateMatch,
 	"CREATE_PAIR":    JobTypeCreatePair,
@@ -149,6 +153,8 @@ func (j jobTypeEnum) String() string {
 		return "END_ROUND"
 	case JobTypeCreateMatches:
 		return "CREATE_MATCHES"
+	case JobTypeReportMatches:
+		return "REPORT_MATCHES"
 	case JobTypeCreateMatch:
 		return "CREATE_MATCH"
 	case JobTypeUpdateMatch:

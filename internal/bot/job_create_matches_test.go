@@ -114,6 +114,11 @@ func (s *CreateMatchesSuite) Test_CreateMatches() {
 	result = db.Model(&models.Job{}).Where("job_type = ?", models.JobTypeNotifyMember).Count(&count)
 	r.NoError(result.Error)
 	r.Equal(int64(1), count)
+
+	// Verify REPORT_MATCHES job was queued
+	result = db.Model(&models.Job{}).Where("job_type = ?", models.JobTypeReportMatches).Count(&count)
+	r.NoError(result.Error)
+	r.Equal(int64(1), count)
 }
 
 func (s *CreateMatchesSuite) Test_CreateMatches_SameGenderTwoParticipants() {
