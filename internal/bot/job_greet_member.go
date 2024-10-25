@@ -624,17 +624,25 @@ func RespondGreetMemberWebhook(ctx context.Context, client *http.Client, interac
 		return errors.Wrap(err, "failed to decode base64 string to privateMetadata")
 	}
 
+	// Modify and append to the existing message
 	confirmationText := `*Thank you for choosing to participate in Chat Roulette!*`
+	sectionBlock := slack.NewSectionBlock(
+		slack.NewTextBlockObject("mrkdwn", confirmationText, false, false),
+		nil,
+		nil,
+	)
 
-	text := slack.NewTextBlockObject("mrkdwn", confirmationText, false, false)
-	section := slack.NewSectionBlock(text, nil, nil)
+	deepLink := generateAppHomeDeepLink(interaction.Team.ID, interaction.APIAppID)
+
+	visitAppHomeText := fmt.Sprintf(":pushpin:  You can always visit me in <%s|App Home>", deepLink)
+
+	element := slack.NewTextBlockObject("mrkdwn", visitAppHomeText, false, false)
+	contextBlock := slack.NewContextBlock("AppHome", element)
 
 	var message slack.Message
 	message.Msg.Blocks = pm.Blocks
 
-	message = transformMessage(message, 6, section)
-
-	slack.AddBlockMessage(message, section)
+	message = transformMessage(message, 6, sectionBlock, contextBlock)
 
 	webhookMessage := &slack.WebhookMessage{
 		Blocks:          &message.Blocks,

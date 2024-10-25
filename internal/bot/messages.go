@@ -2,16 +2,20 @@ package bot
 
 import "github.com/slack-go/slack"
 
-// transformMessage transforms a slack.Message by preserving
-// the first N blocks and appending a new block.
-func transformMessage(message slack.Message, count int, block slack.Block) slack.Message {
-	var newMessage slack.Message
+// transformMessage transforms a slack.Message by preserving the first N blocks and appending new blocks.
+func transformMessage(message slack.Message, n int, blocks ...slack.Block) slack.Message {
+	preserved := min(n, len(message.Blocks.BlockSet))
 
-	for i := 0; i < count; i++ {
-		b := message.Blocks.BlockSet[i]
-
-		newMessage.Blocks.BlockSet = append(newMessage.Blocks.BlockSet, b)
+	msg := slack.Message{
+		Msg: slack.Msg{
+			Blocks: slack.Blocks{
+				BlockSet: make([]slack.Block, 0, preserved+len(blocks)),
+			},
+		},
 	}
 
-	return slack.AddBlockMessage(newMessage, block)
+	msg.Blocks.BlockSet = append(msg.Blocks.BlockSet, message.Blocks.BlockSet[:preserved]...)
+	msg.Blocks.BlockSet = append(msg.Blocks.BlockSet, blocks...)
+
+	return msg
 }
