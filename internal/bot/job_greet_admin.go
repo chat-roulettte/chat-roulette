@@ -3,6 +3,7 @@ package bot
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"path"
@@ -257,10 +258,17 @@ func RespondGreetAdminWebhook(ctx context.Context, client *http.Client, interact
 	text := slack.NewTextBlockObject("mrkdwn", confirmationText, false, false)
 	section := slack.NewSectionBlock(text, nil, nil)
 
+	deepLink := generateAppHomeDeepLink(interaction.Team.ID, interaction.APIAppID)
+
+	visitAppHomeText := fmt.Sprintf(":pushpin:  You can always visit me in <%s|App Home>", deepLink)
+
+	element := slack.NewTextBlockObject("mrkdwn", visitAppHomeText, false, false)
+	contextBlock := slack.NewContextBlock("AppHome", element)
+
 	var message slack.Message
 	message.Msg.Blocks = pm.Blocks
 
-	message = transformMessage(message, 5, section)
+	message = transformMessage(message, 5, section, contextBlock)
 
 	slack.AddBlockMessage(message, section)
 

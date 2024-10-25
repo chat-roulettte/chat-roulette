@@ -2,6 +2,7 @@ package bot
 
 import (
 	"context"
+	"net/url"
 
 	"github.com/pkg/errors"
 	"github.com/slack-go/slack"
@@ -44,4 +45,22 @@ func isBotAChannelMember(ctx context.Context, client *slack.Client, botUserID, c
 	}
 
 	return isMember, nil
+}
+
+// generateAppHomeDeepLink generates a deep link to the Chat Roulette app's App Home page
+func generateAppHomeDeepLink(teamID, appID string) string {
+	q := make(url.Values)
+
+	q.Set("tab", "home")
+	q.Set("team", teamID)
+	q.Set("id", appID)
+
+	u := url.URL{
+		Scheme:   "slack",
+		Host:     "app",
+		Path:     "",
+		RawQuery: q.Encode(),
+	}
+
+	return u.String()
 }

@@ -339,10 +339,15 @@ func Test_RespondGreetAdminWebhook(t *testing.T) {
 		var request *slack.WebhookMessage
 		err := json.NewDecoder(r.Body).Decode(&request)
 		assert.Nil(t, err)
-		assert.Len(t, request.Blocks.BlockSet, 6)
+		assert.Len(t, request.Blocks.BlockSet, 7)
 
 		sectionBlock := request.Blocks.BlockSet[5].(*slack.SectionBlock)
 		assert.Contains(t, sectionBlock.Text.Text, "Chat Roulette is now enabled!")
+
+		contextBlock := request.Blocks.BlockSet[6].(*slack.ContextBlock)
+		text := contextBlock.ContextElements.Elements[0].(*slack.TextBlockObject).Text
+		assert.Contains(t, text, "visit me in")
+		assert.Contains(t, text, "slack://app?id=A1234567890&tab=home&team=T1234567890")
 
 		w.Write([]byte(`{}`))
 	}))
@@ -368,6 +373,10 @@ func Test_RespondGreetAdminWebhook(t *testing.T) {
 	assert.Nil(t, err)
 
 	interaction := &slack.InteractionCallback{
+		APIAppID: "A1234567890",
+		Team: slack.Team{
+			ID: "T1234567890",
+		},
 		User: slack.User{
 			ID: userID,
 		},

@@ -125,3 +125,9 @@ func Test_isBotChannelMember(t *testing.T) {
 		assert.Contains(t, err.Error(), "failed to check if bot is a member of the Slack channel")
 	})
 }
+
+func Test_generateAppHomeDeepLink(t *testing.T) {
+	actual := generateAppHomeDeepLink("T1234567890", "A1234567890")
+	expected := "slack://app?id=A1234567890&tab=home&team=T1234567890"
+	assert.Equal(t, expected, actual)
+}
