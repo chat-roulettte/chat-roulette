@@ -133,7 +133,7 @@ func (s *CreateRoundSuite) Test_CreateRound() {
 		s.mock,
 		reportStatsParams,
 		models.JobTypeReportStats.String(),
-		models.JobPriorityStandard,
+		models.JobPriorityLow,
 	)
 
 	// Mock query to queue CREATE_ROUND job

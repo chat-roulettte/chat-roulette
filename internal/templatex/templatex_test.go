@@ -72,6 +72,24 @@ func Test_PrettyURL(t *testing.T) {
 	}
 }
 
+func Test_PrettyPercent(t *testing.T) {
+	testCases := []struct {
+		name     string
+		input    float64
+		expected string
+	}{
+		{"no decimals", 100.0, "100%"},
+		{"decimals", 66.66666666, "66.67%"},
+		{"one third", 33.3333, "33.33%"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, PrettyPercent(tc.input))
+		})
+	}
+}
+
 func Test_DerefBool(t *testing.T) {
 	b := true
 

@@ -20,9 +20,14 @@ const (
 
 // reportStatsTemplate is used with reportStatsTemplateFilename
 type reportStatsTemplate struct {
-	Matches float64
+	Pairs   float64
 	Met     float64
 	Percent float64
+}
+
+type roundStats struct {
+	Total int
+	Met   int
 }
 
 // ReportStatsParams are the parameters for the REPORT_STATS job.
@@ -40,25 +45,20 @@ func ReportStats(ctx context.Context, db *gorm.DB, client *slack.Client, p *Repo
 		"round_id", p.RoundID,
 	)
 
-	// Retrieve the number of matches that were made and how many actually met
-	type Matches struct {
-		Total int64
-		Met   int64
-	}
-
-	var matches Matches
+	// Retrieve the number of pairs that were made and how many actually met
+	var stats roundStats
 
 	dbCtx, cancel := context.WithTimeout(ctx, 300*time.Millisecond)
 	defer cancel()
 
 	result := db.WithContext(dbCtx).
 		Model(&models.Match{}).
-		Select(
-			`COUNT(*) as total`,
-			`SUM(CASE WHEN has_met = true then 1 else 0 end) AS met`,
-		).
+		Select(`
+			COUNT(*) AS total,
+			COUNT(*) FILTER (WHERE has_met) AS met
+		`).
 		Where("round_id = ?", p.RoundID).
-		Find(&matches)
+		Find(&stats)
 
 	if result.Error != nil {
 		message := "failed to retrieve match results"
@@ -67,12 +67,12 @@ func ReportStats(ctx context.Context, db *gorm.DB, client *slack.Client, p *Repo
 	}
 
 	// Calculate matches percent
-	percent := (float64(matches.Met) / float64(matches.Total)) * 100
+	percent := (float64(stats.Met) / float64(stats.Total)) * 100
 
 	// Render template
 	t := reportStatsTemplate{
-		Matches: float64(matches.Total),
-		Met:     float64(matches.Met),
+		Pairs:   float64(stats.Total),
+		Met:     float64(stats.Met),
 		Percent: percent,
 	}
 
@@ -104,10 +104,9 @@ func ReportStats(ctx context.Context, db *gorm.DB, client *slack.Client, p *Repo
 func QueueReportStatsJob(ctx context.Context, db *gorm.DB, p *ReportStatsParams) error {
 	job := models.GenericJob[*ReportStatsParams]{
 		JobType:  models.JobTypeReportStats,
-		Priority: models.JobPriorityStandard,
+		Priority: models.JobPriorityLow,
 		Params:   p,
-		// This should execute before the start of the next chat-roulette round.
-		ExecAt: p.NextRound.Add(-(1 * time.Hour)),
+		ExecAt:   p.NextRound.Add(-(4 * time.Hour)), // 4 hours before the start of the next round
 	}
 
 	return QueueJob(ctx, db, job)

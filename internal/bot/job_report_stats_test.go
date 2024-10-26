@@ -71,7 +71,7 @@ func (s *ReportStatsSuite) Test_ReportStats() {
 			w.Write([]byte(`{"ok":false}`))
 		}
 
-		r.Len(blocks.BlockSet, 5)
+		r.Len(blocks.BlockSet, 9)
 
 		w.Write([]byte(`{
 			"ok": true,
@@ -102,13 +102,14 @@ func Test_reportStatsTemplate(t *testing.T) {
 
 	testCases := []struct {
 		name     string
-		matches  float64
+		pairs    float64
 		met      float64
 		percent  float64
 		contains []string
 	}{
 		{"all met", 10, 10, 100, []string{}},
 		{"half met", 10, 5, 50, []string{
+			"This round had *20* participants",
 			"*5* groups met",
 			"*50%* of the *10* intros made",
 		}},
@@ -117,12 +118,13 @@ func Test_reportStatsTemplate(t *testing.T) {
 			"*25%* of the *4* intros made",
 		}},
 		{"none met", 20, 0, 0, []string{
+			"This round had *40* participants",
 			"*0* groups met",
 			"*0%* of the *20* intros made",
 		}},
-		{"no matches", 0, 0, 0, []string{
-			"No matches were made in the last round of Chat Roulette! :cry:",
-			"To ensure matches can be made in the next round, participants must opt-in to Chat Roulette.",
+		{"no pairs", 0, 0, 0, []string{
+			"No intros were made in the last round :sob:",
+			"To ensure intros can be made in the next round, you must opt-in to Chat Roulette.",
 		}},
 	}
 
@@ -130,7 +132,7 @@ func Test_reportStatsTemplate(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 
 			p := reportStatsTemplate{
-				Matches: tc.matches,
+				Pairs:   tc.pairs,
 				Met:     tc.met,
 				Percent: tc.percent,
 			}
