@@ -19,7 +19,7 @@ type EndRoundParams struct {
 	NextRound time.Time `json:"next_round"`
 }
 
-// EndRound completes a running chat-roulette round for a Slack channel.
+// EndRound concludes a running chat-roulette round for a Slack channel.
 func EndRound(ctx context.Context, db *gorm.DB, client *slack.Client, p *EndRoundParams) error {
 
 	logger := hclog.FromContext(ctx).With(
@@ -28,7 +28,7 @@ func EndRound(ctx context.Context, db *gorm.DB, client *slack.Client, p *EndRoun
 
 	logger.Info("ending chat-roulette round if one is in progress")
 
-	// End the previous chat-roulette round for this Slack channel
+	// End the current chat-roulette round for this Slack channel
 	dbCtx, cancel := context.WithTimeout(ctx, 300*time.Millisecond)
 	defer cancel()
 
@@ -39,12 +39,12 @@ func EndRound(ctx context.Context, db *gorm.DB, client *slack.Client, p *EndRoun
 		Update("has_ended", true)
 
 	if result.Error != nil {
-		message := "failed to end chat-roulette round"
+		message := "failed to end current chat-roulette round"
 		logger.Error(message, "error", result.Error)
 		return errors.Wrap(result.Error, message)
 	}
 
-	logger.Info("ended the last chat-roulette round")
+	logger.Info("ended the current chat-roulette round")
 
 	return nil
 }
@@ -55,7 +55,7 @@ func QueueEndRoundJob(ctx context.Context, db *gorm.DB, p *EndRoundParams) error
 		JobType:  models.JobTypeEndRound,
 		Priority: models.JobPriorityStandard,
 		Params:   p,
-		ExecAt:   p.NextRound.Add(-(1 * time.Hour)),
+		ExecAt:   p.NextRound.Add(-(4 * time.Hour)), // 4 hours before the start of the next round
 	}
 
 	return QueueJob(ctx, db, job)

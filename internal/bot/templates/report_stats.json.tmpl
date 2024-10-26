@@ -1,29 +1,55 @@
+{{- $participants := mul .Pairs 2 }}
+{{- $groupsKeyword := "groups" }}
+{{- if eq .Met 1.0 }}
+    {{- $groupsKeyword = "group" }}
+{{- end -}}
 {
 	"blocks": [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Hi all :wave:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "The current round of Chat Roulette has now come to an end :smile:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "The next round will begin soon. But before that, let's review how we did!"
+			}
+		},
 		{
 			"type": "header",
 			"text": {
 				"type": "plain_text",
-				"text": ":bar_chart: Stats for Chat Roulette",
+				"text": ":bar_chart: Round Stats",
 				"emoji": true
 			}
 		},
 		{
 			"type": "divider"
 		},
-	{{- if (eq .Matches 0.0) }}
+	{{- if eq .Pairs 0.0 }}
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "No matches were made in the last round of Chat Roulette! :cry:"
+				"text": "No intros were made in the last round :sob:"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "To ensure matches can be made in the next round, participants must opt-in to Chat Roulette."
+				"text": "To ensure intros can be made in the next round, you must opt-in to Chat Roulette."
 			}
 		}
 	{{- else }}
@@ -31,17 +57,24 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*{{ .Met }}* group{{ if or (eq .Met 0.0) (gt .Met 1.0) }}s{{ end }} met from the last round of Chat Roulette!"
+				"text": "This round had *{{ $participants }}* participants :tada:"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "That's *{{ .Percent }}%* of the *{{ .Matches }}* intros made."
+				"text": "*{{ .Met }}* {{ $groupsKeyword }} met :partying_face:"
 			}
 		},
-		{{- if (eq .Percent 100.0) }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "That's *{{ .Percent | prettyPercent }}* of the *{{ .Pairs }}* intros made :confetti_ball:"
+			}
+		},
+		{{- if eq .Percent 100.0 }}
 		{
 			"type": "section",
 			"text": {

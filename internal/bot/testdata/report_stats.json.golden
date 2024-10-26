@@ -1,10 +1,31 @@
 {
 	"blocks": [
 		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Hi all :wave:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "The current round of Chat Roulette has now come to an end :smile:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "The next round will begin soon. But before that, let's review how we did!"
+			}
+		},
+		{
 			"type": "header",
 			"text": {
 				"type": "plain_text",
-				"text": ":bar_chart: Stats for Chat Roulette",
+				"text": ":bar_chart: Round Stats",
 				"emoji": true
 			}
 		},
@@ -15,14 +36,21 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*10* groups met from the last round of Chat Roulette!"
+				"text": "This round had *20* participants :tada:"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "That's *100%* of the *10* intros made."
+				"text": "*10* groups met :partying_face:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "That's *100%* of the *10* intros made :confetti_ball:"
 			}
 		},
 		{

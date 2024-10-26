@@ -56,7 +56,7 @@ func (s *EndRoundSuite) Test_EndRound() {
 
 	err := EndRound(s.ctx, s.db, nil, p)
 	r.NoError(err)
-	r.Contains(s.buffer.String(), "ended the last chat-roulette round")
+	r.Contains(s.buffer.String(), "ended the current chat-roulette round")
 }
 
 func (s *EndRoundSuite) Test_QueueEndRoundJob() {

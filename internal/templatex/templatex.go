@@ -50,6 +50,15 @@ func PrettyURL(s string) string {
 	return re.ReplaceAllString(s, "")
 }
 
+// PrettyPercent returns a pretty-formatted percent without trailing zeros
+func PrettyPercent(v float64) string {
+	if v == float64(int(v)) {
+		return fmt.Sprintf("%.0f%%", v)
+	}
+
+	return fmt.Sprintf("%.2f%%", v)
+}
+
 // DerefBool derefences a pointer to a boolean.
 func DerefBool(b *bool) bool {
 	return *b

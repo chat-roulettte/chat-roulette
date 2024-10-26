@@ -17,9 +17,10 @@ var (
 
 	// funcMap is a map of custom template functions
 	funcMap = template.FuncMap{
-		"capitalize": templatex.Capitalize,
-		"prettyDate": templatex.PrettierDate,
-		"prettyURL":  templatex.PrettyURL,
+		"capitalize":    templatex.Capitalize,
+		"prettyDate":    templatex.PrettierDate,
+		"prettyURL":     templatex.PrettyURL,
+		"prettyPercent": templatex.PrettyPercent,
 	}
 
 	templates = template.New("custom").Funcs(funcMap).Funcs(sprig.TxtFuncMap())
