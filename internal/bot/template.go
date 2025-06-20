@@ -5,7 +5,7 @@ import (
 	"embed"
 	"text/template"
 
-	"github.com/Masterminds/sprig/v3"
+	sprig "github.com/Masterminds/sprig/v3"
 
 	"github.com/chat-roulettte/chat-roulette/internal/templatex"
 )

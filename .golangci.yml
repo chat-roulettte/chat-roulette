@@ -1,30 +1,27 @@
+version: "2"
 run:
-  timeout: 5m
   tests: true
-
 linters:
-  disable-all: true
+  default: none
   enable:
-    - errcheck # checking for unchecked errors, these unchecked errors can be critical bugs in some cases
-    - govet # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
-    - ineffassign # detects when assignments to existing variables are not used
-    - staticcheck # is a go vet on steroids, applying a ton of static analysis checks (covers gosimple)
-    - unused # checks for unused constants, variables, functions and types
     - asciicheck # checks that your code does not contain non-ASCII identifiers
     - bidichk # checks for dangerous unicode character sequences
     - bodyclose # checks whether HTTP response body is closed successfully
     - durationcheck # checks for two durations multiplied together
+    - errcheck # checking for unchecked errors, these unchecked errors can be critical bugs in some cases
     - errname # checks that sentinel errors are prefixed with the Err and error types are suffixed with the Error
     - errorlint # finds code that will cause problems with the error wrapping scheme introduced in Go 1.13
     - forbidigo # forbids identifiers
     - gocritic # provides diagnostics that check for bugs, performance and style issues
-    - goimports # in addition to fixing imports, goimports also formats your code in the same style as gofmt
     - gomoddirectives # manages the use of 'replace', 'retract', and 'excludes' directives in go.mod
     - gomodguard # allow and block lists linter for direct Go module dependencies. This is different from depguard where there are different block types for example version constraints and module recommendations
     - goprintffuncname # checks that printf-like functions are named with f at the end
     - gosec # inspects source code for security problems
+    - govet # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
+    - ineffassign # detects when assignments to existing variables are not used
     - loggercheck # checks key value pairs for common logger libraries (kitlog,klog,logr,zap)
     - makezero # finds slice declarations with non-zero initial length
+    - misspell # finds commonly misspelled English words
     - nakedret # finds naked returns in functions greater than a specified function length
     - nestif # reports deeply nested if statements
     - nilerr # finds the code that returns nil even if it checks that the error is not nil
@@ -35,39 +32,55 @@ linters:
     - predeclared # finds code that shadows one of Go's predeclared identifiers
     - promlinter # checks Prometheus metrics naming via promlint
     - reassign # checks that package variables are not reassigned
-    - stylecheck # is a replacement for golint
+    - staticcheck # is a go vet on steroids, applying a ton of static analysis checks (covers gosimple)
     - testableexamples # checks if examples are testable (have an expected output)
     - tparallel # detects inappropriate usage of t.Parallel() method in your Go test codes
     - unconvert # removes unnecessary type conversions
     - unparam # reports unused function parameters
-    - usestdlibvars # detects the possibility to use variables/constants from the Go standard library
     - unused # checks for unused constants, variables, functions and types
-    - misspell # finds commonly misspelled English words
+    - unused # checks for unused constants, variables, functions and types
+    - usestdlibvars # detects the possibility to use variables/constants from the Go standard library
     # - dupl # detects duplicate code fragments
-
-output:
-  sort-results: true
-
-linters-settings:
-  misspell:
-    locale: US
-  goimports:
-    local-prefixes: github.com/chat-roulettte/chat-roulette
-  errcheck:
-    check-type-assertions: true
-    exclude-functions:
-      - (net/http.ResponseWriter).Write
-      - (*github.com/unrolled/render.Render).HTML
-  nestif:
-    min-complexity: 10
-
-issues:
-  exclude:
-    - ifElseChain
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - bodyclose
-        - errcheck
-        - noctx
-        - dupl
+  settings:
+    errcheck:
+      check-type-assertions: true
+      exclude-functions:
+        - (net/http.ResponseWriter).Write
+        - (*github.com/unrolled/render.Render).HTML
+    misspell:
+      locale: US
+    nestif:
+      min-complexity: 10
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - bodyclose
+          - dupl
+          - errcheck
+          - noctx
+        path: _test\.go
+      - path: (.+)\.go$
+        text: ifElseChain
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/chat-roulettte/chat-roulette
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

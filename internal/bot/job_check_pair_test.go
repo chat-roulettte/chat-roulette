@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/hashicorp/go-hclog"
-	"github.com/sebdah/goldie/v2"
+	sqlmock "github.com/DATA-DOG/go-sqlmock"
+	hclog "github.com/hashicorp/go-hclog"
+	goldie "github.com/sebdah/goldie/v2"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slacktest"
 	"github.com/stretchr/testify/assert"

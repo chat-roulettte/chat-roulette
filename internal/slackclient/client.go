@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/hashicorp/go-hclog"
-	"github.com/hashicorp/go-retryablehttp"
+	hclog "github.com/hashicorp/go-hclog"
+	retryablehttp "github.com/hashicorp/go-retryablehttp"
 	"github.com/slack-go/slack"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
@@ -23,7 +23,7 @@ func New(logger hclog.Logger, token string) (*slack.Client, *http.Client) {
 	httpClient := retryableHTTPClient.StandardClient()
 	httpClient.Transport = otelhttp.NewTransport(httpClient.Transport)
 
-	slackClient := slack.New(token, slack.OptionHTTPClient(httpClient)) // do we need to configure logger to devnull?
+	slackClient := slack.New(token, slack.OptionHTTPClient(httpClient))
 
 	return slackClient, httpClient
 }

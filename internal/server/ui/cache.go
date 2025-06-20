@@ -2,6 +2,7 @@ package ui
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/dgraph-io/ristretto"
@@ -13,12 +14,20 @@ const (
 	CacheKeySlackTeamInfo = "SLACK_TEAM_INFO"
 )
 
+var (
+	ErrCacheValueNotExpectedType = fmt.Errorf("cache value is not expected type")
+)
+
 // lookupSlackWorkspace looks up info on the Slack workspace.
 // It tries the cache first, before hitting the Slack API.
 func lookupSlackWorkspace(ctx context.Context, cache *ristretto.Cache, client *slack.Client) (*slack.TeamInfo, error) {
 	v, ok := cache.Get(CacheKeySlackTeamInfo)
 	if ok {
-		return v.(*slack.TeamInfo), nil
+		t, ok := v.(*slack.TeamInfo)
+		if !ok {
+			return nil, ErrCacheValueNotExpectedType
+		}
+		return t, nil
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, 2000*time.Millisecond)
@@ -38,10 +47,13 @@ func lookupSlackWorkspace(ctx context.Context, cache *ristretto.Cache, client *s
 // lookupSlackChannel looks up info on a Slack channel.
 // It tries the cache first, before hitting the Slack API.
 func lookupSlackChannel(ctx context.Context, cache *ristretto.Cache, client *slack.Client, channelID string) (*slack.Channel, error) {
-
 	v, ok := cache.Get(channelID)
 	if ok {
-		return v.(*slack.Channel), nil
+		c, ok := v.(*slack.Channel)
+		if !ok {
+			return nil, ErrCacheValueNotExpectedType
+		}
+		return c, nil
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, 2000*time.Millisecond)
@@ -66,10 +78,13 @@ func lookupSlackChannel(ctx context.Context, cache *ristretto.Cache, client *sla
 // lookupSlackUser looks up info on a Slack user.
 // It tries the cache first, before hitting the Slack API.
 func lookupSlackUser(ctx context.Context, cache *ristretto.Cache, client *slack.Client, userID string) (*slack.User, error) {
-
 	v, ok := cache.Get(userID)
 	if ok {
-		return v.(*slack.User), nil
+		u, ok := v.(*slack.User)
+		if !ok {
+			return nil, ErrCacheValueNotExpectedType
+		}
+		return u, nil
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, 2000*time.Millisecond)

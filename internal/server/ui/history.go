@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bincyber/go-sqlcrypter"
+	sqlcrypter "github.com/bincyber/go-sqlcrypter"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
 	"go.opentelemetry.io/otel/trace"

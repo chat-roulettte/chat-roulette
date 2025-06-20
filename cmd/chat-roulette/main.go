@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/akamensky/argparse"
-	"github.com/bincyber/go-sqlcrypter"
+	sqlcrypter "github.com/bincyber/go-sqlcrypter"
 	"github.com/bincyber/go-sqlcrypter/providers/aesgcm"
 	"go.opentelemetry.io/otel"
 

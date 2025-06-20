@@ -67,7 +67,7 @@ func getChannels(ctx context.Context, client *slack.Client, botUserID string) ([
 	var slackChannels []chatRouletteChannel
 	for _, i := range resp {
 		channel := chatRouletteChannel{
-			ChannelID: i.Conversation.ID,
+			ChannelID: i.ID,
 			Inviter:   i.Creator,
 		}
 		slackChannels = append(slackChannels, channel)

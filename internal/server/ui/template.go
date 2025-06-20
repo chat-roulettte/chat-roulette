@@ -4,7 +4,7 @@ import (
 	"embed"
 	"html/template"
 
-	"github.com/Masterminds/sprig/v3"
+	sprig "github.com/Masterminds/sprig/v3"
 	"github.com/unrolled/render"
 
 	"github.com/chat-roulettte/chat-roulette/internal/templatex"

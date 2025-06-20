@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
+	sqlmock "github.com/DATA-DOG/go-sqlmock"
 	"github.com/hashicorp/go-hclog"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"

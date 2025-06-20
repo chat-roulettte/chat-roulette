@@ -76,15 +76,17 @@ func generateStopPrefix(prefix string) string {
 	return prefix[:len(prefix)-1] + string(nextChar)
 }
 
-// nextLetter returns the letter in the English alphabetic
+// nextLetter returns the letter in the English alphabet
 // that comes after the provided letter c.
 func nextLetter(c byte) byte {
-	if c == 'z' {
+	switch c {
+	case 'z':
 		return 'a'
-	} else if c == 'Z' {
+	case 'Z':
 		return 'A'
+	default:
+		return c + 1
 	}
-	return c + 1
 }
 
 // GetAbbreviatedTimezone returns the abbreviated

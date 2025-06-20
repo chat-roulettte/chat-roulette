@@ -188,7 +188,7 @@ func MarkInactive(ctx context.Context, db *gorm.DB, client *slack.Client, p *Mar
 
 		if _, _, err = client.PostMessageContext(
 			slackCtx,
-			response.Conversation.ID,
+			response.ID,
 			slack.MsgOptionBlocks(view.Blocks.BlockSet...),
 		); err != nil {
 			message := "failed to send Slack direct message to user"
