@@ -109,12 +109,14 @@ func (s *implServer) slackOptionsHandler(w http.ResponseWriter, r *http.Request)
 			parts := strings.Split(v.Name, ",")
 			countryName := parts[0]
 
+			emoji := true
+
 			response.Options = append(response.Options, &slack.OptionBlockObject{
 				Value: countryName,
 				Text: &slack.TextBlockObject{
 					Type:  slack.PlainTextType,
 					Text:  fmt.Sprintf(":flag-%s: %s", v.Code, countryName),
-					Emoji: true,
+					Emoji: &emoji,
 				},
 			})
 		}

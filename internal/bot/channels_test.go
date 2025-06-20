@@ -82,7 +82,7 @@ func Test_getChannels(t *testing.T) {
 		channels, err := getChannels(context.Background(), client, "U023BECGF")
 		assert.Nil(t, channels)
 		assert.NotNil(t, err)
-		assert.Contains(t, "internal_error", err.Error())
+		assert.Contains(t, "invalid_auth", err.Error())
 	})
 }
 
@@ -165,7 +165,7 @@ func Test_getChannelMembers(t *testing.T) {
 		members, err := getChannelMembers(context.Background(), client, "U023BECGF", 100)
 		assert.Nil(t, members)
 		assert.NotNil(t, err)
-		assert.Contains(t, "internal_error", err.Error())
+		assert.Contains(t, "invalid_auth", err.Error())
 	})
 }
 
