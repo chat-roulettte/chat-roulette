@@ -53,7 +53,7 @@ func ReportMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Re
 
 	logger := hclog.FromContext(ctx).With(
 		attributes.SlackChannelID, p.ChannelID,
-		"round_id", p.RoundID,
+		attributes.RoundID, p.RoundID,
 	)
 
 	// Lookup the channel
