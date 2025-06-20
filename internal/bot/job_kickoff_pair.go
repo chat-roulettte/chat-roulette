@@ -43,7 +43,7 @@ func KickoffPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Kick
 
 	logger := hclog.FromContext(ctx).With(
 		attributes.SlackChannelID, p.ChannelID,
-		"match_id", p.MatchID,
+		attributes.MatchID, p.MatchID,
 	)
 
 	// Retrieve match metadata from the database

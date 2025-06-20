@@ -48,7 +48,7 @@ func CheckPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *CheckP
 
 	logger := hclog.FromContext(ctx).With(
 		attributes.SlackChannelID, p.ChannelID,
-		"match_id", p.MatchID,
+		attributes.MatchID, p.MatchID,
 	)
 
 	logger.Info("checking if pair has met for chat-roulette")

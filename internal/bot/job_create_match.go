@@ -200,7 +200,7 @@ func CreateMatch(ctx context.Context, db *gorm.DB, client *slack.Client, p *Crea
 		return errors.Wrap(err, message)
 	}
 
-	logger.Debug("added new match to the database", "match_id", newMatch.ID)
+	logger.Debug("added new match to the database", attributes.MatchID, newMatch.ID)
 
 	// Queue a CREATE_PAIR job for this pair
 	params := &CreatePairParams{
@@ -219,7 +219,7 @@ func CreateMatch(ctx context.Context, db *gorm.DB, client *slack.Client, p *Crea
 		return errors.Wrap(err, message)
 	}
 
-	logger.Info("queued CREATE_PAIR job for this match", "match_id", newMatch.ID)
+	logger.Info("queued CREATE_PAIR job for this match", attributes.MatchID, newMatch.ID)
 
 	return nil
 }

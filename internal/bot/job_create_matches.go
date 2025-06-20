@@ -32,7 +32,7 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 
 	logger := hclog.FromContext(ctx).With(
 		attributes.SlackChannelID, p.ChannelID,
-		"round_id", p.RoundID,
+		attributes.RoundID, p.RoundID,
 	)
 
 	// Wait for member jobs to completed before retrieving participants
@@ -96,7 +96,7 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 			return err
 		}
 
-		logger.Info("added new match to the database", "match_id", newMatch.ID)
+		logger.Info("added new match to the database", attributes.MatchID, newMatch.ID)
 
 		params := &CreatePairParams{
 			MatchID:     newMatch.ID,
@@ -114,7 +114,7 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 			return errors.Wrap(err, message)
 		}
 
-		logger.Info("queued CREATE_PAIR job for this match", "match_id", newMatch.ID)
+		logger.Info("queued CREATE_PAIR job for this match", attributes.MatchID, newMatch.ID)
 	}
 
 	pairsCount := len(matches) - unpaired

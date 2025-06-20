@@ -42,7 +42,7 @@ func ReportStats(ctx context.Context, db *gorm.DB, client *slack.Client, p *Repo
 
 	logger := hclog.FromContext(ctx).With(
 		attributes.SlackChannelID, p.ChannelID,
-		"round_id", p.RoundID,
+		attributes.RoundID, p.RoundID,
 	)
 
 	// Retrieve the number of pairs that were made and how many actually met

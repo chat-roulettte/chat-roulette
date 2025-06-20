@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/chat-roulettte/chat-roulette/internal/database/models"
+	"github.com/chat-roulettte/chat-roulette/internal/o11y/attributes"
 )
 
 // UpdateMatchParams are the parameters for the UPDATE_MATCH job.
@@ -21,7 +22,7 @@ type UpdateMatchParams struct {
 // UpdateMatch updates the has_met status for a match at the end of a chat-roulette round.
 func UpdateMatch(ctx context.Context, db *gorm.DB, client *slack.Client, p *UpdateMatchParams) error {
 
-	logger := hclog.FromContext(ctx).With("match_id", p.MatchID)
+	logger := hclog.FromContext(ctx).With(attributes.MatchID, p.MatchID)
 
 	logger.Info("updating match")
 
