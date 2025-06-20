@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.22 as build
+FROM docker.io/library/golang:1.23 AS build
 ADD . /src
 WORKDIR /src
 RUN go build -o /src/bin/app-manifest cmd/app-manifest/main.go

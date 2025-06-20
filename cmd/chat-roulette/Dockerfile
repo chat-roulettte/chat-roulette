@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.22 as build
+FROM docker.io/library/golang:1.23 AS build
 ADD . /src
 WORKDIR /src
 RUN make go/build
