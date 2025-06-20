@@ -1,6 +1,10 @@
 {{- $participantsKeyword := "participants" }}
+{{- $participantsEmoji := ":tada:" }}
 {{- if eq .Participants 1 }}
     {{- $participantsKeyword = "participant" }}
+{{- end }}
+{{- if eq .Participants 0 }}
+    {{- $participantsEmoji = ":slightly_smiling_face:" }}
 {{- end }}
 {{- $sameGenderKeyword := "participants" }}
 {{- if eq .HasGenderPreference 1 }}
@@ -18,9 +22,9 @@
 {{- if eq .Pairs 0 }}
     {{- $matchesEmoji = ":sob:" }}
 {{- end }}
-{{- $matchPhrase := "matches were" }}
+{{- $matchPhrase := "intros were" }}
 {{- if eq .Pairs 1 }}
-    {{- $matchPhrase = "match was" }}
+    {{- $matchPhrase = "intro was" }}
 {{- end -}}
 {
 	"blocks": [
@@ -60,7 +64,7 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "This round has *{{ .Participants }}* {{ $participantsKeyword }} :tada:"
+				"text": "This round has *{{ .Participants }}* {{ $participantsKeyword }} {{ $participantsEmoji }}"
 			}
 		},
 {{- if .IsAdmin }}
@@ -90,7 +94,7 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*{{ .Pairs }}* intros were made {{ $matchesEmoji }}"
+				"text": "*{{ .Pairs }}* {{ $matchPhrase }} made {{ $matchesEmoji }}"
 			}
 		}
 {{- if and ( gt .Pairs 0 ) ( not .IsAdmin ) }}

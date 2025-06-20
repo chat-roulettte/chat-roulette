@@ -50,6 +50,21 @@ func Test_reportMatchesTemplate(t *testing.T) {
 		g.Assert(t, "report_matches_admin.json", []byte(content))
 	})
 
+	t.Run("admin zero participants", func(t *testing.T) {
+		data.IsAdmin = true
+		data.Participants = 0
+		data.Men = 0
+		data.Women = 0
+		data.HasGenderPreference = 0
+		data.Unpaired = 0
+		data.Pairs = 0
+
+		content, err := renderTemplate(reportMatchesTemplateFilename, data)
+		assert.Nil(t, err)
+
+		g.Assert(t, "report_matches_admin_zero.json", []byte(content))
+	})
+
 	t.Run("channel", func(t *testing.T) {
 		data.IsAdmin = false
 		data.Participants = 13
