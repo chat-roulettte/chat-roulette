@@ -54,12 +54,16 @@ func HandleAppHomeEvent(ctx context.Context, client *slack.Client, db *gorm.DB, 
 	}
 
 	var view slack.HomeTabViewRequest
-
 	if err := json.Unmarshal([]byte(content), &view); err != nil {
 		return errors.Wrap(err, "failed to unmarshal JSON")
 	}
 
-	if _, err = client.PublishViewContext(ctx, p.UserID, view, ""); err != nil {
+	req := slack.PublishViewContextRequest{
+		UserID: p.UserID,
+		View:   view,
+	}
+
+	if _, err = client.PublishViewContext(ctx, req); err != nil {
 		return errors.Wrap(err, "failed to publish AppHome view")
 	}
 
