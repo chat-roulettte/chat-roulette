@@ -334,6 +334,9 @@ func (w *Worker) execJob(ctx context.Context, job *models.Job, tx *gorm.DB) erro
 	case models.JobTypeReportStats:
 		err = bot.ExecJob(ctx, tx, w.slackClient, job, bot.ReportStats)
 
+	case models.JobTypeMarkInactive:
+		err = bot.ExecJob(ctx, tx, w.slackClient, job, bot.MarkInactive)
+
 	default:
 		err = fmt.Errorf("invalid job type")
 	}

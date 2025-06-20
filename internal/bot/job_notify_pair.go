@@ -46,7 +46,7 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 
 	logger := hclog.FromContext(ctx).With(
 		attributes.SlackChannelID, p.ChannelID,
-		"match_id", p.MatchID,
+		attributes.MatchID, p.MatchID,
 	)
 
 	logger.Info("notifying pair")
@@ -232,7 +232,7 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
 	defer cancel()
 
-	timestamp := channel.NextRound.Add(-(12 * time.Hour)) // 12 hours before the round ends
+	timestamp := channel.NextRound.Add(-(18 * time.Hour)) // 18 hours before the round ends
 
 	if err := QueueCheckPairJob(dbCtx, db, params, timestamp); err != nil {
 		message := "failed to add CHECK_PAIR job to the queue"
@@ -241,6 +241,32 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 	}
 
 	logger.Info("queued CHECK_PAIR job for this match to run at the end of the round")
+
+	// Queue a MARK_INACTIVE job for the end of the round
+	mParams := &MarkInactiveParams{
+		ChannelID: p.ChannelID,
+		NextRound: channel.NextRound,
+		MatchID:   p.MatchID,
+		Participants: []string{
+			p.Participant,
+			p.Partner,
+		},
+	}
+
+	params.IsMidRound = false
+
+	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
+	defer cancel()
+
+	timestamp = channel.NextRound.Add(-(1 * time.Hour)) // 1 hour before the round ends
+
+	if err := QueueMarkInactiveJob(dbCtx, db, mParams, timestamp); err != nil {
+		message := "failed to add MARK_INACTIVE job to the queue"
+		logger.Error(message, "error", err)
+		return errors.Wrap(err, message)
+	}
+
+	logger.Info("queued MARK_INACTIVE job for this match to run before the start of the next round")
 
 	return nil
 }

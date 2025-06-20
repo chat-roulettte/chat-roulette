@@ -90,6 +90,7 @@ func (s *CreateRoundSuite) Test_CreateRound() {
 		WithArgs(
 			p.ChannelID,
 			false,
+			0,
 			database.AnyTime(),
 			database.AnyTime(),
 		).

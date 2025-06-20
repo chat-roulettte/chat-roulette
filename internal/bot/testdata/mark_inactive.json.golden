@@ -1,0 +1,44 @@
+{
+	"blocks": [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Hello <@U9876543210> :wave:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Thank you for participating in Chat Roulette in <#C0123456789> :blush:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "It looks like you haven't been active recently. I understand that life can get busy sometimes. To improve the Chat Roulette experience for everyone, you have been marked as inactive :cry:"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "The next Chat Roulette round will kickoff on *Monday, January 3rd, 2022* :rocket:"
+			}
+		},
+        {
+            "type": "divider"
+        },
+		{
+			"type": "context",
+			"elements": [
+				{
+					"type": "mrkdwn",
+					"text": ":pushpin: _If you wish to join future rounds, visit your <slack://app?id=A1234567890&tab=home&team=T1234567890|Personal Dashboard> to mark yourself as active once again!_"
+				}
+			]
+		}
+	]
+}

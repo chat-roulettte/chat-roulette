@@ -98,6 +98,9 @@ const (
 
 	// JobTypeReportStats is the job for generating report for a chat roulette round
 	JobTypeReportStats
+
+	// JobTypeMarkInactive is the job for marking users as inactive
+	JobTypeMarkInactive
 )
 
 var jobTypes = map[string]jobTypeEnum{
@@ -123,6 +126,7 @@ var jobTypes = map[string]jobTypeEnum{
 	"NOTIFY_MEMBER":  JobTypeNotifyMember,
 	"CHECK_PAIR":     JobTypeCheckPair,
 	"REPORT_STATS":   JobTypeReportStats,
+	"MARK_INACTIVE":  JobTypeMarkInactive,
 }
 
 func (j jobTypeEnum) String() string {
@@ -171,6 +175,8 @@ func (j jobTypeEnum) String() string {
 		return "CHECK_PAIR"
 	case JobTypeReportStats:
 		return "REPORT_STATS"
+	case JobTypeMarkInactive:
+		return "MARK_INACTIVE"
 	default:
 		return ""
 	}
