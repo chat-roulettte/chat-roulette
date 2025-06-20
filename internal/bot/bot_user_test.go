@@ -131,3 +131,27 @@ func Test_generateAppHomeDeepLink(t *testing.T) {
 	expected := "slack://app?id=A1234567890&tab=home&team=T1234567890"
 	assert.Equal(t, expected, actual)
 }
+
+func Test_GetBotTeamAppIDs(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		slackServer := slacktest.NewTestServer()
+
+		go slackServer.Start()
+		defer slackServer.Stop()
+
+		client := slack.New("xoxb-test-token-here", slack.OptionAPIURL(slackServer.GetAPIURL()))
+
+		actualTeamID, actualAppID, err := GetBotTeamAppIDs(context.Background(), client)
+		assert.Equal(t, "T024BE7LD", actualTeamID)
+		assert.Equal(t, "A4H1JB4AZ", actualAppID)
+		assert.Nil(t, err)
+	})
+
+	t.Run("auth failure", func(t *testing.T) {
+		client := slack.New("xoxb-invalid-slack-authtoken")
+		teamID, appID, err := GetBotTeamAppIDs(context.Background(), client)
+		assert.Empty(t, teamID)
+		assert.Empty(t, appID)
+		assert.NotNil(t, err)
+	})
+}

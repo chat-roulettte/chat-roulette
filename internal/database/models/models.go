@@ -99,6 +99,9 @@ type Round struct {
 	// HasEnded is a boolean flag for if the chat roulette round has concluded
 	HasEnded bool
 
+	// InactiveParticipants tracks how many participants were marked as inactive during this round
+	InactiveParticipants int16 `gorm:"column:inactive_users"`
+
 	// CreatedAt is the timestamp of when the record was first created
 	CreatedAt time.Time
 

@@ -3,6 +3,7 @@ package bot
 import (
 	"context"
 	"net/url"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/slack-go/slack"
@@ -17,6 +18,34 @@ func GetBotUserID(ctx context.Context, client *slack.Client) (string, error) {
 	}
 
 	return resp.UserID, nil
+}
+
+func GetBotTeamAppIDs(ctx context.Context, client *slack.Client) (string, string, error) {
+	var teamID, appID string
+
+	// Retrieve TeamID
+	slackCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	rAuthTest, err := client.AuthTestContext(slackCtx)
+	if err != nil {
+		return teamID, appID, errors.Wrap(err, "failed to call Slack's auth.test API endpoint")
+	}
+	teamID = rAuthTest.TeamID
+
+	// Retrieve AppID
+	slackCtx, cancel = context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	rBotInfo, err := client.GetBotInfoContext(slackCtx, slack.GetBotInfoParameters{
+		Bot: rAuthTest.BotID,
+	})
+	if err != nil {
+		return teamID, appID, errors.Wrap(err, "failed to call Slack's bots.info API endpoint")
+	}
+	appID = rBotInfo.AppID
+
+	return teamID, appID, nil
 }
 
 // isUserASlackBot uses Slack's users.info API method to check if the given user is actually a bot.
