@@ -7,13 +7,13 @@ go/install:
 	go get -v
 
 go/tools:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.1
-	go install -tags 'postgres $(MIGRATIONS_SOURCE)' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.1
-	go install gotest.tools/gotestsum@v1.12.0
-	go install github.com/miniscruff/changie@v1.19.1
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6
+	go install -tags 'postgres $(MIGRATIONS_SOURCE)' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.3
+	go install gotest.tools/gotestsum@v1.12.3
+	go install github.com/miniscruff/changie@v1.22.0
 
 go/tidy:
-	go mod tidy -compat=1.22
+	go mod tidy -compat=1.23
 
 go/test:
 	go test -v --cover ./...
@@ -23,6 +23,9 @@ go/testsum:
 
 go/lint:
 	golangci-lint run --allow-parallel-runners
+
+go/lint/output-html:
+	golangci-lint run --allow-parallel-runners > .lint-report.html
 
 go/run:
 	./scripts/go.sh run
