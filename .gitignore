@@ -4,3 +4,4 @@ notes/
 .coverage.out
 config.json
 fly.toml
+.lint-report.html
