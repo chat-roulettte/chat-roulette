@@ -16,37 +16,37 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Setup Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: 1.23
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@4.2.2
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@4afd733a84b1f43292c63897423277bb7f4313a9 # v8
         with:
-          version: v1.60.1
+          version: v2.1.6
 
   test:
     name: test
     runs-on: ubuntu-22.04
     steps:
       - name: Setup Go
-        uses: actions/setup-go@v2.1.3
+        uses: actions/setup-go@v5
         with:
           go-version: 1.23
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@4.2.2
 
       - name: Get dependencies
         run: go mod download
 
       - name: Setup gotestsum
-        uses: autero1/action-gotestsum@v2.0.0
+        uses: autero1/action-gotestsum@7263b9d73912eec65f46337689e59fac865c425f # v2.0.0
         with:
-          gotestsum_version: 1.12.0
+          gotestsum_version: 1.12.3
 
       - name: Run tests
         run: make go/testsum
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@4.2.2
 
       - name: Build chat-roulette container image
         run: make docker/build/chat-roulette
