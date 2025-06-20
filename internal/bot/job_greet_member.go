@@ -116,7 +116,7 @@ func GreetMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Gree
 	// Send the Slack direct message to the user
 	if _, _, err = client.PostMessageContext(
 		ctx,
-		response.Conversation.ID,
+		response.ID,
 		slack.MsgOptionBlocks(view.Blocks.BlockSet...),
 	); err != nil {
 		logger.Error("failed to send Slack direct message", "error", err)
@@ -377,7 +377,7 @@ func UpsertMemberGenderInfo(ctx context.Context, db *gorm.DB, interaction *slack
 	// Extract the values from the view state
 	gender := interaction.View.State.Values["onboarding-gender-select"]["onboarding-gender-select"].SelectedOption.Value
 
-	hasGenderPreference := false
+	hasGenderPreference := false //nolint:staticcheck
 	if len(interaction.View.State.Values["onboarding-gender-checkbox"]["onboarding-gender-checkbox"].SelectedOptions) != 0 {
 		hasGenderPreference = true
 	}
@@ -640,7 +640,7 @@ func RespondGreetMemberWebhook(ctx context.Context, client *http.Client, interac
 	contextBlock := slack.NewContextBlock("AppHome", element)
 
 	var message slack.Message
-	message.Msg.Blocks = pm.Blocks
+	message.Blocks = pm.Blocks
 
 	message = transformMessage(message, 6, sectionBlock, contextBlock)
 

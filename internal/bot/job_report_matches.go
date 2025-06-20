@@ -158,7 +158,7 @@ func ReportMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Re
 		// Send a private message to the admin
 		if _, _, err = client.PostMessageContext(
 			slackCtx,
-			response.Conversation.ID,
+			response.ID,
 			slack.MsgOptionBlocks(view.Blocks.BlockSet...),
 		); err != nil {
 			logger.Error("failed to report match stats to chat-roulette admin", "error", err)

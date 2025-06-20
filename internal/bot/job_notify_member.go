@@ -92,7 +92,7 @@ func NotifyMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Not
 	// Send the Slack DM to the user
 	if _, _, err = client.PostMessageContext(
 		ctx,
-		response.Conversation.ID,
+		response.ID,
 		slack.MsgOptionBlocks(view.Blocks.BlockSet...),
 	); err != nil {
 		logger.Error("failed to send Slack direct message", "error", err)

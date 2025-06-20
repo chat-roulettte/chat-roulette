@@ -87,7 +87,7 @@ func GreetAdmin(ctx context.Context, db *gorm.DB, client *slack.Client, p *Greet
 	// Send the Slack direct message to the user
 	if _, _, err = client.PostMessageContext(
 		ctx,
-		response.Conversation.ID,
+		response.ID,
 		slack.MsgOptionBlocks(view.Blocks.BlockSet...),
 	); err != nil {
 		logger.Error("failed to send Slack direct message", "error", err)
@@ -266,7 +266,7 @@ func RespondGreetAdminWebhook(ctx context.Context, client *http.Client, interact
 	contextBlock := slack.NewContextBlock("AppHome", element)
 
 	var message slack.Message
-	message.Msg.Blocks = pm.Blocks
+	message.Blocks = pm.Blocks
 
 	message = transformMessage(message, 5, section, contextBlock)
 

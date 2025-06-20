@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/hashicorp/go-hclog"
+	sqlmock "github.com/DATA-DOG/go-sqlmock"
+	hclog "github.com/hashicorp/go-hclog"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"

@@ -82,7 +82,7 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 		return errors.Wrap(err, message)
 	}
 
-	mpimID := response.Conversation.ID
+	mpimID := response.ID
 
 	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
 	defer cancel()
@@ -150,7 +150,7 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 
 	if _, _, err = client.PostMessageContext(
 		slackCtx,
-		response.Conversation.ID,
+		response.ID,
 		slack.MsgOptionBlocks(view.Blocks.BlockSet...),
 		slack.MsgOptionDisableLinkUnfurl(),
 		slack.MsgOptionDisableMediaUnfurl(),

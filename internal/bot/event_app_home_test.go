@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sebdah/goldie/v2"
+	goldie "github.com/sebdah/goldie/v2"
 	"github.com/slack-go/slack"
 	"github.com/stretchr/testify/require"
 

@@ -5,7 +5,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/DATA-DOG/go-sqlmock"
+	sqlmock "github.com/DATA-DOG/go-sqlmock"
 	"github.com/hashicorp/go-hclog"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/slacktest"

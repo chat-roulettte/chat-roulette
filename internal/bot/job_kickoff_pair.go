@@ -6,10 +6,11 @@ import (
 	"strconv"
 	"time"
 
+	rand "math/rand/v2"
+
 	"github.com/hashicorp/go-hclog"
 	"github.com/pkg/errors"
 	"github.com/slack-go/slack"
-	"golang.org/x/exp/rand"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
@@ -154,11 +155,7 @@ func QueueKickoffPairJob(ctx context.Context, db *gorm.DB, p *KickoffPairParams)
 }
 
 func selectRandomParticipant(p1, p2 string) string {
-	r := rand.New(rand.NewSource(uint64(time.Now().UnixNano())))
-
 	pair := []string{p1, p2}
-
-	randomIndex := r.Intn(len(pair))
-
+	randomIndex := rand.IntN(len(pair)) //nolint:gosec
 	return pair[randomIndex]
 }

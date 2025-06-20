@@ -20,8 +20,8 @@ import (
 	"github.com/akamensky/argparse"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
-	"github.com/hashicorp/go-hclog"
-	"github.com/hashicorp/go-retryablehttp"
+	hclog "github.com/hashicorp/go-hclog"
+	retryablehttp "github.com/hashicorp/go-retryablehttp"
 	"github.com/spf13/viper"
 	"sigs.k8s.io/yaml"
 )
