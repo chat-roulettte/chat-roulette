@@ -43,7 +43,7 @@ require (
 	google.golang.org/grpc v1.73.0
 	gorm.io/datatypes v1.2.5
 	gorm.io/driver/postgres v1.6.0
-	gorm.io/gorm v1.26.1
+	gorm.io/gorm v1.30.0
 	sigs.k8s.io/yaml v1.5.0
 )
 
