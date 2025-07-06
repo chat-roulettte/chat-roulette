@@ -148,6 +148,24 @@ type Pairing struct {
 	CreatedAt time.Time
 }
 
+// Icebreaker represents a row in the icebreakers table
+type Icebreaker struct {
+	// ID is an auto-incrementing identifier for the table
+	ID int32 `gorm:"autoIncrement"`
+
+	// Question is the icebreaker question
+	Question string
+
+	// UsageCount is the count of how many times this icebreaker has been selected
+	UsageCount int32 `gorm:"column:usage_count"`
+
+	// CreatedAt is the timestamp of when the record was first created
+	CreatedAt time.Time
+
+	// UpdatedAt is the timestamp of when the record was last updated
+	UpdatedAt time.Time
+}
+
 // Job represents a row in the jobs table
 type Job struct {
 	// ID is the primary key of the record
