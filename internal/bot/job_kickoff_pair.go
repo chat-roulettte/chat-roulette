@@ -24,9 +24,11 @@ const (
 
 // kickoffPairTemplate is used with templates/kickoff_pair.json.tmpl
 type kickoffPairTemplate struct {
-	Volunteer   string
-	Participant string `json:"participant"`
-	Partner     string `json:"partner"`
+	Volunteer           string
+	Participant         string
+	Partner             string
+	NoMessagesExchanged bool
+	Icebreaker          string
 }
 
 // KickoffPairParams are the parameters for the KICKOFF_PAIR job.
@@ -37,8 +39,8 @@ type KickoffPairParams struct {
 	Partner     string `json:"partner"`
 }
 
-// KickoffPair notifies a pair of chat-roulette participants that
-// they have been matched for this round of chat-roulette.
+// KickoffPair stimulates conversation for a pair of chat-roulette participants
+// by sharing an icebreaker and picking a volunteer to answer first.
 func KickoffPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *KickoffPairParams) error {
 
 	logger := hclog.FromContext(ctx).With(
@@ -59,10 +61,10 @@ func KickoffPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Kick
 	}
 
 	// Retrieve the timestamp of NOTIFY_PAIR job to determine when the bot sent message to pair
+	var timestamp time.Time
+
 	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
 	defer cancel()
-
-	var timestamp time.Time
 
 	result := db.WithContext(dbCtx).
 		Model(&models.Job{}).
@@ -98,16 +100,29 @@ func KickoffPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Kick
 
 	logger.Debug("retrieved chat history from the Slack Group DM", "messages", len(history.Messages))
 
-	if len(history.Messages) > 1 {
-		logger.Debug("skipping sending message to the pair to kickstart a conversation")
-		return nil
+	// Get a random icebreaker question from the database
+	var icebreaker models.Icebreaker
+
+	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
+	defer cancel()
+
+	if err := db.WithContext(dbCtx).Model(&models.Icebreaker{}).Order("RANDOM()").First(&icebreaker).Error; err != nil {
+		message := "failed to retrieve random icebreaker from the DB"
+		logger.Error(message, "error", err)
+		return errors.Wrap(err, message)
 	}
 
-	// Pick a volunteer and kick start the conversation
+	// Pick a volunteer and share the icebreaker
 	t := kickoffPairTemplate{
-		Volunteer:   selectRandomParticipant(p.Participant, p.Partner),
-		Participant: p.Participant,
-		Partner:     p.Partner,
+		Volunteer:           selectRandomParticipant(p.Participant, p.Partner),
+		Participant:         p.Participant,
+		Partner:             p.Partner,
+		NoMessagesExchanged: true,
+		Icebreaker:          icebreaker.Question,
+	}
+
+	if len(history.Messages) > 1 {
+		t.NoMessagesExchanged = false
 	}
 
 	content, err := renderTemplate(kickoffPairTemplateFilename, t)
@@ -117,9 +132,9 @@ func KickoffPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Kick
 		return errors.Wrap(err, "failed to render template")
 	}
 
-	var view slack.View
-	if err := json.Unmarshal([]byte(content), &view); err != nil {
-		message := "failed to unmarshal JSON template to slack.View"
+	var msg slackMessage
+	if err := json.Unmarshal([]byte(content), &msg); err != nil {
+		message := "failed to unmarshal JSON template to slack.Message"
 		logger.Error(message, "error", err)
 		return errors.Wrap(err, message)
 	}
@@ -130,13 +145,25 @@ func KickoffPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Kick
 	if _, _, err = client.PostMessageContext(
 		slackCtx,
 		match.MpimID,
-		slack.MsgOptionBlocks(view.Blocks.BlockSet...),
+		slack.MsgOptionBlocks(msg.Blocks.BlockSet...),
+		slack.MsgOptionAttachments(msg.Attachments...),
 		slack.MsgOptionDisableLinkUnfurl(),
 		slack.MsgOptionDisableMediaUnfurl(),
 	); err != nil {
 		message := "failed to send Slack group DM"
 		logger.Error(message, "error", err)
 		return errors.Wrap(err, message)
+	}
+
+	// Increment the counter for how many times this icebreaker has been used
+	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
+	defer cancel()
+
+	err = db.WithContext(dbCtx).Model(&models.Icebreaker{}).Where("id = ?", icebreaker.ID).
+		UpdateColumn("usage_count", gorm.Expr("usage_count + ?", 1)).Error
+	if err != nil {
+		message := "failed to increment random icebreaker from the DB"
+		logger.Error(message, "error", err)
 	}
 
 	return nil

@@ -25,13 +25,19 @@ import (
 	"github.com/chat-roulettte/chat-roulette/internal/o11y"
 )
 
+var (
+	testIceBreaker = "What would you do if you really been far even as decided to use even go want to do look more like?"
+)
+
 func Test_kickoffPairTemplate(t *testing.T) {
 	g := goldie.New(t)
 
 	p := kickoffPairTemplate{
-		Participant: "U0123456789",
-		Partner:     "U9876543210",
-		Volunteer:   "U9876543210",
+		Participant:         "U0123456789",
+		Partner:             "U9876543210",
+		Volunteer:           "U9876543210",
+		NoMessagesExchanged: true,
+		Icebreaker:          testIceBreaker,
 	}
 
 	content, err := renderTemplate(kickoffPairTemplateFilename, p)
@@ -94,6 +100,10 @@ func (s *KickoffPairSuite) Test_KickoffPair() {
 		WasNotified: true,
 	})
 
+	// Write the test icebreaker to the database and purge the rest to ensure this is deterministic
+	s.db.Exec("DELETE FROM icebreakers WHERE id > 1")
+	s.db.Model(&models.Icebreaker{}).Update("question", testIceBreaker).Where("id = ?", 1)
+
 	// Write NOTIFY_PAIR job to the database
 	p := &NotifyPairParams{
 		ChannelID:   channelID,
@@ -120,51 +130,37 @@ func (s *KickoffPairSuite) Test_KickoffPair() {
 		w.Write([]byte(`{"ok":true,"channel":{"id":"G1111111111", "is_mpim":true}}`))
 	})
 
-	var testname string
 	mux.HandleFunc("/conversations.history", func(w http.ResponseWriter, req *http.Request) {
-		var r *slack.GetConversationHistoryResponse
-
-		switch testname {
-		case "bot message":
-			r = &slack.GetConversationHistoryResponse{
-				SlackResponse: slack.SlackResponse{
-					Ok: true,
-				},
-				Messages: []slack.Message{
-					{
-						Msg: slack.Msg{
-							Channel: mpimID,
-							User:    "U1029384756", // Bot user
-							Text:    fmt.Sprintf("Hi %s %s :wave:", p.Participant, p.Partner),
-							Type:    "message",
-						},
+		r := &slack.GetConversationHistoryResponse{
+			SlackResponse: slack.SlackResponse{
+				Ok: true,
+			},
+			Messages: []slack.Message{
+				{
+					Msg: slack.Msg{
+						Channel: mpimID,
+						User:    "U1029384756", // Bot user
+						Text:    fmt.Sprintf("Hi %s %s :wave:", p.Participant, p.Partner),
+						Type:    "message",
 					},
 				},
-			}
-		case "skipped":
-			r = &slack.GetConversationHistoryResponse{
-				SlackResponse: slack.SlackResponse{
-					Ok: true,
-				},
-				Messages: []slack.Message{
-					{
-						Msg: slack.Msg{
-							Channel: mpimID,
-							User:    p.Participant,
-							Text:    "Hi!",
-							Type:    "message",
-						},
-					},
-					{
-						Msg: slack.Msg{
-							Channel: mpimID,
-							User:    p.Partner,
-							Text:    "Hello",
-							Type:    "message",
-						},
+				{
+					Msg: slack.Msg{
+						Channel: mpimID,
+						User:    p.Participant,
+						Text:    "Hi!",
+						Type:    "message",
 					},
 				},
-			}
+				{
+					Msg: slack.Msg{
+						Channel: mpimID,
+						User:    p.Partner,
+						Text:    "Hello",
+						Type:    "message",
+					},
+				},
+			},
 		}
 		json.NewEncoder(w).Encode(&r)
 	})
@@ -172,10 +168,18 @@ func (s *KickoffPairSuite) Test_KickoffPair() {
 	mux.HandleFunc("/chat.postMessage", func(w http.ResponseWriter, req *http.Request) {
 		req.ParseForm()
 
+		a := req.FormValue("attachments")
 		b := req.FormValue("blocks")
 
-		if b == "" {
+		if a == "" || b == "" {
 			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		var attachments []slack.Attachment
+		if err := json.Unmarshal([]byte(a), &attachments); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"ok":false}`))
 			return
 		}
 
@@ -183,9 +187,11 @@ func (s *KickoffPairSuite) Test_KickoffPair() {
 		if err := json.Unmarshal([]byte(b), &blocks); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(`{"ok":false}`))
+			return
 		}
 
-		r.Len(blocks.BlockSet, 4)
+		r.Len(attachments, 1)
+		r.Len(blocks.BlockSet, 2)
 
 		w.Write([]byte(`{
 			"ok": true,
@@ -206,24 +212,14 @@ func (s *KickoffPairSuite) Test_KickoffPair() {
 		Partner:     p.Partner,
 	}
 
-	s.Run("bot message", func() {
-		testname = "bot message"
+	err := KickoffPair(s.ctx, s.db, client, params)
+	r.NoError(err)
+	r.Contains(s.buffer.String(), "retrieved chat history from the Slack Group DM")
+	r.Contains(s.buffer.String(), "messages=3")
 
-		err := KickoffPair(s.ctx, s.db, client, params)
-		r.NoError(err)
-		r.Contains(s.buffer.String(), "retrieved chat history from the Slack Group DM")
-		r.Contains(s.buffer.String(), "messages=1")
-	})
-
-	s.Run("skipped", func() {
-		testname = "skipped"
-
-		err := KickoffPair(s.ctx, s.db, client, params)
-		r.NoError(err)
-		r.Contains(s.buffer.String(), "retrieved chat history from the Slack Group DM")
-		r.Contains(s.buffer.String(), "messages=2")
-		r.Contains(s.buffer.String(), "skipping sending message")
-	})
+	var counter int16
+	s.db.Model(&models.Icebreaker{}).Select("usage_count").Where("id = ?", 1).First(&counter)
+	r.Equal(int16(1), counter)
 }
 
 func (s *KickoffPairSuite) Test_QueueKickoffPairJob() {

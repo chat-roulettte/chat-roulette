@@ -1,32 +1,41 @@
 {
 	"blocks": [
+		{{- if .NoMessagesExchanged }}
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "Hey <@{{ .Partner }}> <@{{ .Participant }}> :wave:"
+				"text": "It seems like both of you are shy :blush:"
+			}
+		},
+		{{- end }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "How about starting with an icebreaker? :speech_balloon:"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "It seems both of you are shy :blush:"
+				"text": "<@{{ .Volunteer }}> you've been randomly selected to answer first :sweat_smile:"
 			}
-		},
+		}
+	],
+	"attachments": [
 		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "<@{{ .Volunteer }}> you have been randomly selected to kick us off :smile:"
-			}
-		},
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "Why don't you take the lead and introduce your self :speech_balloon:"
-			}
+			"color": "#36C5F0",
+			"blocks": [
+				{
+					"type": "section",
+					"text": {
+						"type": "mrkdwn",
+						"text": "_{{ .Icebreaker }}_"
+					}
+				}
+			]
 		}
 	]
 }
