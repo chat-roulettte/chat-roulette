@@ -4,29 +4,36 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "Hey <@U9876543210> <@U0123456789> :wave:"
+				"text": "It seems like both of you are shy :blush:"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "It seems both of you are shy :blush:"
+				"text": "How about starting with an icebreaker? :speech_balloon:"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "<@U9876543210> you have been randomly selected to kick us off :smile:"
+				"text": "<@U9876543210> you've been randomly selected to answer first :sweat_smile:"
 			}
-		},
+		}
+	],
+	"attachments": [
 		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text": "Why don't you take the lead and introduce your self :speech_balloon:"
-			}
+			"color": "#36C5F0",
+			"blocks": [
+				{
+					"type": "section",
+					"text": {
+						"type": "mrkdwn",
+						"text": "_What would you do if you really been far even as decided to use even go want to do look more like?_"
+					}
+				}
+			]
 		}
 	]
 }
