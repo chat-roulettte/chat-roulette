@@ -52,7 +52,6 @@ func MarkInactive(ctx context.Context, db *gorm.DB, client *slack.Client, p *Mar
 	defer cancel()
 
 	result := db.WithContext(dbCtx).Model(&models.Match{}).
-		Where("has_met = false").
 		Where("id = ?", p.MatchID).
 		Find(&match)
 

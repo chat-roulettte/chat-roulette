@@ -410,7 +410,7 @@ func (s *MarkInactiveSuite) Test_QueueMarkInactiveJob() {
 	err := QueueMarkInactiveJob(s.ctx, db, p, nextRound.Add(-24*time.Hour))
 	r.NoError(err)
 	r.Contains(s.buffer.String(), "added new job to the database")
-	mock.ExpectationsWereMet()
+	r.NoError(mock.ExpectationsWereMet())
 }
 
 func Test_MarkInactive_suite(t *testing.T) {
