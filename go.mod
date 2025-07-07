@@ -23,7 +23,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/sebdah/goldie/v2 v2.5.5
 	github.com/segmentio/ksuid v1.0.4
-	github.com/slack-go/slack v0.17.2
+	github.com/slack-go/slack v0.17.3
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	github.com/unrolled/render v1.7.0
