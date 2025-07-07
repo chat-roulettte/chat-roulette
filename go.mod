@@ -7,7 +7,6 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/akamensky/argparse v1.4.0
 	github.com/bincyber/go-sqlcrypter v0.2.0
-	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/coreos/go-oidc/v3 v3.14.1
 	github.com/dgraph-io/ristretto v0.2.0
 	github.com/dustin/go-humanize v1.0.1
@@ -29,7 +28,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/unrolled/render v1.7.0
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.3.2
-	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.36.4
+	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.62.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.62.0
 	go.opentelemetry.io/otel v1.37.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.37.0
