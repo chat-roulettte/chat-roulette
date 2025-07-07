@@ -78,7 +78,7 @@ func CheckPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *CheckP
 	//
 	// The interaction will be received by our /interactions endpoint
 	// and handled outside of this job.
-	slackCtx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	slackCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	if _, _, err = client.PostMessageContext(

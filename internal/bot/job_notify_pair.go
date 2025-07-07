@@ -64,7 +64,7 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 	}
 
 	// Create a Slack Group DM with the pair of participants and update the database
-	childCtx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	childCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	response, _, _, err := client.OpenConversationContext(childCtx,
@@ -145,7 +145,7 @@ func NotifyPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Notif
 	}
 
 	// Send the Slack group message to the pair
-	slackCtx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	slackCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	if _, _, err = client.PostMessageContext(
