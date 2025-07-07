@@ -2,8 +2,6 @@ module github.com/chat-roulettte/chat-roulette
 
 go 1.23.0
 
-toolchain go1.24.1
-
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/Masterminds/sprig/v3 v3.3.0
