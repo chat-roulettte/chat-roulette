@@ -96,7 +96,7 @@ func GreetMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Gree
 	}
 
 	// Open a Slack DM with the user
-	childCtx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	childCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	response, _, _, err := client.OpenConversationContext(

@@ -135,7 +135,7 @@ func ReportMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Re
 		}
 
 		// Open a Slack DM with the chat-roulette admin
-		slackCtx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+		slackCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
 		defer cancel()
 
 		response, _, _, err := client.OpenConversationContext(
@@ -152,10 +152,10 @@ func ReportMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Re
 			multiErr = err
 		}
 
-		slackCtx, cancel = context.WithTimeout(ctx, 3000*time.Millisecond)
+		// Send a private message to the admin
+		slackCtx, cancel = context.WithTimeout(ctx, 3*time.Second)
 		defer cancel()
 
-		// Send a private message to the admin
 		if _, _, err = client.PostMessageContext(
 			slackCtx,
 			response.ID,

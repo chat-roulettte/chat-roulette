@@ -82,7 +82,7 @@ func KickoffPair(ctx context.Context, db *gorm.DB, client *slack.Client, p *Kick
 	}
 
 	// Check if the pair have already started a discussion
-	slackCtx, cancel := context.WithTimeout(ctx, 3000*time.Millisecond)
+	slackCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	history, err := client.GetConversationHistoryContext(slackCtx, &slack.GetConversationHistoryParameters{

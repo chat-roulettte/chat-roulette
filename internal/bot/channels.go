@@ -55,7 +55,7 @@ func getChannels(ctx context.Context, client *slack.Client, botUserID string) ([
 	}
 
 	// Set deadline for Slack API call
-	ctx, cancel := context.WithTimeout(ctx, 2000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	// Skip pagination, assume bot is not a member of more than 100 channels
@@ -89,7 +89,7 @@ func getChannelMembers(ctx context.Context, client *slack.Client, channelID stri
 	var channelMembers []chatRouletteMember
 	for {
 		// Set deadline for Slack API call
-		ctx, cancel := context.WithTimeout(ctx, 2000*time.Millisecond)
+		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 		defer cancel()
 
 		members, cursor, err := client.GetUsersInConversationContext(ctx, params)

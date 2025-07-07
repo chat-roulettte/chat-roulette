@@ -30,7 +30,7 @@ func lookupSlackWorkspace(ctx context.Context, cache *ristretto.Cache, client *s
 		return t, nil
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, 2000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 
 	teamInfo, err := client.GetTeamInfoContext(ctx)
@@ -56,7 +56,7 @@ func lookupSlackChannel(ctx context.Context, cache *ristretto.Cache, client *sla
 		return c, nil
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, 2000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 
 	p := &slack.GetConversationInfoInput{
@@ -87,7 +87,7 @@ func lookupSlackUser(ctx context.Context, cache *ristretto.Cache, client *slack.
 		return u, nil
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, 2000*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 
 	user, err := client.GetUserInfoContext(ctx, userID)
