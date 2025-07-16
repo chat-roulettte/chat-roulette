@@ -245,6 +245,119 @@ func (s *CreateMatchSuite) Test_CreateMatch_ExceededMidPointInActiveRound() {
 	r.Contains(s.buffer.String(), "unable to match participant: not enough time remaining in current Chat Roulette round")
 }
 
+func (s *CreateMatchSuite) Test_CreateMatch_HasGenderPreference() {
+	r := require.New(s.T())
+
+	channelID := "C0123456789"
+
+	// Write channel to the database
+	s.db.Create(&models.Channel{
+		ChannelID:      channelID,
+		Inviter:        "U9876543210",
+		ConnectionMode: models.VirtualConnectionMode,
+		Interval:       models.Biweekly,
+		Weekday:        time.Friday,
+		Hour:           12,
+		NextRound:      time.Now().Add(504 * time.Hour), // 21 days in the future
+	})
+
+	// Add members to the database
+	members := []struct {
+		userID              string
+		gender              models.Gender
+		isActive            bool
+		hasGenderPreference bool
+	}{
+		// This user has not been matched since they were inactive when the round started
+		{"U8765432109", models.Female, false, false},
+		// These users will all get matched
+		{"U3234567890", models.Female, true, false},
+		{"U7812309456", models.Female, true, true},
+		{"U0487326159", models.Male, true, true},
+		{"U0693126494", models.Male, true, true},
+	}
+
+	for _, member := range members {
+		s.db.Create(&models.Member{
+			ChannelID:           channelID,
+			UserID:              member.userID,
+			Gender:              member.gender,
+			IsActive:            &member.isActive,
+			HasGenderPreference: &member.hasGenderPreference,
+		})
+	}
+
+	// Write a record in the rounds table and create matches
+	s.db.Create(&models.Round{
+		ChannelID: channelID,
+		HasEnded:  false,
+	})
+
+	err := CreateMatches(s.ctx, s.db, nil, &CreateMatchesParams{
+		ChannelID: channelID,
+		RoundID:   1,
+	})
+	r.NoError(err)
+
+	// Add record for the CREATE_ROUND job
+	createRoundParams := &CreateRoundParams{
+		ChannelID: channelID,
+		NextRound: time.Now().Add(336 * time.Hour),
+		Interval:  models.Biweekly.String(),
+	}
+
+	data, _ := json.Marshal(createRoundParams)
+
+	s.db.Create(&models.Job{
+		JobID:       ksuid.New(),
+		JobType:     models.JobTypeCreateRound,
+		Priority:    models.JobPriorityStandard,
+		Status:      models.JobStatusSucceeded,
+		IsCompleted: true,
+		Data:        data,
+		ExecAt:      time.Now().UTC().Add(-(24 * time.Hour)),
+	})
+
+	// Ensure pairings table is populated with rows
+	var jobs []models.Job
+
+	err = s.db.Model(&models.Job{}).
+		Where("job_type = ?", models.JobTypeCreatePair.String()).
+		Where("status = ?", models.JobStatusPending).
+		Where("is_completed = false").
+		Find(&jobs).Error
+	r.NoError(err)
+
+	for _, job := range jobs {
+		err := ExecJob(s.ctx, s.db, nil, &job, CreatePair)
+		r.NoError(err)
+	}
+
+	// Set the inactive, standby participant to active
+	err = s.db.Model(&models.Member{}).Where("user_id = ?", "U8765432109").Update("is_active", true).Update("has_gender_preference", true).Error
+	r.NoError(err)
+
+	// Test when the only other unmatched participant is not the same gender
+	isActive := true
+	hasGenderPreference := true
+	newParticipant := &models.Member{
+		ChannelID:           channelID,
+		UserID:              "U9261442153",
+		Gender:              models.Male,
+		IsActive:            &isActive,
+		HasGenderPreference: &hasGenderPreference,
+	}
+
+	s.db.Create(newParticipant)
+
+	err = CreateMatch(s.ctx, s.db, nil, &CreateMatchParams{
+		ChannelID:   newParticipant.ChannelID,
+		Participant: newParticipant.UserID,
+	})
+	r.NoError(err)
+	r.Contains(s.buffer.String(), "unable to match participant: no suitable partner found")
+}
+
 func (s *CreateMatchSuite) Test_CreateMatch_NoMatchFound() {
 	r := require.New(s.T())
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/ory/dockertest"
 	"github.com/ory/dockertest/docker"
+	"gorm.io/gorm"
 )
 
 // NewTestPostgresDB spawns a new Docker container running
@@ -74,4 +75,23 @@ func NewTestPostgresDB(migrate bool) (*dockertest.Resource, string, error) {
 	}
 
 	return resource, databaseURL, nil
+}
+
+// CleanPostgresDB resets a running Postgres server to a clean state
+// by dropping and recreating the public schema.
+func CleanPostgresDB(db *gorm.DB) error {
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+
+	if _, err := sqlDB.Exec("DROP SCHEMA public CASCADE;"); err != nil {
+		return err
+	}
+
+	if _, err := sqlDB.Exec("CREATE SCHEMA public;"); err != nil {
+		return err
+	}
+
+	return nil
 }

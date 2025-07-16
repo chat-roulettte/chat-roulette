@@ -29,11 +29,12 @@ func Migrate(databaseURL string) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to create new migrate instance")
 	}
+	defer m.Close()
 
 	if err := m.Up(); err != nil {
 		// Don't error on "no change"
 		if !errors.Is(err, migrate.ErrNoChange) {
-			return err
+			return errors.Wrap(err, "failed to apply all migrations up to newest version")
 		}
 	}
 

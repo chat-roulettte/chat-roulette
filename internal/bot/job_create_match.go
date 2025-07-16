@@ -104,19 +104,11 @@ func CreateMatch(ctx context.Context, db *gorm.DB, client *slack.Client, p *Crea
 	}
 
 	// Retrieve preferences of this participant
-	dbCtx, cancel = context.WithTimeout(ctx, 300*time.Millisecond)
-	defer cancel()
-
-	var participant models.Member
-	result = db.WithContext(dbCtx).
-		Model(&models.Member{}).
-		Where("channel_id = ?", p.ChannelID).
-		First(&participant)
-
-	if result.Error != nil {
-		message := "failed to retrieve the participant from the database"
-		logger.Error(message, "error", result.Error)
-		return errors.Wrap(result.Error, message)
+	participant, err := models.GetMemberByUserID(ctx, db, p.ChannelID, p.Participant)
+	if err != nil {
+		message := "failed to retrieve the participant's preferences"
+		logger.Error(message, "error", err)
+		return errors.Wrap(err, message)
 	}
 
 	// Find a suitable partner for this participant
