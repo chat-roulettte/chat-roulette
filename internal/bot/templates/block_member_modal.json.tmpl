@@ -1,0 +1,59 @@
+{
+	"type": "modal",
+	"callback_id": "block-member-modal",
+	"private_metadata": "{{ .PrivateMetadata }}",
+	"clear_on_close": true,
+	"notify_on_close": false,
+	"title": {
+		"type": "plain_text",
+		"text": "Chat Roulette for Slack",
+		"emoji": true
+	},
+	"close": {
+		"type": "plain_text",
+		"text": "Cancel",
+		"emoji": true
+	},
+	"submit": {
+		"type": "plain_text",
+		"text": "Submit",
+		"emoji": true
+	},
+	"blocks": [
+        {
+            "type": "image",
+            "image_url": "{{ .ImageURL }}",
+            "alt_text": "block members icon"
+        },
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Hi *<@{{ .UserID }}>* :wave:"
+			}
+		},
+		{
+			"type": "section",
+			"block_id": "block-members",
+			"text": {
+				"type": "mrkdwn",
+				"text": "_Select any users that you do not wish to be matched with in future Chat Roulette rounds:_"
+			},
+			"accessory": {
+				"type": "multi_users_select",
+				"action_id": "placeholder",
+				"max_selected_items": 5,
+				"focus_on_load": true
+			}
+		},
+		{
+			"type": "context",
+			"elements": [
+				{
+					"type": "mrkdwn",
+					"text": ":pushpin: This may may result in fewer matches"
+				}
+			]
+		}
+	]
+}

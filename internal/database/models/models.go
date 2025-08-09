@@ -211,3 +211,21 @@ func NewJob(jobType jobTypeEnum, data datatypes.JSON) *Job {
 		ExecAt:      time.Now().UTC(),
 	}
 }
+
+// BlockedMember represents a row in the blocked_members table
+type BlockedMember struct {
+	// ID is the primary key for the table
+	ID int32 `gorm:"primaryKey"`
+
+	// ChannelID is the ID of the Slack channel that the user is a member of
+	ChannelID string `gorm:"foreignKey:ChannelID;references:Channel"`
+
+	// UserID is the ID of the Slack user who is doing the blocking
+	UserID string `gorm:"foreignKey:UserID;references:User"`
+
+	// MemberID is the ID of the Slack user who is blocked from being matched with UserID
+	MemberID string
+
+	// CreatedAt is the timestamp of when the record was first created
+	CreatedAt time.Time
+}

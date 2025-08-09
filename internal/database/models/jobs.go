@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+var (
+	ErrJobParamsFailedValidation = errors.New("failed to validate job parameters")
+)
+
 const (
 	// JobPriority are the priorities to use for jobs
 	JobPriorityHighest  = 10
@@ -101,6 +105,12 @@ const (
 
 	// JobTypeMarkInactive is the job for marking users as inactive
 	JobTypeMarkInactive
+
+	// JobTypeBlockMember is the job for blocking a Slack member from being matched with a user
+	JobTypeBlockMember
+
+	// JobTypeUnblockMember is the job for unblocking a Slack member from being matched with a user
+	JobTypeUnblockMember
 )
 
 var jobTypes = map[string]jobTypeEnum{
@@ -127,6 +137,8 @@ var jobTypes = map[string]jobTypeEnum{
 	"CHECK_PAIR":     JobTypeCheckPair,
 	"REPORT_STATS":   JobTypeReportStats,
 	"MARK_INACTIVE":  JobTypeMarkInactive,
+	"BLOCK_MEMBER":   JobTypeBlockMember,
+	"UNBLOCK_MEMBER": JobTypeUnblockMember,
 }
 
 func (j jobTypeEnum) String() string {
@@ -177,6 +189,10 @@ func (j jobTypeEnum) String() string {
 		return "REPORT_STATS"
 	case JobTypeMarkInactive:
 		return "MARK_INACTIVE"
+	case JobTypeBlockMember:
+		return "BLOCK_MEMBER"
+	case JobTypeUnblockMember:
+		return "UNBLOCK_MEMBER"
 	default:
 		return ""
 	}
@@ -327,7 +343,11 @@ func ExtractJobFromActionID(actionID string) (jobTypeEnum, error) {
 // JobRequiresSlackChannel ...
 func JobRequiresSlackChannel(jobType jobTypeEnum) bool {
 	switch jobType {
-	case JobTypeSyncChannels, JobTypeGreetAdmin, JobTypeAddChannel, JobTypeUpdateMatch:
+	case JobTypeSyncChannels, JobTypeAddChannel:
+		return false
+	case JobTypeGreetAdmin, JobTypeUpdateMatch:
+		return false
+	case JobTypeBlockMember, JobTypeUnblockMember:
 		return false
 	default:
 		return true

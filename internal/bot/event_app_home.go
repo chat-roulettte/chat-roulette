@@ -28,12 +28,13 @@ type appHomeTemplate struct {
 	BotUserID string
 	AppURL    string
 	Channels  []models.Channel
+	IsAppUser bool
 }
 
 // HandleAppHomeEvent handles the app_home_opened event and publishes the view for the App Home.
 func HandleAppHomeEvent(ctx context.Context, client *slack.Client, db *gorm.DB, p *AppHomeParams) error {
 	// Retrieve chat-roulette enabled Slack channels from the database
-	dbCtx, cancel := context.WithTimeout(ctx, 300*time.Millisecond)
+	dbCtx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)
 	defer cancel()
 
 	var channels []models.Channel
@@ -41,11 +42,16 @@ func HandleAppHomeEvent(ctx context.Context, client *slack.Client, db *gorm.DB, 
 		return errors.Wrap(err, "failed to retrieve chat roulette channels")
 	}
 
+	// Check if the user exists in the database (ie, user is a member of a Chat Roulette channel). Ignore errors
+	var count int64
+	_ = db.WithContext(dbCtx).Model(&models.Member{}).Where("user_id = ?", p.UserID).Count(&count)
+
 	// Render template
 	t := appHomeTemplate{
 		BotUserID: p.BotUserID,
 		AppURL:    p.URL,
 		Channels:  channels,
+		IsAppUser: count == 1,
 	}
 
 	content, err := renderTemplate(appHomeTemplateFilename, t)
