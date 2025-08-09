@@ -30,7 +30,6 @@ func Test_execJob(t *testing.T) {
 	w := Worker{}
 
 	err := w.execJob(context.Background(), j, nil)
-
 	assert.Error(t, err)
 }
 
@@ -68,7 +67,11 @@ func (s *ProcessJobTestSuite) SetupTest() {
 	}
 }
 
-func (s *ProcessJobTestSuite) AfterTest(_, _ string) {
+func (s *ProcessJobTestSuite) TearDownTest() {
+	require.NoError(s.T(), database.CleanPostgresDB(s.db))
+}
+
+func (s *ProcessJobTestSuite) TearDownSuite() {
 	s.resource.Close()
 }
 
@@ -87,7 +90,6 @@ func (s *ProcessJobTestSuite) Test_Succeeded() {
 
 	data, _ := json.Marshal(p)
 	job := models.NewJob(models.JobTypeAddChannel, data)
-
 	s.db.Save(&job)
 
 	err := s.worker.processJob(s.ctx, trace.Link{})
@@ -102,18 +104,35 @@ func (s *ProcessJobTestSuite) Test_Succeeded() {
 	r.True(job.IsCompleted)
 }
 
-func (s *ProcessJobTestSuite) Test_Failed() {
+func (s *ProcessJobTestSuite) Test_Failed_MissingSlackChannel() {
 	r := require.New(s.T())
 
 	job := models.NewJob(models.JobTypeAddMember, []byte(`{"foo":"bar"}`))
+	s.db.Save(&job)
 
+	err := s.worker.processJob(context.Background(), trace.Link{})
+	r.NoError(err)
+
+	// Verify job was marked as failed
+	r.Contains(s.buffer.String(), "failed to extract Slack channel ID from job data")
+	result := s.db.First(&job)
+	r.NoError(result.Error)
+	r.Equal(result.RowsAffected, int64(1))
+	r.Equal(job.Status, models.JobStatusFailed)
+	r.True(job.IsCompleted)
+}
+
+func (s *ProcessJobTestSuite) Test_Failed_ValidationError() {
+	r := require.New(s.T())
+
+	job := models.NewJob(models.JobTypeBlockMember, []byte(`{"user_id":"1 2 3","member_id":"U8765432109"}`))
 	s.db.Save(&job)
 
 	err := s.worker.processJob(context.Background(), trace.Link{})
 	r.Error(err)
 
 	// Verify job was marked as failed
-	r.Contains(s.buffer.String(), "failed to unmarshal JSON")
+	r.Contains(s.buffer.String(), "failed to execute job")
 	result := s.db.First(&job)
 	r.NoError(result.Error)
 	r.Equal(result.RowsAffected, int64(1))
@@ -131,7 +150,6 @@ func (s *ProcessJobTestSuite) Test_Canceled() {
 
 	data, _ := json.Marshal(p)
 	job := models.NewJob(models.JobTypeAddMember, data)
-
 	s.db.Save(&job)
 
 	err := s.worker.processJob(context.Background(), trace.Link{})

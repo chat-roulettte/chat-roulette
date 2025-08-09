@@ -39,10 +39,17 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "Chat Roulette can be enabled on a Slack channel by inviting <@{{ .BotUserID }}> to it. The bot will pair up members of the Slack channel every round giving participants ample time to connect. Based on the channel's _Connection Mode_ setting, the bot will suggest connecting in person for :coffee: or virtually over :video_camera: using Zoom, Google Meet, or Microsoft Teams."
+				"text": "Chat Roulette can be enabled on a Slack channel by inviting <@{{ .BotUserID }}> to it!"
 			}
 		},
-{{ if .Channels }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "The Chat Roulette bot will then pair up members of the Slack channel every round giving participants ample time to connect. Based on the channel's _Connection Mode_ setting, the bot will suggest connecting in person for :coffee: or virtually over :video_camera: using Zoom, Google Meet, or Microsoft Teams."
+			}
+		}
+{{- if .Channels }},
 		{
 			"type": "header",
 			"text": {
@@ -63,7 +70,7 @@
 				}
 			]
 		},
-{{ range .Channels }}
+{{- range .Channels }}
 	{{- $connectionMode := .ConnectionMode.String | capitalize }}
 	{{- if eq $connectionMode "Physical" }}
 		{{ $connectionMode = "In Person" }}
@@ -92,8 +99,54 @@
 					"text": ":calendar: Next Round: *{{ .NextRound | prettyDate }}*"
 				}
 			]
+		}
+{{- end }}
+{{- end }}
+{{- if .IsAppUser }},
+		{
+			"type": "header",
+			"text": {
+				"type": "plain_text",
+				"text": ":wrench: Customize Your Chat Roulette Experience",
+				"emoji": true
+			}
 		},
-{{ end }}{{ end }}
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "_To prevent or allow being matched with a specific participant, click on the following buttons:_"
+			}
+		},
+		{
+			"type": "actions",
+			"elements": [
+				{
+					"type": "button",
+					"text": {
+						"type": "plain_text",
+						"text": ":x: Prevent matching with ...",
+						"emoji": true
+					},
+					"value": "-",
+					"action_id": "BLOCK_MEMBER|start"
+				},
+				{
+					"type": "button",
+					"text": {
+						"type": "plain_text",
+						"text": ":white_check_mark: Allow matching with ...",
+						"emoji": true
+					},
+					"value": "-",
+					"style": "primary",
+					"action_id": "UNBLOCK_MEMBER|start"
+				}
+			]
+		},
 		{
 			"type": "header",
 			"text": {
@@ -109,7 +162,7 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "_To view your personal Chat Roulette dashboard, click on the following button_"
+				"text": "_To view your personal Chat Roulette dashboard and manage your settings, click on the following button:_"
 			},
 			"accessory": {
 				"type": "button",
@@ -123,5 +176,6 @@
 				"action_id": "link"
 			}
 		}
+{{- end }}
 	]
 }

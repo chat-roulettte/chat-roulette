@@ -1,0 +1,51 @@
+{
+	"type": "modal",
+	"callback_id": "unblock-member-modal",
+	"private_metadata": "{{ .PrivateMetadata }}",
+	"clear_on_close": true,
+	"notify_on_close": false,
+	"title": {
+		"type": "plain_text",
+		"text": "Chat Roulette for Slack",
+		"emoji": true
+	},
+	"close": {
+		"type": "plain_text",
+		"text": "Cancel",
+		"emoji": true
+	},
+	"submit": {
+		"type": "plain_text",
+		"text": "Submit",
+		"emoji": true
+	},
+	"blocks": [
+        {
+            "type": "image",
+            "image_url": "{{ .ImageURL }}",
+            "alt_text": "unblock members icon"
+        },
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Hi *<@{{ .UserID }}>* :wave:"
+			}
+		},
+		{
+			"type": "section",
+			"block_id": "unblock-members",
+			"text": {
+				"type": "mrkdwn",
+				"text": "_Select any users that you have previously not wished to be matched with:_"
+			},
+			"accessory": {
+				"type": "multi_users_select",
+				"action_id": "placeholder",
+				"max_selected_items": 5,
+				"focus_on_load": true,
+				"initial_users": {{ .BlockedMembers }}
+			}
+		}
+	]
+}

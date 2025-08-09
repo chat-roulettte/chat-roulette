@@ -96,6 +96,7 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 	switch interaction.Type {
 	case slack.InteractionTypeViewSubmission:
 
+		logger = logger.With(attributes.SlackViewCallbackID, interaction.View.CallbackID)
 		span.SetAttributes(
 			attribute.String(attributes.SlackViewCallbackID, interaction.View.CallbackID),
 		)
@@ -342,16 +343,46 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte(`{"response_action": "clear"}`))
 			return
+
+		case "block-member-modal":
+			// Respond to the HTTP request with the new view
+			if err := bot.UpsertMemberBlockList(r.Context(), s.GetDB(), &interaction); err != nil {
+				span.RecordError(err)
+				logger.Error("failed to upsert block list for member", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(`{"response_action": "clear"}`))
+
+		case "unblock-member-modal":
+			// Respond to the HTTP request with the new view
+			if err := bot.UpsertMemberUnblockList(r.Context(), s.GetDB(), &interaction); err != nil {
+				span.RecordError(err)
+				logger.Error("failed to upsert unblock list for member", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(`{"response_action": "clear"}`))
 		}
 
 	case slack.InteractionTypeBlockActions:
 		if len(interaction.ActionCallback.BlockActions) > 0 {
 			actionID := interaction.ActionCallback.BlockActions[0].ActionID
 
-			// Don't handle link buttons
+			logger = logger.With(attributes.SlackActionID, actionID)
+			span.SetAttributes(
+				attribute.String(attributes.SlackActionID, actionID),
+			)
+
+			// Don't handle link buttons and ignore "placeholder"
 			// See: https://github.com/slackapi/node-slack-sdk/issues/869
-			if actionID == "link" {
-				w.WriteHeader(http.StatusOK)
+			if actionID == "link" || actionID == "placeholder" {
 				return
 			}
 
@@ -390,6 +421,26 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 					w.WriteHeader(http.StatusInternalServerError)
 					return
 				}
+
+			case models.JobTypeBlockMember:
+				// handle BLOCK_MEMBER button
+				if err := bot.HandleBlockMemberButton(r.Context(), s.GetBaseURL(), s.GetSlackClient(), &interaction); err != nil {
+					span.RecordError(err)
+					logger.Error("failed to handle block member button", "error", err)
+					w.WriteHeader(http.StatusInternalServerError)
+					return
+				}
+
+			case models.JobTypeUnblockMember:
+				// handle UNBLOCK_MEMBER button
+				if err := bot.HandleUnblockMemberButton(r.Context(), s.GetBaseURL(), s.GetDB(), s.GetSlackClient(), &interaction); err != nil {
+					span.RecordError(err)
+					logger.Error("failed to handle unblock member button", "error", err)
+					w.WriteHeader(http.StatusInternalServerError)
+					return
+				}
+			default:
+				// noop
 			}
 		}
 	}

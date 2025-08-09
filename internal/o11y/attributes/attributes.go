@@ -8,7 +8,7 @@ const (
 	SlackInteraction    = "slack_interaction"
 	SlackViewCallbackID = "slack_view_callback_id"
 	SlackBlockID        = "slack_block_id"
-	SlackAction         = "slack_action"
+	SlackActionID       = "slack_action_id"
 
 	JobType     = "job"
 	JobID       = "job_id"

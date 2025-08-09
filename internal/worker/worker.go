@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-hclog"
+	pkgerrors "github.com/pkg/errors"
 	"github.com/segmentio/ksuid"
 	"github.com/slack-go/slack"
 	"go.opentelemetry.io/otel"
@@ -178,7 +179,12 @@ func (w *Worker) processJob(ctx context.Context, link trace.Link) error {
 
 		err := json.Unmarshal(job.Data, &p)
 		if err != nil || p.ChannelID == "" {
-			w.logger.Warn("failed to unmarshal JSON and extract Slack channel ID", "error", err)
+			message := "failed to unmarshal JSON from job.Data"
+			if err == nil {
+				message = "failed to extract Slack channel ID from job data"
+			}
+
+			w.logger.Warn(message, "error", err)
 
 			job.Status = models.JobStatusFailed
 			job.IsCompleted = true
@@ -189,7 +195,7 @@ func (w *Worker) processJob(ctx context.Context, link trace.Link) error {
 				attribute.String(attributes.JobStatus, job.Status.String()),
 			)
 
-			return fmt.Errorf("failed to unmarshal JSON and extract Slack channel ID")
+			return pkgerrors.Wrap(err, message)
 		}
 
 		// Check if the Slack channel exists
@@ -231,6 +237,20 @@ func (w *Worker) processJob(ctx context.Context, link trace.Link) error {
 			attributes.JobID, job.JobID.String(),
 			attributes.JobType, job.JobType.String(),
 		)
+
+		// If retrying the job will not make it succeed, then it should be marked as failed and not retried
+		if errors.Is(err, models.ErrJobParamsFailedValidation) {
+			job.Status = models.JobStatusFailed
+			job.IsCompleted = true
+			tx.WithContext(ctx).Save(&job)
+			tx.Commit()
+
+			span.SetAttributes(
+				attribute.String("job_status", models.JobStatusFailed.String()),
+			)
+
+			return err
+		}
 
 		span.SetAttributes(
 			attribute.String("job_status", models.JobStatusErrored.String()),
@@ -336,6 +356,12 @@ func (w *Worker) execJob(ctx context.Context, job *models.Job, tx *gorm.DB) erro
 
 	case models.JobTypeMarkInactive:
 		err = bot.ExecJob(ctx, tx, w.slackClient, job, bot.MarkInactive)
+
+	case models.JobTypeBlockMember:
+		err = bot.ExecJob(ctx, tx, w.slackClient, job, bot.BlockMember)
+
+	case models.JobTypeUnblockMember:
+		err = bot.ExecJob(ctx, tx, w.slackClient, job, bot.UnblockMember)
 
 	default:
 		err = fmt.Errorf("invalid job type")
