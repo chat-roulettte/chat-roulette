@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"net/url"
 	"time"
@@ -58,11 +59,14 @@ func NewTestPostgresDB(migrate bool) (*dockertest.Resource, string, error) {
 
 	pool.MaxWait = 10 * time.Second
 	if err = pool.Retry(func() error {
+		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+		defer cancel()
+
 		db, err := sql.Open("postgres", databaseURL)
 		if err != nil {
 			return err
 		}
-		return db.Ping()
+		return db.PingContext(ctx)
 	}); err != nil {
 		return nil, "", err
 	}
@@ -85,11 +89,11 @@ func CleanPostgresDB(db *gorm.DB) error {
 		return err
 	}
 
-	if _, err := sqlDB.Exec("DROP SCHEMA public CASCADE;"); err != nil {
+	if _, err := sqlDB.ExecContext(context.Background(), "DROP SCHEMA public CASCADE;"); err != nil {
 		return err
 	}
 
-	if _, err := sqlDB.Exec("CREATE SCHEMA public;"); err != nil {
+	if _, err := sqlDB.ExecContext(context.Background(), "CREATE SCHEMA public;"); err != nil {
 		return err
 	}
 

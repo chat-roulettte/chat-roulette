@@ -152,7 +152,7 @@ func HandleGreetMemberButton(ctx context.Context, client *slack.Client, interact
 	if interaction.Type == slack.InteractionTypeBlockActions {
 		span.SetAttributes(
 			attribute.String(attributes.SlackInteraction, string(interaction.Type)),
-			attribute.String(attributes.SlackAction, string(interaction.ActionCallback.BlockActions[0].Type)),
+			attribute.String(attributes.SlackActionID, string(interaction.ActionCallback.BlockActions[0].Type)),
 		)
 
 		// ChannelID and ResponseURL will be stored in the private_metadata field

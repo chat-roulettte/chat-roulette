@@ -244,7 +244,7 @@ func Test_HandleGreetAdminButton(t *testing.T) {
 
 	interaction.ResponseURL = url
 
-	err := HandleGreetMemberButton(context.Background(), client, &interaction)
+	err := HandleGreetAdminButton(context.Background(), client, &interaction)
 	assert.Nil(t, err)
 }
 
