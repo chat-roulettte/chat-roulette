@@ -30,7 +30,7 @@
                 "block_id": "onboarding",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "To allow participants to match with only others of the same gender, Chat Roulette for Slack needs to know your gender."
+                    "text": "To allow participants to only be introduced to others of the same gender, Chat Roulette for Slack needs to know your gender."
                 }
             },
             {
@@ -41,7 +41,7 @@
                     "placeholder": {
                         "type": "plain_text",
                         "text": "...",
-                        "emoji": true
+                        "emoji": false
                     },
                     "options": [
                         {
@@ -65,7 +65,7 @@
                 },
                 "label": {
                     "type": "plain_text",
-                    "text": "Select your gender",
+                    "text": "Select your gender:",
                     "emoji": true
                 }
             },
@@ -81,11 +81,7 @@
                                 "text": "I would like to opt-in to this feature!",
                                 "emoji": true
                             },
-                            "value": "true",
-                            "description": {
-                                "type": "mrkdwn",
-                                "text": "*Note*: this option may result in fewer matches"
-                            }
+                            "value": "true"
                         }
                     ],
                     "action_id": "onboarding-gender-checkbox"
@@ -96,6 +92,15 @@
                     "emoji": true
                 },
                 "optional": true
+            },
+            {
+                "type": "context",
+                "elements": [
+                    {
+                        "type": "mrkdwn",
+                        "text": ":pushpin: This may may result in fewer matches"
+                    }
+                ]
             }
         ]
     }
