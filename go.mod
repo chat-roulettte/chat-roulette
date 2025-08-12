@@ -7,7 +7,6 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/akamensky/argparse v1.4.0
 	github.com/bincyber/go-sqlcrypter v0.2.0
-	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/coreos/go-oidc/v3 v3.14.1
 	github.com/dgraph-io/ristretto v0.2.0
 	github.com/dustin/go-humanize v1.0.1
@@ -39,7 +38,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.37.0
 	go.opentelemetry.io/otel/trace v1.37.0
 	golang.org/x/oauth2 v0.30.0
-	golang.org/x/text v0.26.0
+	golang.org/x/text v0.28.0
 	google.golang.org/grpc v1.74.2
 	gorm.io/datatypes v1.2.6
 	gorm.io/driver/postgres v1.6.0
@@ -113,7 +112,7 @@ require (
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/crypto v0.39.0 // indirect
 	golang.org/x/net v0.41.0 // indirect
-	golang.org/x/sync v0.15.0 // indirect
+	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250603155806-513f23925822 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
