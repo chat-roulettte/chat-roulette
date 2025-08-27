@@ -54,7 +54,7 @@ func (s *CreateMatchesSuite) Test_CreateMatches() {
 	db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.VirtualConnectionMode,
+		ConnectionMode: models.ConnectionModeVirtual,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,
@@ -139,7 +139,7 @@ func (s *CreateMatchesSuite) Test_CreateMatches_SameGenderTwoParticipants() {
 	db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.VirtualConnectionMode,
+		ConnectionMode: models.ConnectionModeVirtual,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,

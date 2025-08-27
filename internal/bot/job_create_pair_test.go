@@ -54,7 +54,7 @@ func (s *CreatePairSuite) Test_CreatePair() {
 	db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.HybridConnectionMode,
+		ConnectionMode: models.ConnectionModeHybrid,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,

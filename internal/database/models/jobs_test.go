@@ -1,8 +1,10 @@
 package models
 
 import (
+	"errors"
 	"testing"
 
+	"github.com/dmarkham/enumer/enumerrs"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,4 +43,12 @@ func Test_JobRequiresSlackChannel(t *testing.T) {
 		v := JobRequiresSlackChannel(JobTypeAddMember)
 		assert.True(t, v)
 	})
+}
+
+func Test_IsError(t *testing.T) {
+	v, err := jobTypeEnumString("FOO_BAR")
+	assert.Error(t, err)
+	assert.Zero(t, v)
+	assert.True(t, errors.Is(err, enumerrs.ErrValueInvalid))
+	assert.Contains(t, err.Error(), "does not belong to")
 }

@@ -48,7 +48,7 @@ func (s *UpdateChannelHandlerSuite) SetupTest() {
 	db.Create(&models.Channel{
 		ChannelID:      "C0123456789",
 		Inviter:        "U9876543210",
-		ConnectionMode: models.PhysicalConnectionMode,
+		ConnectionMode: models.ConnectionModePhysical,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,

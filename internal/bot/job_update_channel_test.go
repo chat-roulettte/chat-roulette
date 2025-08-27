@@ -41,7 +41,7 @@ func (s *UpdateChannelSuite) Test_UpdateChannel() {
 
 	channelID := "C0123456789"
 	interval := models.Biweekly
-	connectionMode := models.VirtualConnectionMode
+	connectionMode := models.ConnectionModeVirtual
 	weekday := time.Monday
 	hour := 12
 
@@ -111,7 +111,7 @@ func (s *UpdateChannelSuite) Test_QueueUpdateChannelJob() {
 	p := &UpdateChannelParams{
 		ChannelID:      "C0123456789",
 		Interval:       "biweekly",
-		ConnectionMode: models.HybridConnectionMode.String(),
+		ConnectionMode: models.ConnectionModeHybrid.String(),
 		Weekday:        "Monday",
 		Hour:           12,
 		NextRound:      time.Now().Add(48 * time.Hour),

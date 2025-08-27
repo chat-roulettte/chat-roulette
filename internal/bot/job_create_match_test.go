@@ -57,7 +57,7 @@ func (s *CreateMatchSuite) Test_CreateMatch() {
 	s.db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.VirtualConnectionMode,
+		ConnectionMode: models.ConnectionModeVirtual,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,
@@ -175,7 +175,7 @@ func (s *CreateMatchSuite) Test_CreateMatch_NoActiveRound() {
 	s.db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.VirtualConnectionMode,
+		ConnectionMode: models.ConnectionModeVirtual,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,
@@ -205,7 +205,7 @@ func (s *CreateMatchSuite) Test_CreateMatch_ExceededMidPointInActiveRound() {
 	s.db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.VirtualConnectionMode,
+		ConnectionMode: models.ConnectionModeVirtual,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,
@@ -254,7 +254,7 @@ func (s *CreateMatchSuite) Test_CreateMatch_HasGenderPreference() {
 	s.db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.VirtualConnectionMode,
+		ConnectionMode: models.ConnectionModeVirtual,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,
@@ -367,7 +367,7 @@ func (s *CreateMatchSuite) Test_CreateMatch_NoMatchFound() {
 	s.db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.VirtualConnectionMode,
+		ConnectionMode: models.ConnectionModeVirtual,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,

@@ -270,7 +270,7 @@ b3N0L2FjdGlvbnMvYS9iL2MifQ==`,
 
 func Test_UpsertChannelSettings(t *testing.T) {
 	inviter := "U0123456789"
-	connectionMode := models.HybridConnectionMode
+	connectionMode := models.ConnectionModeHybrid
 	interval := models.Biweekly
 	firstRound := time.Date(2024, time.January, 4, 10, 0, 0, 0, time.UTC)
 

@@ -84,7 +84,7 @@ func CreateRound(ctx context.Context, db *gorm.DB, client *slack.Client, p *Crea
 	logger.Info("started new chat-roulette round")
 
 	// Update the next_round column for the channel
-	interval, err := models.ParseInterval(p.Interval)
+	interval, err := models.IntervalEnumString(p.Interval)
 	if err != nil {
 		return err
 	}

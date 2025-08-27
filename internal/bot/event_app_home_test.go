@@ -38,7 +38,7 @@ func Test_appHomeTemplate(t *testing.T) {
 						ChannelID:      "C0123456789",
 						Inviter:        "U0123456789",
 						Interval:       models.Biweekly,
-						ConnectionMode: models.VirtualConnectionMode,
+						ConnectionMode: models.ConnectionModeVirtual,
 						NextRound:      nextRound,
 					},
 				},
