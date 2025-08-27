@@ -96,7 +96,7 @@ func (s *SyncChannelsSuite) Test_SyncChannels() {
 	db.Create(&models.Channel{
 		ChannelID:      deleteChannel,
 		Inviter:        inviter,
-		ConnectionMode: models.VirtualConnectionMode,
+		ConnectionMode: models.ConnectionModeVirtual,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,

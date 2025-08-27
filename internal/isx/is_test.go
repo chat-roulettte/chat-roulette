@@ -19,7 +19,7 @@ func Test_Interval(t *testing.T) {
 		err := validation.Validate("blah", validation.By(Interval))
 
 		assert.NotNil(t, err)
-		assert.ErrorContains(t, err, "invalid chat roulette interval")
+		assert.ErrorContains(t, err, "the input value is not valid for the type")
 	})
 }
 

@@ -57,7 +57,7 @@ func UpdateMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Upd
 	}
 
 	if p.Gender != "" {
-		v, err := models.ParseGender(p.Gender)
+		v, err := models.GenderString(p.Gender)
 		if err != nil {
 			logger.Error("failed to parse gender", "error", err)
 			return err

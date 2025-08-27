@@ -7,13 +7,19 @@ go/install:
 	go get -v
 
 go/tools:
-	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6
-	go install -tags 'postgres $(MIGRATIONS_SOURCE)' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.3
-	go install gotest.tools/gotestsum@v1.12.3
-	go install github.com/miniscruff/changie@v1.22.0
+	cd tools && \
+	GOTOOLCHAIN=local go mod tidy -compat=1.23 && \
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint && \
+	go install -tags 'postgres $(MIGRATIONS_SOURCE)' github.com/golang-migrate/migrate/v4/cmd/migrate && \
+	go install gotest.tools/gotestsum && \
+	go install github.com/miniscruff/changie && \
+	go install github.com/dmarkham/enumer
 
 go/tidy:
 	go mod tidy -compat=1.23
+
+go/generate:
+	go generate ./...
 
 go/test:
 	go test -v --cover ./...
@@ -21,11 +27,17 @@ go/test:
 go/testsum:
 	gotestsum --format testname --no-color=false -- --cover ./...
 
+go/testsum/watch:
+	gotestsum --format testname --no-color=false --watch -ftestname -- -count=1
+
 go/lint:
 	golangci-lint run --allow-parallel-runners
 
 go/lint/output-html:
 	golangci-lint run --allow-parallel-runners > .lint-report.html
+
+go/scan:
+	docker run -it -v "${PWD}:/src" semgrep/semgrep:1.128.1@sha256:fca58525689355641019c05ab49dcc5bc3a1eb7e044f35014ee39594b5aa4fc1 semgrep --metrics=off --config p/golang --verbose .
 
 go/run:
 	./scripts/go.sh run

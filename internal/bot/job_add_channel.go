@@ -34,13 +34,13 @@ func AddChannel(ctx context.Context, db *gorm.DB, client *slack.Client, p *AddCh
 
 	// Add Slack channel to the database
 	weekday, _ := timex.ParseWeekday(p.Weekday)
-	interval, err := models.ParseInterval(p.Interval)
+	interval, err := models.IntervalEnumString(p.Interval)
 	if err != nil {
 		logger.Error("failed to parse interval", "error", err)
 		return err
 	}
 
-	connectionMode, err := models.ParseConnectionMode(p.ConnectionMode)
+	connectionMode, err := models.ConnectionModeString(p.ConnectionMode)
 	if err != nil {
 		logger.Error("failed to parse connection mode", "error", err)
 		return err

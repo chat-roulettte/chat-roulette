@@ -82,7 +82,7 @@ func (s *KickoffPairSuite) Test_KickoffPair() {
 	s.db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.VirtualConnectionMode,
+		ConnectionMode: models.ConnectionModeVirtual,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,

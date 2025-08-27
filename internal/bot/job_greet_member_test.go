@@ -162,9 +162,9 @@ func Test_greetMemberTemplate(t *testing.T) {
 		interval       models.IntervalEnum
 		goldenFile     string
 	}{
-		{"biweekly physical", models.PhysicalConnectionMode.String(), models.Biweekly, "greet_member_biweekly.json"},
-		{"monthly virtual", models.VirtualConnectionMode.String(), models.Monthly, "greet_member_monthly.json"},
-		{"weekly hybrid", models.HybridConnectionMode.String(), models.Weekly, "greet_member_hybrid.json"},
+		{"biweekly physical", models.ConnectionModePhysical.String(), models.Biweekly, "greet_member_biweekly.json"},
+		{"monthly virtual", models.ConnectionModeVirtual.String(), models.Monthly, "greet_member_monthly.json"},
+		{"weekly hybrid", models.ConnectionModeHybrid.String(), models.Weekly, "greet_member_hybrid.json"},
 	}
 
 	for _, tc := range testCases {

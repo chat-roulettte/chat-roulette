@@ -36,9 +36,9 @@ func Test_notifyPairTemplate(t *testing.T) {
 		connectionMode string
 		goldenFile     string
 	}{
-		{"virtual", models.VirtualConnectionMode.String(), "notify_pair_virtual.json"},
-		{"physical", models.PhysicalConnectionMode.String(), "notify_pair_physical.json"},
-		{"hybrid", models.HybridConnectionMode.String(), "notify_pair_hybrid.json"},
+		{"virtual", models.ConnectionModeVirtual.String(), "notify_pair_virtual.json"},
+		{"physical", models.ConnectionModePhysical.String(), "notify_pair_physical.json"},
+		{"hybrid", models.ConnectionModeHybrid.String(), "notify_pair_hybrid.json"},
 	}
 
 	p := notifyPairTemplate{
@@ -124,7 +124,7 @@ func (s *NotifyPairSuite) Test_NotifyPair() {
 	db.Create(&models.Channel{
 		ChannelID:      channelID,
 		Inviter:        "U9876543210",
-		ConnectionMode: models.PhysicalConnectionMode,
+		ConnectionMode: models.ConnectionModePhysical,
 		Interval:       models.Biweekly,
 		Weekday:        time.Friday,
 		Hour:           12,

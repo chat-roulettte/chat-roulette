@@ -37,7 +37,7 @@ var (
 func Interval(value interface{}) error {
 	s, _ := value.(string)
 
-	if _, err := models.ParseInterval(s); err != nil {
+	if _, err := models.IntervalEnumString(s); err != nil {
 		return err
 	}
 
@@ -61,7 +61,7 @@ func Weekday(value interface{}) error {
 func ConnectionMode(value interface{}) error {
 	s, _ := value.(string)
 
-	if _, err := models.ParseConnectionMode(s); err != nil {
+	if _, err := models.ConnectionModeString(s); err != nil {
 		return err
 	}
 
