@@ -46,14 +46,15 @@ func Test_updateMemberHandler(t *testing.T) {
 	isActive := false
 
 	params := updateMemberRequest{
-		ChannelID:   "C9876543210",
-		UserID:      "U0123456789",
-		IsActive:    &isActive,
-		Country:     "United States of America",
-		City:        "Phoenix",
-		Timezone:    "America/Phoenix",
-		ProfileType: "Twitter",
-		ProfileLink: "twitter.com/test",
+		ChannelID:      "C9876543210",
+		UserID:         "U0123456789",
+		ConnectionMode: models.ConnectionModePhysical.String(),
+		IsActive:       &isActive,
+		Country:        "United States of America",
+		City:           "Phoenix",
+		Timezone:       "America/Phoenix",
+		ProfileType:    "Twitter",
+		ProfileLink:    "twitter.com/test",
 	}
 
 	t.Run("unauthenticated", func(t *testing.T) {
@@ -94,9 +95,10 @@ func Test_updateMemberHandler(t *testing.T) {
 		isActive := true
 
 		p := &bot.UpdateMemberParams{
-			ChannelID: "C9876543210",
-			UserID:    "U0123456789",
-			IsActive:  &isActive,
+			ChannelID:      "C9876543210",
+			UserID:         "U0123456789",
+			IsActive:       &isActive,
+			ConnectionMode: "unknown",
 		}
 
 		body := new(bytes.Buffer)

@@ -53,4 +53,5 @@ type onboardingTemplate struct {
 	ImageURL        string
 	Zones           []tz.Zone
 	IsAdmin         bool
+	ConnectionMode  string
 }

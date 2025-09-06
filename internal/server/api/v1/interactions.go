@@ -1,9 +1,11 @@
 package v1
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/slack-go/slack"
@@ -179,10 +181,64 @@ func (s *implServer) slackInteractionHandler(w http.ResponseWriter, r *http.Requ
 			return
 
 		case "onboarding-timezone":
+			db := s.GetDB()
+
 			// Parse the contents of the view and queue UPDATE_MEMBER job
-			if err := bot.UpsertMemberTimezoneInfo(r.Context(), s.GetDB(), &interaction); err != nil {
+			if err := bot.UpsertMemberTimezoneInfo(r.Context(), db, &interaction); err != nil {
 				span.RecordError(err)
 				logger.Error("failed to upsert Slack member's timezone info", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			// Extract the ChannelID from the private_metadata field
+			channelID, err := bot.ExtractChannelIDFromPrivateMetada(&interaction)
+			if err != nil {
+				span.RecordError(err)
+				logger.Error("failed to extract channelID from privateMetadata", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			// Lookup the channel's Connection Mode
+			var connectionMode models.ConnectionMode
+
+			dbCtx, cancel := context.WithTimeout(r.Context(), 200*time.Second)
+			defer cancel()
+
+			result := db.WithContext(dbCtx).Model(&models.Channel{}).Select("connection_mode").Where("channel_id = ?", channelID).Scan(&connectionMode)
+			if result.Error != nil {
+				span.RecordError(result.Error)
+				logger.Error("failed to lookup the channel's Connection Mode", "error", result.Error)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			var body []byte
+
+			// Connection Mode preference for participants is only applicable when the Chat Roulette channel is running in "Hybrid" mode
+			if connectionMode == models.ConnectionModeHybrid {
+				body, err = bot.RenderOnboardingConnectionModeView(r.Context(), &interaction, s.GetBaseURL())
+			} else {
+				body, err = bot.RenderOnboardingGenderView(r.Context(), &interaction, s.GetBaseURL())
+			}
+			if err != nil {
+				span.RecordError(err)
+				logger.Error("failed to load template", "error", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write(body)
+			return
+
+		case "onboarding-connection-mode":
+			// Parse the contents of the view and queue UPDATE_MEMBER job
+			if err := bot.UpsertMemberConnectionMode(r.Context(), s.GetDB(), &interaction); err != nil {
+				span.RecordError(err)
+				logger.Error("failed to upsert Slack member's connection mode preference", "error", err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}

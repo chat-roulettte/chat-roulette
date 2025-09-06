@@ -49,7 +49,7 @@ func CreateMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Cr
 	var matches []chatRoulettePair
 
 	result := db.WithContext(dbCtx).
-		Raw("SELECT * FROM GetRandomMatchesV3(?)", p.ChannelID).
+		Raw("SELECT * FROM GetRandomMatchesV4(?)", p.ChannelID).
 		Scan(&matches)
 
 	if result.Error != nil {

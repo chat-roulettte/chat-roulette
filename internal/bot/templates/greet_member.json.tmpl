@@ -18,7 +18,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "{{ .When }}, you will be introduced to another member in the <#{{ .ChannelID }}> channel. You will have until the end of each round to meet {{ if eq .ConnectionMode "virtual" }}virtually over :video_camera: using Zoom, Google Meet, or Microsoft Teams{{ else if eq .ConnectionMode "physical" }}in person at a location of your choosing, whether it's for :coffee: or :shallow_pan_of_food:{{ else if eq .ConnectionMode "hybrid" }}in person for :coffee: or virtually over :video_camera: using Zoom, Google Meet, or Microsoft Teams{{ end }}!",
+                "text": "{{ .When }}, you will be introduced to another member in the <#{{ .ChannelID }}> channel. You will have until the end of each round to meet {{ if eq .ConnectionMode "virtual" }}virtually over :video_camera: using Zoom, Google Meet, or Microsoft Teams{{ else if eq .ConnectionMode "physical" }}in-person at a location of your choosing, whether it's for :coffee: or :shallow_pan_of_food:{{ else if eq .ConnectionMode "hybrid" }}in-person for :coffee: or virtually over :video_camera: using Zoom, Google Meet, or Microsoft Teams{{ end }}!",
                 "verbatim": false
             }
         },

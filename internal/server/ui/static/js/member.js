@@ -18,6 +18,7 @@ document
     let body = {
       channel_id: channel_id,
       user_id: user.dataset.slackUserId,
+      connection_mode: data.get("connection-mode"),
       country: data.get("location-country"),
       city: data.get("location-city"),
       timezone: data.get("location-timezone"),

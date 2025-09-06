@@ -18,7 +18,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet in person at a location of your choosing, whether it's for :coffee: or :shallow_pan_of_food:!",
+                "text": "*Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet in-person at a location of your choosing, whether it's for :coffee: or :shallow_pan_of_food:!",
                 "verbatim": false
             }
         },

@@ -215,7 +215,7 @@ func Test_HandleGreetMemberButton(t *testing.T) {
 				"type": "section",
 				"text": {
 					"type": "mrkdwn",
-					"text": "Chat Roulette has been enabled on this channel. *Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet in person at a location of your choosing, whether it's for coffee or a meal!",
+					"text": "Chat Roulette has been enabled on this channel. *Biweekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet in-person at a location of your choosing, whether it's for coffee or a meal!",
 					"verbatim": false
 				}
 			},
@@ -447,6 +447,25 @@ b3N0L2FjdGlvbnMvYS9iL2MifQ==`,
 	assert.Nil(t, err)
 }
 
+func Test_RenderOnboardingConnectionModeView(t *testing.T) {
+	g := goldie.New(t)
+
+	interaction := &slack.InteractionCallback{
+		User: slack.User{
+			ID: "U0123456789",
+		},
+		View: slack.View{
+			PrivateMetadata: `eyJjaGFubmVsX2lkIjoiQzAxMjM0NTY3ODkiLCJyZXNwb25zZV91cmwiOiJodHRwOi8vbG9jYWxob3N0L2FjdGlvbnMvYS9iL2MifQ==`,
+		},
+	}
+
+	content, err := RenderOnboardingConnectionModeView(context.Background(), interaction, "http://localhost/")
+	assert.Nil(t, err)
+	assert.NotNil(t, content)
+
+	g.Assert(t, "onboarding_connection_mode.json", content)
+}
+
 func Test_RenderOnboardingGenderView(t *testing.T) {
 	g := goldie.New(t)
 
@@ -464,6 +483,47 @@ func Test_RenderOnboardingGenderView(t *testing.T) {
 	assert.NotNil(t, content)
 
 	g.Assert(t, "onboarding_gender.json", content)
+}
+
+func Test_UpsertMemberConnectionMode(t *testing.T) {
+	userID := "U0123456789"
+
+	interaction := &slack.InteractionCallback{
+		User: slack.User{
+			ID: "U0123456789",
+		},
+		View: slack.View{
+			PrivateMetadata: `eyJjaGFubmVsX2lkIjoiQzAxMjM0NTY3ODkiLCJyZXNwb25zZV91cmwiOiJodHRwOi8vbG9jYWxo
+b3N0L2FjdGlvbnMvYS9iL2MifQ==`,
+			State: &slack.ViewState{
+				Values: map[string]map[string]slack.BlockAction{
+					"onboarding-connection-mode": {
+						"onboarding-connection-mode-select": {
+							SelectedOption: slack.OptionBlockObject{
+								Value: models.ConnectionModeVirtual.String(),
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	db, mock := database.NewMockedGormDB()
+
+	database.MockQueueJob(
+		mock,
+		&UpdateMemberParams{
+			ChannelID:      "C0123456789",
+			UserID:         userID,
+			ConnectionMode: models.ConnectionModeVirtual.String(),
+		},
+		models.JobTypeUpdateMember.String(),
+		models.JobPriorityHigh,
+	)
+
+	err := UpsertMemberConnectionMode(context.Background(), db, interaction)
+	assert.Nil(t, err)
 }
 
 func Test_UpsertMemberGenderInfo(t *testing.T) {

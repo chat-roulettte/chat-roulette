@@ -56,6 +56,7 @@ func Test_UpdateMember(t *testing.T) {
 		ChannelID:           channelID,
 		UserID:              userID,
 		Gender:              models.Male,
+		ConnectionMode:      models.ConnectionModeHybrid,
 		Country:             sqlcrypter.NewEncryptedBytes("United States of America"),
 		City:                sqlcrypter.NewEncryptedBytes("New York"),
 		IsActive:            &isActive,
@@ -70,6 +71,7 @@ func Test_UpdateMember(t *testing.T) {
 		ChannelID:           channelID,
 		UserID:              userID,
 		Gender:              models.Male.String(),
+		ConnectionMode:      models.ConnectionModeVirtual.String(),
 		City:                sqlcrypter.NewEncryptedBytes("Los Angeles"),
 		IsActive:            &isActive,
 		HasGenderPreference: &hasGenderPreference,
@@ -89,6 +91,7 @@ func Test_UpdateMember(t *testing.T) {
 	r.False(*member.IsActive)
 	r.False(*member.HasGenderPreference)
 	r.Equal(member.City.String(), "Los Angeles")
+	r.Equal(member.ConnectionMode, models.ConnectionModeVirtual)
 }
 
 func Test_ExecUpdateMember(t *testing.T) {

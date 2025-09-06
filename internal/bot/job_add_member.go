@@ -47,6 +47,7 @@ func AddMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *AddMem
 	newMember := &models.Member{
 		ChannelID:           p.ChannelID,
 		UserID:              p.UserID,
+		ConnectionMode:      models.ConnectionModeHybrid,
 		Gender:              models.Male,
 		IsActive:            &isActive,
 		HasGenderPreference: new(bool),

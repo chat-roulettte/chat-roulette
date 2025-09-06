@@ -29,11 +29,12 @@ import (
 const (
 	greetMemberTemplateFilename = "greet_member.json.tmpl"
 
-	onboardingLocationTemplateFilename = "onboarding_location.json.tmpl"
-	onboardingTimezoneTemplateFilename = "onboarding_timezone.json.tmpl"
-	onboardingGenderTemplateFilename   = "onboarding_gender.json.tmpl"
-	onboardingProfileTemplateFilename  = "onboarding_profile.json.tmpl"
-	onboardingCalendlyTemplateFilename = "onboarding_calendly.json.tmpl"
+	onboardingLocationTemplateFilename       = "onboarding_location.json.tmpl"
+	onboardingTimezoneTemplateFilename       = "onboarding_timezone.json.tmpl"
+	onboardingGenderTemplateFilename         = "onboarding_gender.json.tmpl"
+	onboardingConnectionModeTemplateFilename = "onboarding_connection_mode.json.tmpl"
+	onboardingProfileTemplateFilename        = "onboarding_profile.json.tmpl"
+	onboardingCalendlyTemplateFilename       = "onboarding_calendly.json.tmpl"
 )
 
 // greetMemberTemplate is used with templates/greet_member.json.tmpl
@@ -322,6 +323,75 @@ func UpsertMemberTimezoneInfo(ctx context.Context, db *gorm.DB, interaction *sla
 		UserID:    interaction.User.ID,
 		ChannelID: channelID,
 		Timezone:  sqlcrypter.NewEncryptedBytes(timezone),
+	}
+
+	if err := QueueUpdateMemberJob(ctx, db, p); err != nil {
+		return errors.Wrap(err, "failed to add UPDATE_MEMBER job to the queue")
+	}
+
+	return nil
+}
+
+// RenderOnboardingConnectionModeView renders the view template for collecting
+// a new member's connection mode preference.
+func RenderOnboardingConnectionModeView(ctx context.Context, interaction *slack.InteractionCallback, baseURL string) ([]byte, error) {
+	// Start new span
+	tracer := otel.Tracer("")
+	_, span := tracer.Start(ctx, "render.connection_mode")
+	defer span.End()
+
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse base URL")
+	}
+	u.Path = path.Join(u.Path, "static/img/connection-mode.png")
+
+	// Extract the ChannelID from the private_metadata field
+	channelID, err := ExtractChannelIDFromPrivateMetada(interaction)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to extract channelID from privateMetadata")
+	}
+
+	// Render the template
+	t := onboardingTemplate{
+		UserID:          interaction.User.ID,
+		PrivateMetadata: interaction.View.PrivateMetadata,
+		ChannelID:       channelID,
+		ImageURL:        u.String(),
+	}
+
+	content, err := renderTemplate(onboardingConnectionModeTemplateFilename, t)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to render template")
+	}
+
+	return []byte(content), nil
+}
+
+// UpsertMemberConnectionMode collects a new member's connection mode
+// preference during the onboarding flow and updates it in the database.
+func UpsertMemberConnectionMode(ctx context.Context, db *gorm.DB, interaction *slack.InteractionCallback) error {
+	// Start new span
+	tracer := otel.Tracer("")
+	ctx, span := tracer.Start(ctx, "upsert.connection_mode")
+	defer span.End()
+
+	// Extract the ChannelID from the private_metadata field
+	channelID, err := ExtractChannelIDFromPrivateMetada(interaction)
+	if err != nil {
+		return errors.Wrap(err, "failed to extract channelID from privateMetadata")
+	}
+
+	// Extract the connection mode from the view state
+	connectionMode := interaction.View.State.Values["onboarding-connection-mode"]["onboarding-connection-mode-select"].SelectedOption.Value
+
+	// Schedule an UPDATE_MEMBER job to update the member's connection mode.
+	// UpdateMember() could be called directly here, however
+	// scheduling a background job will ensure it is reliably executed.
+	p := &UpdateMemberParams{
+		UserID:         interaction.User.ID,
+		ChannelID:      channelID,
+		ConnectionMode: connectionMode,
 	}
 
 	if err := QueueUpdateMemberJob(ctx, db, p); err != nil {

@@ -17,7 +17,7 @@ INSERT INTO icebreakers (question) VALUES
 ('What''s the most memorable trip you''ve ever taken and what made it so special?'),
 ('What''s the most interesting thing you''ve learned from a podcast recently?'),
 ('What''s the most interesting or unusual hobby you''ve ever had?'),
-('What''s the most beautiful place you''ve ever seen in person?'),
+('What''s the most beautiful place you''ve ever seen in-person?'),
 ('What''s the best thing you''ve learned recently outside of work?'),
 ('What''s the best meal you''ve ever had and what made it so memorable?'),
 ('What''s something that you''re looking forward to in the coming months?'),
