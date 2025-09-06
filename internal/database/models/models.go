@@ -16,7 +16,7 @@ type Channel struct {
 	// Inviter is the ID of the user who has invited the bot to the Slack channel
 	Inviter string
 
-	// ConnectionMode ...
+	// ConnectionMode is the connection mode (in-person, virtual, or hybrid) for this channel
 	ConnectionMode ConnectionMode
 
 	// Interval is the interval for chat roulette rounds for the channel (ie. weekly, biweekly, triweekly, monthly)
@@ -48,6 +48,9 @@ type Member struct {
 
 	// ChannelID is the ID of the Slack channel that the user is a member of
 	ChannelID string `gorm:"foreignKey:ChannelID;references:Channel"`
+
+	// ConnectionMode is the preferred mode of connection (virtual, in-person, or hybrid for no preference)
+	ConnectionMode ConnectionMode `gorm:"type:connection_mode;default:'ConnectionMode(3)'"`
 
 	// Gender is the gender of the user
 	Gender Gender

@@ -94,7 +94,7 @@ func (s *UpdateChannelHandlerSuite) Test_Validation() {
 	p := &bot.UpdateChannelParams{
 		ChannelID:      "C0123456789",
 		Interval:       "on the regular",
-		ConnectionMode: "in person",
+		ConnectionMode: "in-person",
 		Weekday:        "Thursday",
 		Hour:           24,
 		NextRound:      time.Now().UTC().AddDate(0, 0, -2),

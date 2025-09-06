@@ -22,6 +22,7 @@ import (
 type updateMemberRequest struct {
 	ChannelID           string `json:"channel_id"`
 	UserID              string `json:"user_id"`
+	ConnectionMode      string `json:"connection_mode,omitempty"`
 	Country             string `json:"country,omitempty"`
 	City                string `json:"city,omitempty"`
 	Timezone            string `json:"timezone,omitempty"`
@@ -68,6 +69,7 @@ func (s *implServer) updateMemberHandler(w http.ResponseWriter, r *http.Request)
 	if err := validation.ValidateStruct(req,
 		validation.Field(&req.ChannelID, validation.Required, is.Alphanumeric),
 		validation.Field(&req.UserID, validation.Required, is.Alphanumeric),
+		validation.Field(&req.ConnectionMode, validation.Required, validation.By(isx.ConnectionMode)),
 		validation.Field(&req.Country, validation.Required, validation.By(isx.Country)),
 		validation.Field(&req.City, validation.Required),
 		validation.Field(&req.Timezone, validation.Required),
@@ -123,6 +125,7 @@ func (s *implServer) updateMemberHandler(w http.ResponseWriter, r *http.Request)
 	p := &bot.UpdateMemberParams{
 		ChannelID:           req.ChannelID,
 		UserID:              req.UserID,
+		ConnectionMode:      req.ConnectionMode,
 		IsActive:            req.IsActive,
 		HasGenderPreference: req.HasGenderPreference,
 	}

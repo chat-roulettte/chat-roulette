@@ -1,0 +1,90 @@
+{
+    "response_action": "update",
+    "view": {
+        "type": "modal",
+        "callback_id": "onboarding-connection-mode",
+        "private_metadata": "{{ .PrivateMetadata }}",
+        "title": {
+            "type": "plain_text",
+            "text": "Chat Roulette for Slack",
+            "emoji": true
+        },
+        "close": {
+            "type": "plain_text",
+            "text": "Cancel",
+            "emoji": true
+        },
+        "submit": {
+            "type": "plain_text",
+            "text": "Next",
+            "emoji": true
+        },
+        "blocks": [
+            {
+                "type": "image",
+                "image_url": "{{ .ImageURL }}",
+                "alt_text": "connection-mode"
+            },
+            {
+                "type": "section",
+                "block_id": "section-1",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "The _Connection Mode_ for <#{{ .ChannelID }}> is currently set to *Hybrid*"
+                }
+            },
+            {
+                "type": "section",
+                "block_id": "section-2",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "That means each round, you can meet for coffee or virtually over Zoom, Google Meet, or Microsoft Teams. By selecting your preferred connection mode, the Chat Roulette bot will try to match you with others who have the same preference!"
+                }
+            },
+            {
+                "type": "input",
+                "block_id": "onboarding-connection-mode",
+                "element": {
+                    "type": "static_select",
+                    "placeholder": {
+                        "type": "plain_text",
+                        "text": "Either",
+                        "emoji": false
+                    },
+					"options": [
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "Virtual",
+								"emoji": false
+							},
+							"value": "virtual"
+						},
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "In-Person",
+								"emoji": false
+							},
+							"value": "physical"
+						},
+						{
+							"text": {
+								"type": "plain_text",
+								"text": "Either",
+								"emoji": false
+							},
+							"value": "hybrid"
+						}
+					],
+                    "action_id": "onboarding-connection-mode-select"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Select your preferred mode:",
+                    "emoji": true
+                }
+            }
+        ]
+    }
+}

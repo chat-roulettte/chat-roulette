@@ -19,6 +19,7 @@ type UpdateMemberParams struct {
 	ChannelID           string                    `json:"channel_id"`
 	UserID              string                    `json:"user_id"`
 	Gender              string                    `json:"gender,omitempty"`
+	ConnectionMode      string                    `json:"connection_mode,omitempty"`
 	Country             sqlcrypter.EncryptedBytes `json:"country,omitempty"`
 	City                sqlcrypter.EncryptedBytes `json:"city,omitempty"`
 	Timezone            sqlcrypter.EncryptedBytes `json:"timezone,omitempty"`
@@ -54,6 +55,15 @@ func UpdateMember(ctx context.Context, db *gorm.DB, client *slack.Client, p *Upd
 		CalendlyLink:        p.CalendlyLink,
 		HasGenderPreference: p.HasGenderPreference,
 		IsActive:            p.IsActive,
+	}
+
+	if p.ConnectionMode != "" {
+		v, err := models.ConnectionModeString(p.ConnectionMode)
+		if err != nil {
+			logger.Error("failed to parse connection mode", "error", err)
+			return err
+		}
+		member.ConnectionMode = v
 	}
 
 	if p.Gender != "" {

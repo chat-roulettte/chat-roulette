@@ -34,6 +34,7 @@ func CreateGormDB(logger hclog.Logger, c *config.Config) (*gorm.DB, error) {
 		NowFunc: func() time.Time {
 			return time.Now().UTC()
 		},
+		DefaultContextTimeout: 1 * time.Second,
 		Logger: gormlogger.New(stdLogger, gormlogger.Config{
 			SlowThreshold:             100 * time.Millisecond,
 			LogLevel:                  logLevel,

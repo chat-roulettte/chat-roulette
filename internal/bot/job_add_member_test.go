@@ -69,6 +69,7 @@ func (s *AddMemberSuite) Test_AddMember() {
 			false,
 			database.AnyTime(),
 			database.AnyTime(),
+			sqlmock.AnyArg(),
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 	s.mock.ExpectCommit()

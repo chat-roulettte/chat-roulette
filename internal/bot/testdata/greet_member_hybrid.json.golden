@@ -18,7 +18,7 @@
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*Weekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet in person for :coffee: or virtually over :video_camera: using Zoom, Google Meet, or Microsoft Teams!",
+                "text": "*Weekly* on *Mondays*, you will be introduced to another member in the <#C0123456789> channel. You will have until the end of each round to meet in-person for :coffee: or virtually over :video_camera: using Zoom, Google Meet, or Microsoft Teams!",
                 "verbatim": false
             }
         },
