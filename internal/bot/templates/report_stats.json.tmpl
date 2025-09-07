@@ -64,14 +64,14 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*{{ .Met }}* {{ $groupsKeyword }} met :partying_face:"
+				"text": "*{{ .Met }}* {{ $groupsKeyword }} met {{ if eq .Met 0.0 }}:smiling_face_with_tear:{{ else }}:partying_face:{{ end }}"
 			}
 		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "That's *{{ .Percent | prettyPercent }}* of the *{{ .Pairs }}* intros made :confetti_ball:"
+				"text": "That's *{{ .Percent | prettyPercent }}* of the *{{ .Pairs }}* intros made {{ if gt .Percent 0.0 }}:confetti_ball:{{ end }}"
 			}
 		},
 		{{- if eq .Percent 100.0 }}

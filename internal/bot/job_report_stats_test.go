@@ -107,19 +107,22 @@ func Test_reportStatsTemplate(t *testing.T) {
 		percent  float64
 		contains []string
 	}{
-		{"all met", 10, 10, 100, []string{}},
+		{"all met", 10, 10, 100, []string{
+			"Congratulations to everyone for achieving *100%* :tada:",
+		}},
 		{"half met", 10, 5, 50, []string{
 			"This round had *20* participants",
-			"*5* groups met",
-			"*50%* of the *10* intros made",
+			"*5* groups met :partying_face:",
+			"*50%* of the *10* intros made :confetti_ball:",
 		}},
 		{"one group met", 4, 1, 25, []string{
 			"*1* group met",
 			"*25%* of the *4* intros made",
+			"Can you get to *100%* next round?",
 		}},
 		{"none met", 20, 0, 0, []string{
 			"This round had *40* participants",
-			"*0* groups met",
+			"*0* groups met :smiling_face_with_tear:",
 			"*0%* of the *20* intros made",
 		}},
 		{"no pairs", 0, 0, 0, []string{
