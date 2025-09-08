@@ -21,16 +21,20 @@ const (
 
 // reportMatchesTemplate is used with reportMatchesTemplateFilename
 type reportMatchesTemplate struct {
-	IsAdmin             bool
-	UserID              string
-	ChannelID           string
-	NextRound           time.Time
-	Participants        int
-	Men                 int
-	Women               int
-	HasGenderPreference int
-	Pairs               int
-	Unpaired            int
+	IsAdmin                bool
+	UserID                 string
+	ChannelID              string
+	NextRound              time.Time
+	Participants           int
+	Men                    int
+	Women                  int
+	HasGenderPreference    int
+	IsHybridConnectionMode bool
+	PreferredVirtual       int
+	PreferredInPerson      int
+	PreferredHybrid        int
+	Pairs                  int
+	Unpaired               int
 }
 
 // ReportMatchesParams are the parameters for the REPORT_MATCHES job.
@@ -46,6 +50,9 @@ type matchStats struct {
 	Men                 int
 	Women               int
 	HasGenderPreference int
+	PreferredVirtual    int
+	PreferredInPerson   int
+	PreferredHybrid     int
 }
 
 // ReportMatches sends a report of matches for the current round to the chat-roulette admin and channel.
@@ -82,9 +89,17 @@ func ReportMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Re
 	result = db.WithContext(dbCtx).
 		Table("pairings").
 		Select(`
-		COUNT(*) FILTER (WHERE members.gender = 'male') AS men,
-		COUNT(*) FILTER (WHERE members.gender = 'female') AS women,
-		COUNT(*) FILTER (WHERE members.has_gender_preference) AS has_gender_preference`).
+			COUNT(*) FILTER (WHERE members.gender = ?) AS men,
+			COUNT(*) FILTER (WHERE members.gender = ?) AS women,
+			COUNT(*) FILTER (WHERE members.has_gender_preference) AS has_gender_preference,
+			COUNT(*) FILTER (WHERE members.connection_mode = ?) AS preferred_virtual,
+			COUNT(*) FILTER (WHERE members.connection_mode = ?) AS preferred_in_person,
+			COUNT(*) FILTER (WHERE members.connection_mode = ?) AS preferred_hybrid`,
+			models.Male,
+			models.Female,
+			models.ConnectionModeVirtual,
+			models.ConnectionModePhysical,
+			models.ConnectionModeHybrid).
 		Joins("JOIN matches ON matches.id = pairings.match_id").
 		Joins("JOIN members ON pairings.member_id = members.id").
 		Where("matches.round_id = ?", p.RoundID).
@@ -98,15 +113,19 @@ func ReportMatches(ctx context.Context, db *gorm.DB, client *slack.Client, p *Re
 
 	// Send message to channel and admin concurrently
 	t := reportMatchesTemplate{
-		UserID:              channel.Inviter,
-		ChannelID:           p.ChannelID,
-		NextRound:           channel.NextRound,
-		Participants:        p.Participants,
-		Pairs:               p.Pairs,
-		Unpaired:            p.Unpaired,
-		Men:                 stats.Men,
-		Women:               stats.Women,
-		HasGenderPreference: stats.HasGenderPreference,
+		UserID:                 channel.Inviter,
+		ChannelID:              p.ChannelID,
+		NextRound:              channel.NextRound,
+		Participants:           p.Participants,
+		Pairs:                  p.Pairs,
+		Unpaired:               p.Unpaired,
+		Men:                    stats.Men,
+		Women:                  stats.Women,
+		HasGenderPreference:    stats.HasGenderPreference,
+		IsHybridConnectionMode: channel.ConnectionMode == models.ConnectionModeHybrid,
+		PreferredVirtual:       stats.PreferredVirtual,
+		PreferredInPerson:      stats.PreferredInPerson,
+		PreferredHybrid:        stats.PreferredHybrid,
 	}
 
 	var multiErr error

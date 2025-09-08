@@ -82,6 +82,15 @@
 				"text": "*{{ .HasGenderPreference }}* {{ $sameGenderKeyword }} preferred to be matched with the same gender :blush:"
 			}
 		},
+{{- if .IsHybridConnectionMode }}
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*{{ .PreferredVirtual }}* preferred to meet virtually versus *{{ .PreferredInPerson }}* who preferred to meet in-person. Meanwhile, *{{ .PreferredHybrid }}* had no _Connection Mode_ preference"
+			}
+		},
+{{- end }}
 		{
 			"type": "section",
 			"text": {
