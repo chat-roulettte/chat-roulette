@@ -50,12 +50,32 @@ func Test_reportMatchesTemplate(t *testing.T) {
 		g.Assert(t, "report_matches_admin.json", []byte(content))
 	})
 
+	t.Run("admin hybrid connection mode", func(t *testing.T) {
+		data.IsAdmin = true
+		data.Participants = 51
+		data.Men = 20
+		data.Women = 30
+		data.HasGenderPreference = 6
+		data.Unpaired = 1
+		data.Pairs = 25
+		data.IsHybridConnectionMode = true
+		data.PreferredVirtual = 10
+		data.PreferredInPerson = 30
+		data.PreferredHybrid = 11
+
+		content, err := renderTemplate(reportMatchesTemplateFilename, data)
+		assert.Nil(t, err)
+
+		g.Assert(t, "report_matches_admin_connection_mode.json", []byte(content))
+	})
+
 	t.Run("admin zero participants", func(t *testing.T) {
 		data.IsAdmin = true
 		data.Participants = 0
 		data.Men = 0
 		data.Women = 0
 		data.HasGenderPreference = 0
+		data.IsHybridConnectionMode = false
 		data.Unpaired = 0
 		data.Pairs = 0
 
@@ -186,9 +206,14 @@ func (s *ReportMatchesSuite) Test_ReportMatches() {
 	// Mock stat lookups
 	s.mock.ExpectQuery(`SELECT .* FROM "pairings" JOIN .* WHERE matches.round_id = (.+)`).
 		WithArgs(
+			models.Male,
+			models.Female,
+			models.ConnectionModeVirtual,
+			models.ConnectionModePhysical,
+			models.ConnectionModeHybrid,
 			roundID,
 		).
-		WillReturnRows(sqlmock.NewRows([]string{"men", "women", "has_gender_preference"}).AddRow([]driver.Value{5, 5, 0}...))
+		WillReturnRows(sqlmock.NewRows([]string{"men", "women", "has_gender_preference", "preferred_virtual", "preferred_in_person", "preferred_hybrid"}).AddRow([]driver.Value{5, 5, 0, 10, 0, 0}...))
 
 	p := &ReportMatchesParams{
 		ChannelID:    channelID,
