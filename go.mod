@@ -7,7 +7,6 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/akamensky/argparse v1.4.0
 	github.com/bincyber/go-sqlcrypter v0.2.0
-	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/coreos/go-oidc/v3 v3.15.0
 	github.com/dgraph-io/ristretto v0.2.0
 	github.com/dmarkham/enumer v1.6.1
@@ -41,7 +40,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.38.0
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/text v0.28.0
-	google.golang.org/grpc v1.75.0
+	google.golang.org/grpc v1.75.1
 	gorm.io/datatypes v1.2.6
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.30.3
