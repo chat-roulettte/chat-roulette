@@ -48,6 +48,33 @@ func Test_appHomeTemplate(t *testing.T) {
 			isErr:  false,
 		},
 		{
+			name:       "app user multiple channels",
+			goldenFile: "app_home_multiple_channels.json",
+			data: appHomeTemplate{
+				BotUserID: "U0123456789",
+				AppURL:    "https://chat-roulette-for-slack.com",
+				Channels: []models.Channel{
+					{
+						ChannelID:      "C0123456789",
+						Inviter:        "U0123456789",
+						Interval:       models.Biweekly,
+						ConnectionMode: models.ConnectionModeVirtual,
+						NextRound:      nextRound,
+					},
+					{
+						ChannelID:      "C9876543210",
+						Inviter:        "U0123456789",
+						Interval:       models.Monthly,
+						ConnectionMode: models.ConnectionModeHybrid,
+						NextRound:      nextRound,
+					},
+				},
+				IsAppUser: true,
+			},
+			blocks: 20,
+			isErr:  false,
+		},
+		{
 			name:       "non app user",
 			goldenFile: "app_home_non_user.json",
 			data: appHomeTemplate{
