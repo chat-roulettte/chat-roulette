@@ -288,7 +288,6 @@ func Test_HandleCheckPairButtons_No(t *testing.T) {
 
 		assert.Equal(t, *webhook.Blocks, view.Blocks)
 	}))
-
 	defer server.Close()
 
 	interaction.ResponseURL = server.URL
@@ -430,7 +429,6 @@ func Test_HandleCheckPairButtons_Yes_MidRound(t *testing.T) {
 
 		assert.Equal(t, *webhook.Blocks, view.Blocks)
 	}))
-
 	defer server.Close()
 
 	interaction.ResponseURL = server.URL

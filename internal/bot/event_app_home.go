@@ -21,7 +21,6 @@ type AppHomeParams struct {
 	BotUserID string
 	URL       string
 	UserID    string
-	View      slack.View
 }
 
 type appHomeTemplate struct {
@@ -51,7 +50,7 @@ func HandleAppHomeEvent(ctx context.Context, client *slack.Client, db *gorm.DB, 
 		BotUserID: p.BotUserID,
 		AppURL:    p.URL,
 		Channels:  channels,
-		IsAppUser: count == 1,
+		IsAppUser: count > 0,
 	}
 
 	content, err := renderTemplate(appHomeTemplateFilename, t)
