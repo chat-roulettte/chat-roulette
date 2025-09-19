@@ -3,7 +3,7 @@
 	"blocks": [
 		{
 			"type": "image",
-			"image_url": "{{ .AppURL }}/static/img/logo.png",
+			"image_url": "https://chat-roulette-for-slack.com/static/img/logo.png",
 			"alt_text": "chat-roulette logo"
 		},
 		{
@@ -39,7 +39,7 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "Chat Roulette can be enabled on a Slack channel by inviting <@{{ .BotUserID }}> to it!"
+				"text": "Chat Roulette can be enabled on a Slack channel by inviting <@U0123456789> to it!"
 			}
 		},
 		{
@@ -48,8 +48,7 @@
 				"type": "mrkdwn",
 				"text": "The Chat Roulette bot will then pair up members of the Slack channel every round giving participants ample time to connect. Based on the channel's _Connection Mode_ setting, the bot will suggest connecting in-person for :coffee: or virtually over :video_camera: using Zoom, Google Meet, or Microsoft Teams."
 			}
-		}
-{{- if .Channels }},
+		},
 		{
 			"type": "header",
 			"text": {
@@ -69,40 +68,57 @@
 					"text": "_Join any of the following channels to start connecting with members of your community_"
 				}
 			]
-		}
-{{- range .Channels }},
-	{{- $connectionMode := .ConnectionMode.String | capitalize }}
-	{{- if eq $connectionMode "Physical" }}
-		{{ $connectionMode = "In Person" }}
-	{{- end }}
+		},
 		{
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "<#{{ .ChannelID }}>"
+				"text": "<#C0123456789>"
 			},
 			"fields": [
 				{
 					"type": "mrkdwn",
-					"text": ":hammer_and_wrench: Admin: <@{{ .Inviter }}>"
+					"text": ":hammer_and_wrench: Admin: <@U0123456789>"
 				},
 				{
 					"type": "mrkdwn",
-					"text": ":clock1: Interval: *{{ .Interval.String | capitalize }}*"
+					"text": ":clock1: Interval: *Biweekly*"
 				},
 				{
 					"type": "mrkdwn",
-					"text": ":busts_in_silhouette: Connection Mode: *{{ $connectionMode }}*"
+					"text": ":busts_in_silhouette: Connection Mode: *Virtual*"
 				},
 				{
 					"type": "mrkdwn",
-					"text": ":calendar: Next Round: *{{ .NextRound | prettyDate }}*"
+					"text": ":calendar: Next Round: *Monday, January 4th, 2021*"
 				}
 			]
-		}
-{{- end }}
-{{- end }}
-{{- if .IsAppUser }},
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "<#C9876543210>"
+			},
+			"fields": [
+				{
+					"type": "mrkdwn",
+					"text": ":hammer_and_wrench: Admin: <@U0123456789>"
+				},
+				{
+					"type": "mrkdwn",
+					"text": ":clock1: Interval: *Monthly*"
+				},
+				{
+					"type": "mrkdwn",
+					"text": ":busts_in_silhouette: Connection Mode: *Hybrid*"
+				},
+				{
+					"type": "mrkdwn",
+					"text": ":calendar: Next Round: *Monday, January 4th, 2021*"
+				}
+			]
+		},
 		{
 			"type": "header",
 			"text": {
@@ -172,10 +188,9 @@
 					"emoji": true
 				},
 				"value": "dashboard",
-				"url": "{{ .AppURL }}",
+				"url": "https://chat-roulette-for-slack.com",
 				"action_id": "link"
 			}
 		}
-{{- end }}
 	]
 }
