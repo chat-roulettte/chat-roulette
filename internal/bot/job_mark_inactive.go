@@ -150,7 +150,7 @@ func MarkInactive(ctx context.Context, db *gorm.DB, client *slack.Client, p *Mar
 			AppHome:   appHome,
 		}
 
-		content, err := renderTemplate("mark_inactive.json.tmpl", t)
+		content, err := renderTemplate(markInactiveTemplateFilename, t)
 		if err != nil {
 			return errors.Wrap(err, "failed to render template")
 		}
