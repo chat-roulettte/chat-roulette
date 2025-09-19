@@ -25,7 +25,7 @@ go/test:
 	go test -v --cover ./...
 
 go/testsum:
-	gotestsum --format testname --no-color=false -- --cover ./...
+	gotestsum --format testname --no-color=false -- -coverprofile=.coverage.out -covermode=atomic ./...
 
 go/testsum/watch:
 	gotestsum --format testname --no-color=false --watch -ftestname -- -count=1
@@ -47,6 +47,7 @@ go/build:
 
 go/coverage:
 	go tool cover -html=.coverage.out
+	go tool cover -func=.coverage.out | sort -k3 -nr
 
 go/clean:
 	go clean -modcache
